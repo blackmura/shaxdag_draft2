@@ -1,0 +1,1227 @@
+/*
+** We begin by defining "mobile first"
+*/
+
+.ui-panel  {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+/*Иконки без текста к топхедере*/
+.topheader .ui-btn-left a{
+	margin-right: 0.4em;
+}
+.topheader .ui-btn-icon-notext.ui-corner-all {
+    -webkit-border-radius: .3125em;
+    border-radius: .3125em; 
+	overflow: visible;
+	padding: 0.2em;
+}
+/*Иконки FA без границ в топхедере*/  
+.topheader .fa-button{
+	display: inline-block;
+	vertical-align: middle;
+	min-width: 2.3em;
+	text-align: center;
+}
+.topheader .fa-button.right i {
+    margin-top: 0.2em;
+	font-size: 2em;
+}
+
+.topheader .fa-button.left i { 
+	font-size: 2em;
+}
+.fa-button-theme-a{
+	color: rgb(139, 136, 136);
+}
+.fa-button-theme-a-dark{
+	color: rgb(108, 107, 107)
+}
+.fa-button-circle{
+	border-radius: 1em;
+	-webkit-border-radius: 1em;
+	border: 2px solid;
+	padding: 0.15em 0.2em 0.0em 0.2em;
+	color: #5B5A5B;
+}
+/* округленная аватарка с указателем*/
+.user-avatar-circle{
+	border-radius: 30px;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	cursor:pointer;
+	-webkit-box-shadow: 1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+}
+.ui-listview .user-avatar-circle{
+	margin-top:1em;
+}
+.user-avatar-rounded{
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	cursor:pointer;
+	-webkit-box-shadow: 1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+}
+.ui-listview .user-avatar-rounded{
+	margin-top:1em;
+	margin-left: 0.5em;
+}
+/* когда был последний раз */
+.ui-listview .offline-status { 
+	font-size: 0.6em;
+	color: #8A8A8A;
+	margin-left:2em;
+}
+/* округленные квадратные кнопки */
+.kvadro-btn{
+	-webkit-border-radius: .3125em;
+    border-radius: .3125em;
+	overflow: visible; 
+}
+/* Счетчик JQM в стиле badger*/
+.ui-li-count.b{
+	background: -webkit-linear-gradient(top, #F46056, #C31409);
+	background: -moz-linear-gradient(top, #F46056, #C31409);
+    background: -o-linear-gradient(top, #F46056, #C31409);
+    background: -ms-linear-gradient(top, #F46056, #C31409);
+    background: linear-gradient(top, #F46056, #C31409);
+	border-color: #fff;
+}
+/* округленная аватарка с указателем*/
+.emoticon{
+	max-width:1.5em;
+	max-height:1.5em;
+}
+/* Прозрачный черный футер*/
+.ui-footer.ui-bar-b{
+	opacity: 0.85;
+}
+/*Форма сообщения в футере */
+.footer-msg-form{
+	width: 100%; 
+	display: -webkit-box; 
+	display: -moz-box; 
+	-webkit-box-orient: horizontal; 
+	-moz-box-orient: horizontal;
+}
+.footer-msg-form .txt-div{
+	-webkit-box-flex: 1; 
+	-moz-box-flex: 1;
+}
+.footer-msg-form .txt-div textarea {
+	padding-top:.22em; 
+	padding-bottom: 0em; 
+	padding-right:20px;
+}
+.footer-msg-form .smile-div{
+	font-size: 1.5em;
+	padding-top: 0.2em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+.footer-msg-form .send-div{
+	font-size: 1.5em;
+	padding-top: 0.3em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+/*панель переключения пабликов*/
+.navbar-public span{
+	display: none;
+}
+.found_number {
+	font-size: 0.8em;
+	text-align: center;
+	padding-top: 0.5em;
+	display: block;
+}
+/* richtext стили */
+.gif_smile {
+	max-height:60px;
+	max-width:200px;
+}
+.richtext_foto{
+	padding:10px;
+}
+.richtext_foto img{
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-moz-box-shadow: 2px 1px 7px 0px rgba(50, 50, 50, 0.75);
+	box-shadow: 2px 1px 7px 0px rgba(50, 50, 50, 0.75);
+}
+/* стили баров с оповещениями */
+.ntfy_bars .ui-bar{
+	padding-left: 0.2em;
+	padding-top: 0.2em;
+	padding-bottom: 0em;
+	height: 2.1em;
+	cursor: pointer;
+}
+.ntfy_bars .ui-bar-a.ntfy{ 
+	background-color: #83D0E3;
+}
+.ntfy_bars .user-foto{
+	float:left;
+}
+.ntfy_bars .user-foto img{
+	width:30px;
+}
+.ntfy_bars .user-name{
+	float:left;
+	margin-top:0.3em;
+	margin-left: 0.3em;
+}
+.ntfy_bars .time{
+	font-size:0.7em; 
+	margin-top:0.5em;
+	color: #676060;
+}
+.ntfy_bars .ui-body {
+	padding-left:0.5em;
+	padding-right:0.5em;
+}
+.ntfy_bars .ui-bar-a .btn-close{ 
+	font-size: 2em;
+	margin-top:3px;
+}
+.ntfy_bars .ui-body .foto {
+	float: left;
+	width: 60px;
+}
+.ntfy_bars .ui-body .foto  img{
+	width: 60px;
+}
+.ntfy_bars .ui-body .name {
+	margin-left: 70px;
+}
+.ntfy_bars .ui-body  h3{
+	margin-bottom: 0.5em;
+	margin-top: 0.1em;
+	font-size: 1em;
+}
+.ntfy_bars .ui-body .name .info_1{
+	font-size: 0.8em;
+	/*color: #A2A1A1;*/
+}
+/*автозаполнение - переопределяем для мобильной версии*/
+.ac_results{
+	border: 1px solid #D9D5D5;
+	-webkit-box-shadow: 1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         1px 1px 3px 0px rgba(50, 50, 50, 0.75);
+}
+.ac_results li{
+	padding: 0.5em 10px;
+	border-bottom: 1px solid #DBDBDB;
+}
+/* для невидимых селекто */
+.invisible_select {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	min-height: 1.5em;
+	min-height: 100%;
+	height: 3em;
+	max-height: 100%;
+	outline: 0;
+	-webkit-border-radius: inherit;
+	border-radius: inherit;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	cursor: pointer;
+	filter: Alpha(Opacity=0);
+	opacity: 0;
+	z-index: 2;
+}
+.no-data-info{
+	text-align:center;
+	color: #A4A4A4;
+	margin-top: 1em;
+}
+.blink {
+      animation: blink 1s steps(5, start) infinite;
+      -webkit-animation: blink 1s steps(5, start) infinite;
+    }
+    @keyframes blink {
+      to {
+        visibility: hidden;
+      }
+    }
+    @-webkit-keyframes blink {
+      to {
+        visibility: hidden;
+      }
+    }
+/* кнопка удаления фотографии поверх миниатюры*/
+.foto .btn-delete{
+	position: relative;
+	top: -6px;
+	opacity:0.6;
+	filter: alpha(opacity = 60);
+}
+.foto .btn-delete button{
+	margin-left: 0px;
+	background-color: #FFA7A7;
+}
+/*
+** mobile device class
+*/
+/*левая боковая панель */
+#left_panel .user-info-wrapper{
+	margin-top: 5px;
+	margin-left: 5px;
+	margin-bottom: 1em;
+}
+#left_panel .user-avatar-wrapper {
+	float: left;
+	width: 60px;
+}
+#left_panel .user-avatar-wrapper img {
+	width: 50px;
+}
+#left_panel .user-name-wrapper {
+	margin-left: 50px;
+	color: rgb(38, 155, 38);
+	font-size: 1.2em;
+}
+#left_panel .user-buttons-wrapper {
+	margin-top: 5px;
+}
+#left_panel .user-buttons-wrapper .ui-btn {
+	margin-left: 0.5em;
+}
+/*список друзей*/
+
+#left_panel .friends-online{
+	margin-top: 1em;
+	font-size: 0.8em;
+}
+#left_panel .friends-online .ui-bar{
+	cursor: pointer;
+}
+
+#left_panel .friends-online .ui-listview  li{
+	padding: 0px 0px 0px 5px;
+}
+#left_panel .friends-online .foto {
+	float: left;
+	width: 50px;
+}
+#left_panel .friends-online .foto  img{
+	width: 50px;
+	margin-top: 8px;
+}
+#left_panel .friends-online .name {
+	margin-left: 60px;
+}
+#left_panel .friends-online .name .ui-btn {
+	margin-top: 0px;
+	float: left;
+}
+#left_panel .friends-online .name .info_1{
+	font-size: 0.8em;
+	color: #A2A1A1;
+}
+#left_panel .friends-online  .my-nation{
+	top: 0.5em;
+	color: #B4B4B4;
+}
+/* Личная страница*/
+#page_user_name{	
+    margin-bottom: 1em;
+}
+#page_user_name .ui-bar{	
+    margin-top: 0px;
+	margin-bottom: 0.5em;
+}
+#page_user_name .info-line{	
+    text-align:right;
+	color: #575555;
+	font-size: 0.8em;
+}
+#page_user_name .info-line .nation{	
+}
+#page_user_name .info-line .rating{	
+    margin-left: 1em;
+}
+#page_user_name .info-line .last-visit{	
+    margin-left: 1em;
+	color: #9E9E9E;
+}
+#page_user_name .user-status{
+	position: absolute;
+	top: .24em;
+	right: .4em;
+	font-size: 0.8em;
+	padding: inherit;
+}
+#page_user_name .user-status span{ 
+	display: none;
+}
+.user-online{
+	color: rgb(38, 155, 38); 
+}
+.user-offline{
+	color: rgb(137, 139, 137);
+}
+
+#page_user_avatar{
+	text-align: center;
+}
+#page_user_avatar .file-avatar{
+	position: relative;
+	top: -40px;
+	cursor: pointer;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background: rgba(0, 0, 0, 0.45);
+}
+#page_user_avatar .ui-input-text{
+	overflow: hidden;
+	opacity: 0;
+	cursor: pointer;
+	position: absolute;
+	top: -10px;
+	width: 100%;
+}
+#page_user_left{
+}
+#page_user_left .buttons{
+	margin-top:0.5em;
+	margin-bottom:1em;
+	margin-left:5px;
+	margin-right:5px;
+}
+#page_user_right{
+}
+#page_user_avatar img{
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	width:100%;
+	
+}
+#page_user_info1{
+}
+#page_user_fotos .ui-body{
+	text-align: center;
+}
+#page_user_fotos .foto{
+	position: relative;
+    width: 31%;
+    padding-bottom: 31%;
+    float: left;
+    height: 0;
+	margin: 1%;	
+}
+#page_user_fotos .foto img{
+	width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0; 
+}
+.rounded-corners .ui-bar {
+  -webkit-border-top-left-radius: inherit;
+  border-top-left-radius: inherit;
+  -webkit-border-top-right-radius: inherit;
+  border-top-right-radius: inherit;
+  clear: none;
+  margin-top:15px;
+}
+.rounded-corners .ui-bar .ui-btn {
+  padding: 3px 10px;
+}
+.rounded-corners .ui-body {
+  border-top-width: 0;
+  -webkit-border-bottom-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+  -webkit-border-bottom-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+  clear: none;
+}
+.page_limited{
+	max-width: 800px;
+	margin: auto;
+	padding-left:3px;
+	padding-right:3px;
+}
+.user-page-info-t1{
+	font-size: 11px;
+	border-bottom: 1px solid #ccc;
+}
+.user-page-info-t2{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+#page_user_friends .friend{
+	float: left;
+	text-align: center;
+	width:50%;
+	margin-top: 0.5em;
+	height: 100px;
+	overflow: hidden;
+}
+#page_user_friends .friend div{
+	font-size: 0.8em;
+}
+#page_user_friends .friend .user-avatar{
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	width:60px;
+	cursor:pointer;
+}
+#page_fotos_list .foto, #page_usersfotos_list .foto, #page_upload .foto{
+	position: relative;
+    width: 30%;
+    padding-bottom: 30%;
+    float: left;
+    height: 0;
+	margin: 1%;	
+}
+#page_fotos_list .foto img, #page_usersfotos_list .foto img, #page_upload .foto img{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0; 
+}
+
+/* CSS talk bubble 
+<div class="talk-bubble tri-right round right-in">
+  <div class="talktext">
+    <p>Moving our way back up the right side indented. Uses .round and . fgfgdd</p>
+  </div>
+</div>
+*/
+.talk-bubble { 
+	margin-top: 5px;
+  min-height:50px;
+  display: inline-block;
+  position: relative;
+	min-width: 150px;
+	height: auto;
+	max-width:70%;
+	-webkit-box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,35),
+        0px 2px 2px rgba(0,0,0,.2);
+    -moz-box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,.35),
+        0px 2px 2px rgba(0,0,0,.2);
+    box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,.35),
+        0px 2px 2px rgba(0,0,0,.2);
+	cursor: pointer;
+}
+.talk-bubble.me {
+	background-color: rgb(236, 236, 230);
+	margin-right: 15px;
+}
+.talk-bubble.another {
+	background-color: rgb(152, 207, 250);
+	margin-left: 15px;
+}
+.talk-bubble.selected {
+	background-color: rgb(241, 193, 226);
+	-webkit-box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,35),
+        0px 2px 2px rgba(0,0,0,.3);
+    -moz-box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,.35),
+        0px 2px 2px rgba(0,0,0,.3);
+    box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,.35),
+        0px 2px 2px rgba(0,0,0,.3);
+}
+.round{
+  border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+
+}
+.tri-right.left-in:after{ 
+	content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+  left: -20px;
+	right: auto;
+  top: 15px;
+	bottom: auto;
+	border: 12px solid;
+	border-color: rgb(152, 207, 250) rgb(152, 207, 250) transparent transparent;
+}
+.tri-right.left-in.selected:after{
+	border-color: rgb(241, 193, 226) rgb(241, 193, 226) transparent transparent;
+}
+
+
+.tri-right.right-in:after{ 
+	content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+  left: auto;
+	right: -20px;
+  top: 20px;
+	bottom: auto;
+	border: 12px solid;
+	border-color: rgb(236, 236, 230) transparent transparent rgb(236, 236, 230);
+}
+.tri-right.right-in.selected:after{ 
+	border-color: rgb(241, 193, 226) transparent transparent rgb(241, 193, 226);
+}
+/* talk bubble contents */
+.talktext{
+  padding: 1em;
+	text-align: left;
+  line-height: 1.5em;
+  font-size: 0.9em;
+}
+
+.talktext p{
+  /* remove webkit p margins */
+  -webkit-margin-before: 0em;
+  -webkit-margin-after: 0em;
+  overflow: hidden;
+}
+.talktext .options{
+	position: absolute;
+	left: 15px;
+	font-size: 0.7em;
+	top: 0px;
+}
+
+/* bADGES &*/
+[data-bubble]{
+	position: relative;
+}
+[data-bubble]:after {
+    content:attr(data-bubble);
+    position:absolute;
+    top:-1.25em;
+    right: 0.5em;
+ 
+    width: 1.5em;
+    height: 1.5em;
+ 
+    line-height:1.5em;
+    text-align:center;
+ 
+    font-family:"Helvetica Neue";
+    font-weight:bold;
+    color:#fff;
+    text-shadow:0px 1px 0px rgba(0,0,0,.15);
+ 
+    -webkit-box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,35),
+        0px 1px 1px rgba(0,0,0,.2);
+    -moz-box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,.35),
+        0px 1px 1px rgba(0,0,0,.2);
+    box-shadow:
+        inset 0px 1px 0px rgba(255,255,255,.35),
+        0px 1px 1px rgba(0,0,0,.2);
+ 
+    -webkit-border-radius:4em;
+    -moz-border-radius:4em;
+    border-radius:4em;
+}
+.pink_badge[data-bubble]:after {
+    background-image: -webkit-linear-gradient(top, rgb(247, 130, 151), rgb(244, 102, 119));
+    background-image: -moz-linear-gradient(top, rgb(247, 130, 151), rgb(244, 102, 119));
+    background-image: -o-linear-gradient(top, rgb(247, 130, 151), rgb(244, 102, 119));
+    background-image: -ms-linear-gradient(top, rgb(247, 130, 151), rgb(244, 102, 119));
+    background-image: linear-gradient(top, rgb(247, 130, 151), rgb(244, 102, 119));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f78297', EndColorStr='#f46677');
+ 
+    border:1px solid #ce4f5e;
+}
+.yellow_badge[data-bubble]:after {
+    background-image: -webkit-linear-gradient(top, rgb(254, 218, 113), rgb(254, 186, 72));
+    background-image: -moz-linear-gradient(top, rgb(254, 218, 113), rgb(254, 186, 72));
+    background-image: -o-linear-gradient(top, rgb(254, 218, 113), rgb(254, 186, 72));
+    background-image: -ms-linear-gradient(top, rgb(254, 218, 113), rgb(254, 186, 72));
+    background-image: linear-gradient(top, rgb(254, 218, 113), rgb(254, 186, 72));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#feda71', EndColorStr='#feba48');
+ 
+    border:1px solid #dea94f;
+}
+.blue_badge[data-bubble]:after {
+    background-image: -webkit-linear-gradient(top, rgb(172, 228, 248), rgb(108, 205, 243));
+    background-image: -moz-linear-gradient(top, rgb(172, 228, 248), rgb(108, 205, 243));
+    background-image: -o-linear-gradient(top, rgb(172, 228, 248), rgb(108, 205, 243));
+    background-image: -ms-linear-gradient(top, rgb(172, 228, 248), rgb(108, 205, 243));
+    background-image: linear-gradient(top, rgb(172, 228, 248), rgb(108, 205, 243));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ace4f8', EndColorStr='#6ccdf3');
+ 
+    border:1px solid #79b5cb;
+}
+/*------------страница со списком переписок */
+#page_msg1 .user-avatar-rounded{
+	margin-left: 0.5em;
+} 
+#page_msg1 li{
+	cursor: pointer;
+	border-radius: 10px;
+}
+#page_msg1 li.new{
+	background: #ADDDF1;
+}
+#nav-msg-list{
+	margin: -0.5em; /*исправляем косяк jqm с margin -1em */
+}
+#nav-msg-list h2, #nav-msg-list p {
+	margin-left: -1em; 
+}
+/*скрываем аватарки в переписке с пользоваталем если разрешение маленькое*/
+#dialog-msg-list .user-avatar-rounded{
+	display: none;
+} 
+#dialog-msg-list .daysdevider, #comments-list .daysdevider{ 
+	text-align: center;
+	font-size: 0.7em;
+	margin-top: 1.5em;
+	margin-bottom: 0.5em;
+	border-top: 1px solid rgb(201, 201, 201);
+	padding-top: 0.5em;
+} 
+/*
+#nav-sendmsg-btn, #nav-sendcomment-btn{
+	-webkit-border-radius: .3125em;
+    border-radius: .3125em;
+	overflow: visible; 
+	font-size: 1.2em;
+	margin-left:5px;
+	margin-top: 0.5em;
+}
+*/	
+#page_msg2_typing{
+	text-align: center;
+	display : none;
+	font-size: 0.8em;
+}
+.ajax-loader-center{
+	display:none;
+	z-index:9999999;
+	position:fixed;
+	top:50%;
+	left:50%;
+	border:0;
+}
+.animation-rotate-1s {
+-webkit-animation: spin 1s infinite linear;
+-moz-animation: spin 1s infinite linear;
+-o-animation: spin 1s infinite linear;
+animation: spin 1s infinite linear;
+}
+/* Кастомизация списков пользователей. Сокращаем отступ */
+#page_userlist_list .ui-listview{
+	margin: 0px;
+}
+#page_userlist_list_ul li{
+	padding-top: 0em;
+	padding-bottom: 0em;
+}
+#page_userlist_list_ul p{
+	padding-bottom : 0px;
+}
+#page_userlist_list_ul .add_info{
+	display: none;
+}
+#page_userlist_list_ul .info_1{
+	margin-right:1em;
+}
+/* Настройка элементов Photoswipe */
+
+.ps-btn-close, .ps-btn-back, .ps-btn-forward, .ps-btn-like, .ps-btn-comments{ 
+	font-size: 1.3em;
+	padding-top:12px;
+}
+.ps-btn-like i, .ps-btn-comments i{
+display: inline;
+} 
+.ps-btn-like span, .ps-btn-comments span{ 
+display: inline;
+margin-left:5px;
+} 
+.ps-caption-content .avatar{
+	float: left;
+	margin-left:0.5em;
+	text-align:left;
+}
+.ps-caption-content  .name{
+	float: left;
+	margin-left:0.5em;
+	margin-top:0.2em;
+	text-align:left;
+	cursor: pointer; 
+	
+}
+.ps-caption-content  .name span{
+	text-shadow: 0 1px 0 #000; 
+	font-style: italic;
+}
+/* оверлэй при аджаксе */
+div.ajax-overlay{
+	position: absolute;
+	top:0;
+	left:0;
+	width: 100%;
+	height:100%;
+	z-index:2;
+	opacity:0.4;
+	filter: alpha(opacity = 50);
+	background: #fff;
+}
+
+/*------------------------ стили карты------------------------*/
+#page_map, #map_canvas{
+	width: 100%; 
+	height: 100%; 
+	padding: 0px;
+}
+/*------------------------ стили комментариев------------------------*/
+.comments-foto{
+	width: 100%;
+	height:5em;
+	overflow: hidden;
+	cursor: pointer;
+	position: relative;
+}
+.comments-foto img{
+	width: 100%; 
+}
+.comments-foto .overlay{ 
+	position: absolute;
+	top: 1em;
+	left: 50%; 
+	font-size: 2em;
+	color: #ccc;
+	text-shadow: 0 1px 0 #000;
+}
+#comments-content{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+#comments-div .user-avatar-rounded{
+	max-width: 40px;
+	margin-top:15px;
+} 
+#comments-content .btn-like{
+	margin-left:0.5em;
+} 
+#comments-content .btn-unlike{
+	margin-left:0.5em;
+}
+#comments-content  span.rating {
+	color: #E0DCDC;
+	cursor: pointer;
+	padding-bottom: 0.5em;
+}
+#comments-content span.comments { 
+	color: #6D6A6A; 
+}
+#comments-content h3 { 
+	color: #515151; 
+} 
+#comments-content .comm_label { 
+	display: none; 
+} 
+ 
+#comments-div .talktext{
+  padding-top: 0.5em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+#comments-div .talktext .options{
+	top: -1.6em;
+	height: 1.5em;
+	overflow: hidden;
+}
+#comments-div .talk-bubble { 
+	margin-top: 15px;
+  min-height:45px;
+	min-width: 150px;
+}
+#comments-div .round{
+  border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+
+}
+#comments-source.music{
+	background: #52C6E9;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: #fff;
+	font-size: 1.4em;
+}
+#comments-source .song-item .title{
+	color: #fff;
+}
+#comments-source.foto{
+
+}
+#comments-source.clips{
+	position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; 
+	height: 0; 
+	overflow: hidden;
+}
+#comments-source.clips iframe{
+	position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+/*--------------------- Стили событий-------------------------*/ 
+#page_evants_list .ui-bar{
+	padding-left: 0.2em;
+	padding-top: 0.2em;
+	padding-bottom: 0em;
+	height: 2.1em;
+	cursor: pointer;
+}
+#page_evants_list .user-foto{
+	float:left;
+}
+#page_evants_list .user-foto img{
+	width:30px;
+}
+#page_evants_list .user-name{
+	float:left;
+	margin-top:0.3em;
+	margin-left: 0.3em;
+}
+#page_evants_list .evant-time{
+	font-size:0.7em; 
+	margin-top:0.5em;
+	color: #676060;
+}
+#page_evants_list .comments-fotos, #page_evants_list .comments-clips, #page_evants_list .comments-music, #page_evants_list .user-go{
+	cursor: pointer;
+}
+#page_evants_list .footer{
+	margin-top: 1em;
+}
+#page_evants_list .round{
+  border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+
+}
+#page_evants_list .talktext{
+  padding-top: 0.5em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+#page_evants_list .talktext .options{
+	top: -1.6em;
+	height: 1.5em;
+	overflow: hidden;
+}
+#page_evants_list .talk-bubble { 
+	margin-top: 15px;
+  min-height:45px;
+	min-width: 150px;
+}
+#page_evants_list .count-likes { 
+	margin-top: 0.4em;
+}
+#page_evants_list .ui-bar-a.ntfy{ 
+	background-color: #83D0E3;
+}
+#page_evants_list .ui-bar-a .btn-close{ 
+	font-size: 2em;
+	margin-top:3px;
+}
+#page_evants_list .comments-clips{ 
+	cursor: pointer;
+}
+/*--------------------- Музыка-------------------------*/ 
+.sm2-360ui {
+	background-color: rgba(16, 185, 225, 0.33);
+}
+.song-item{ 
+	width: 100%;
+	display: -webkit-box;
+	display: -moz-box;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	border-bottom: 1px solid #DFDFDF;
+	margin-top: 1em;
+}
+.song-item .nation{
+	color: #898989;
+	font-size: 0.9em;
+}
+.song-item .song_title { 
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	font-size: 0.8em;
+	color: #068FB8
+}
+.song-item .ui360 a { 
+	top:5px;
+	overflow: hidden;
+	font-size: 0.8em;
+	display: none;
+}
+.song-item .btn-add { 
+	cursor: pointer;
+	margin-top:10px;
+}
+.song-item .options { 
+	margin-top: 0.5em;
+}
+.song-item .rating { 
+	margin-left: 0px;
+	cursor: pointer;
+	font-size: 1.4em;
+	color: #403F3F;
+}
+.song-item .btn-comments { 
+	margin-left: 1em;
+	cursor: pointer;
+	font-size: 1.4em;
+	color: #403F3F;
+}
+.song-item .btn-like { 
+	display: none;
+}
+.song-item .btn-unlike { 
+	display: none;
+}
+.song-item .title { 
+	cursor: pointer;
+}
+.controlgroup-btn{
+	padding-bottom: 1.2em;
+	padding-top: 1.1em;
+}
+#comments-content .song_title {
+	margin-top:0.4em;
+}
+#page_evants .song_title {
+	margin-top:0.8em;
+}
+#page_evants .btn-add .fa-button-theme-a{
+	color: #AAAAAA;
+}
+/*--------------------- Загрузка-------------------------*/ 
+#page_upload .uploader .preview{
+	font-size:3em;
+	text-align: center;
+		
+}
+#page_upload .uploader .preview{
+	font-size:3em;
+	text-align: center;
+		
+}
+#page_upload .uploader .preview .upload-btn{
+	position: relative;
+	top: -40px;
+	cursor: pointer;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background: rgba(0, 0, 0, 0.45);
+	font-size: 0.3em;
+}
+#page_upload .uploader .preview .upload-btn .ui-input-text{
+	overflow: hidden;
+	opacity: 0;
+	cursor: pointer;
+	position: absolute;
+	top: -1em;
+	width:100%
+}
+#page_upload .uploader .preview .preview-src{
+	display: none;
+	width:100%;
+	overflow: hidden;
+	max-height: 6em;   
+}
+#page_upload .uploader .preview .preview-src img{
+	width:100%; 
+}
+#page_upload  .btn-save{
+	background-color: #2C9DC4;
+}
+#page_upload  .counter{
+	border-bottom: 1px solid;
+	text-align: center;
+}
+#page_upload .page_limited{
+	padding-left: 2px; 
+	padding-right: 2px;
+}
+/*------------- Страница настроек ----------------*/
+#page_settings .ui-bar{
+	margin-bottom: 0px;	
+}
+#page_settings .ui-body{
+	background: #EEEEEE;
+	border: 1px solid rgb(221, 221, 221);
+}
+/*
+** We use CSS3 media queries to determine which CSS to use
+** There are no standards for the size of devices, you will have to determine YOUR best guess,
+** which won't be perfect, but will work in most cases.
+** if our width is 1024 or less assume and orientation portrait
+*/
+/* если как минимум большой телефон*/
+@media screen and (min-width: 468px)  {
+	.page_limited{
+		padding-left:10px;
+		padding-right:10px;
+	}
+	/* friends*/
+	#page_user_friends .friend{
+		width:33%;
+		height: 140px;
+	}
+	#page_user_friends .friend div{
+	}
+	#page_user_friends .friend .user-avatar{
+		width:initial;
+	}
+	/* fotos list*/
+	#page_fotos_list .foto, #page_usersfotos_list .foto, #page_upload .foto{ 
+		width: 18%;
+		padding-bottom: 18%;
+			
+	}
+	/*показываем аватарки если разрешение большое*/
+	#dialog-msg-list .user-avatar-rounded{
+		display: block;
+	} 
+	#comments-div .user-avatar-rounded{
+		max-width: initial;
+		margin-top:0px;
+	}
+	#comments-content .comm_label { 
+		display: inline; 
+	}
+
+	/*--------------------- Музыка-------------------------*/ 
+	.song-item .song_title {  
+		font-size: 1em;
+	}
+	.song-item .options { 
+		margin-top: 0em;
+	}
+	.song-item .rating { 
+		margin-left: 15px;
+		font-size: 1.2em;
+	}
+	.song-item .btn-comments { 
+		font-size: 1.2em;
+	}
+	.song-item .btn-like { 
+		display: inline-block;
+	}
+	.song-item .btn-unlike { 
+		display: inline-block;
+	}
+	/*Загрузка фотографий*/
+	#page_upload .uploader .preview .upload-btn{
+		font-size: 0.5em;
+	}
+	/*панель переключения пабликов*/
+	.navbar-public span{
+		display: inline;
+	}
+	/*бары с оповещением*/
+	.ntfy_bars .ui-body {
+		padding-left: 1em;
+		padding-right: 1em;
+	}
+	.ntfy_bars .ui-body .name .info_1{
+		font-size: 1em;
+	}
+	.ntfy_bars .ui-body .foto {
+		width: 80px;
+	}
+	.ntfy_bars .ui-body .foto  img{
+		width: 80px;
+	}
+	.ntfy_bars .ui-body .name {
+		margin-left: 90px;
+	}
+	.ntfy_bars .ui-body  h3{
+		font-size: 1.2em;
+	}
+}
+/* если как минимум планшет или комп*/
+@media screen and (min-width: 768px)  { 
+	/*--------------------- Стили личной страницы-------------------------*/ 
+	#page_user_left{
+		float:left;
+		height:500px;
+		overflow: hidden;
+		width:200px
+	}
+	#page_user_right{
+		margin-left:215px; 
+		max-width: 580px;
+	}
+	#page_user_name{
+	}
+	#page_user_name .user-status{
+	}
+	#page_user_name .user-status span{
+		display: inline;
+	}
+	
+	#page_user_fotos .foto img{ 
+		width: initial;
+	}
+	/*--------------------- Стили событий-------------------------*/ 
+	#page_evants_list .rounded-corners{
+		width: 350px;
+		float:left;
+		margin-left:10px;
+	}
+	#page_evants_list .ui-bar{
+		height: 2.4em;
+	}
+	#page_evants_list .ui-body .user-avatar-rounded{
+		max-height: 300px;
+	}
+	/*--------------------- Музыка-------------------------*/ 
+	.song-item .song_title { 
+		font-size: 1em;
+	}
+	/*панель переключения пабликов*/
+	.navbar-public span{
+		display: block;
+	}
+}
+
+
+/*---------------------------------- CSS FIX-es --------------*/
+/*фиксим черный куб PhotoSwipe в galaxy */
+	body.ps-active, 
+	body.ps-building, 
+	div.ps-active, 
+	div.ps-building, 
+	div.ps-uilayer {
+		background: transparent !important;
+	}
+	/* for IE9 and IE10 only */
+	@media screen\0 {
+	div.ps-uilayer {
+	background: #000;
+	}
+	}
