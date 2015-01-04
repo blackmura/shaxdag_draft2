@@ -28,7 +28,6 @@
 
 	<script type="text/javascript" src="js/general.js"></script>
 	
-	<script type="text/javascript" src="js/audio_api_patch.js"></script> 
 
 	<!-- Audio -->
 	<script type="text/javascript" src="js/audio_api_patch.js"></script>
@@ -38,7 +37,9 @@
 	<!-- Velocity -->
 	<script type="text/javascript" src="js/velocity.min.js"></script>
 	
-
+	<!-- APP -->
+	<script type="text/javascript" src="PushNotification.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
 	
 	
 	
@@ -120,6 +121,7 @@
 	
 	
 	//документ готов
+	 app.initialize();
 	$( document ).ready(function() {
 		$.mobile.defaultPageTransition = "none"; 	
 		//---------------------обработчик показа страницы
