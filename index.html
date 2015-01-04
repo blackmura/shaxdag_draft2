@@ -4016,7 +4016,7 @@
 						Evants.Utils.increase_ntfy_obj("fotos",1);
 					}
 					else
-					if(data.type=="friend_req"){
+					if(data.type=="friend_req"){ 
 						Environment.Friends.income_users.total_all++;
 					}
 					NavLefPanel.Ntfy.refresh();
@@ -4044,7 +4044,7 @@
 			NavLefPanel.Ntfy.refresh();
 			//если это мобильное приложение, то инициализируем апи
 			if(GLOBAL_APP_VERS.type=="app_mobile"){
-					 //app.initialize();
+					 app.initialize();
 			}
 			
 		},
