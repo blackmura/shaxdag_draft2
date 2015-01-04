@@ -38,8 +38,9 @@
 	<script type="text/javascript" src="js/velocity.min.js"></script>
 	
 	<!-- APP -->
-	<script type="text/javascript" src="PushNotification.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
+	<script type="text/javascript" src="js/PushwooshAndroid.js"></script>
+	<script type="text/javascript" src="js/PushwooshiOS.js"></script>
 	
 	
 	
@@ -121,7 +122,7 @@
 	
 	
 	//документ готов
-	 app.initialize();
+
 	$( document ).ready(function() {
 		$.mobile.defaultPageTransition = "none"; 	
 		//---------------------обработчик показа страницы
@@ -4039,6 +4040,10 @@
 			Evants.Display(data.evants, Evants.url_params);
 			//считываем с объектов оповещения и отображаем баджеры на боковой панели
 			NavLefPanel.Ntfy.refresh();
+			//если это мобильное приложение, то инициализируем апи
+			if(GLOBAL_APP_VERS.type=="app_mobile"){
+					 app.initialize();
+			}
 			
 		},
 		Nations : {
