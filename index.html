@@ -4062,7 +4062,7 @@
 			
 			//инициализация мобильного приложения
 			if(GLOBAL_APP_VERS.type == "app_mobile"){
-				app.initialize();
+				//app.initialize();
 			}
 			
 		},
@@ -5494,6 +5494,9 @@
 				}
 			}
 			
+			if(GLOBAL_APP_VERS.type=="app_mobile"){
+				$("#full_vers_link").css({display: "none"});
+			}
 			
 				
 			
@@ -7182,7 +7185,7 @@
 		<div id="page_evants_list"></div>
 	</div><!-- /content -->
 	
-	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b" id="full_vers_link">
 		<div style='text-align: center; font-size: 0.9em;'><a href='http://shaxdag.com?use_desktop' rel="external">полная версия сайта</a></div>
 	</div>
 	
