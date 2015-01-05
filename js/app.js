@@ -87,10 +87,13 @@ var app = {
 					}
 					else
 					{	// otherwise we were launched because the user touched a notification in the notification tray.
-						if (e.coldstart)
+						if (e.coldstart){
+							NavMsg.OpenDialog(e.payload.user_id);
 							console.log('<li>--COLDSTART NOTIFICATION--' + '</li>');
-						else
-						console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+						}
+						else{
+							console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+						}
 					}
 						
 					console.log('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
