@@ -21,15 +21,15 @@ var app = {
 		Instance : Object(),
 		RegId : 0,
 		onDeviceReady :function () {
-			console.log('<li>deviceready event received</li>');
+			//console.log('<li>deviceready event received</li>');
 			try 
 			{ 
 				app.PN.Instance = window.plugins.pushNotification;
 				if (device.platform == 'android' || device.platform == 'Android') {
-					console.log('<li>registering android</li>');
+					//console.log('<li>registering android</li>');
 					app.PN.Instance.register(app.PN.successHandler, app.PN.errorHandler, {"senderID":GLOBAL_GOOGLE_PID,"ecb":"app.PN.onNotificationGCM"});		// required!
 				} else {
-					console.log('<li>registering iOS</li>');
+					//console.log('<li>registering iOS</li>');
 					app.PN.Instance.register(tokenHandler, app.PN.errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"app.PN.onNotificationAPN"});	// required!
 				}
 			}
@@ -60,7 +60,7 @@ var app = {
 
 		// handle GCM notifications for Android
 		onNotificationGCM : function (e) {
-			console.log('<li>EVENT -> RECEIVED:' + e.event + '</li>');
+			//console.log('<li>EVENT -> RECEIVED:' + e.event + '</li>');
 			
 			switch( e.event )
 			{

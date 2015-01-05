@@ -2565,20 +2565,32 @@
 		},
 		income_msg : {
 			play : function(){
-				if(Audio_.buffer.income_msg==null){
-					Audio_.loadSoundFile("income_msg", 1);
+				if(GLOBAL_APP_VERS.type == "app_mobile"){
+					var my_media = new Media("/android_asset/www/bin/msg_in.mp3");
+					my_media.play();
 				}
-				else
-					Audio_.play("income_msg");
+				else{
+					if(Audio_.buffer.income_msg==null){
+						Audio_.loadSoundFile("income_msg", 1);
+					}
+					else
+						Audio_.play("income_msg");
+				}
 			}
 		},
 		outcome_msg : {
 			play : function(){
-				if(Audio_.buffer.outcome_msg==null){
-					Audio_.loadSoundFile("outcome_msg", 1);
+				if(GLOBAL_APP_VERS.type == "app_mobile"){
+					var my_media = new Media("/android_asset/www/bin/msg_out.mp3");
+					my_media.play();
 				}
-				else
-					Audio_.play("outcome_msg");
+				else{
+					if(Audio_.buffer.outcome_msg==null){
+						Audio_.loadSoundFile("outcome_msg", 1);
+					}
+					else
+						Audio_.play("outcome_msg");
+				}
 			}
 		},
 		
