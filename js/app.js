@@ -1,57 +1,25 @@
 var GLOBAL_GOOGLE_PID = "979380629492";
-var GLOBAL_WOOSH_APPID = "48DD5-AE54A";
-function initPushwoosh() {
-	var pushNotification = window.plugins.pushNotification;
-	if(device.platform == "Android")
-	{
-		registerPushwooshAndroid();
-	}
-
-	if(device.platform == "iPhone" || device.platform == "iOS")
-	{
-		registerPushwooshIOS();
-	}
-}
-
 var app = {
     // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicity call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        initPushwoosh();
-        app.receivedEvent('deviceready');
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-       
-        console.log('Received Event: ' + id);
-    },
-	
-	
+    is_ready: 0,
+	initialize: function() {
+		this.bindEvents();
+	},
+	// Bind Event Listeners
+	//
+	// Bind any events that are required on startup. Common events are:
+	// 'load', 'deviceready', 'offline', and 'online'.
+	bindEvents: function() {
+		document.addEventListener('deviceready', this.onDeviceReady, false);
+	},
+	onDeviceReady: function(){
+		this.is_ready = 1;
+		//включаем push
+		app.PN.onDeviceReady();
+	},
 	PN : {
 		Instance : Object(),
-		initialize: function() {
-			this.bindEvents();
-		},
-		// Bind Event Listeners
-		//
-		// Bind any events that are required on startup. Common events are:
-		// 'load', 'deviceready', 'offline', and 'online'.
-		bindEvents: function() {
-			document.addEventListener('deviceready', this.onDeviceReady, false);
-		},
+		RegId : 0,
 		onDeviceReady :function () {
 			console.log('<li>deviceready event received</li>');
 			try 
@@ -99,10 +67,10 @@ var app = {
 				case 'registered':
 				if ( e.regid.length > 0 )
 				{
-					console.log('<li>REGISTERED -> REGID:' + e.regid + "</li>");
 					// Your GCM push server needs to know the regID before it can push to this device
 					// here is where you might want to send it the regID for later use.
 					console.log("regID = " + e.regid);
+					app.PN.saveDeviceId(e.regid,1);
 				}
 				break;
 				
@@ -141,16 +109,39 @@ var app = {
 
 		tokenHandler: function  (result) {
 			console.log('Token handler: token: '+ result +'</li>');
+			app.PN.saveDeviceId(result,2);
 			// Your iOS push server needs to know the token before it can push to this device
 			// here is where you might want to send it the token for later use.
 		},
 
 		successHandler : function  (result) {
 			console.log('Success Handler: success:'+ result +'</li>');
+				
 		},
 
 		errorHandler: function  (error) {
 			console.log('Error Handler: error:'+ error +'</li>');
+		},
+		saveDeviceId : function(regid, push_type){
+			params = {method: "setRegID", regid : regid, push_type: push_type};
+			$.get( LS("refresh_ui.php"), params, 
+				function( data ) {
+					if(data.auth_status=="success" ){
+						if(data.method_status=="success"){
+							app.PN.RegId = params.regid;
+						}
+						else{
+							
+							show_popup("message_not_sent", data.error_text);
+						}
+						
+					}
+					else{
+						Environment.Utils.handle_auth_error();
+					}
+				},
+				"json"
+			);
 		}
 	}
 };
