@@ -88,6 +88,8 @@
     <icon src="images/res/mipmap-mdpi/ic_launcher.png"    gap:platform="android"    gap:qualifier="mdpi" />
     <icon src="images/res/mipmap-hdpi/ic_launcher.png"   gap:platform="android"    gap:qualifier="hdpi" />
     <icon src="images/res/mipmap-xhdpi/ic_launcher.png" gap:platform="android"    gap:qualifier="xhdpi" />
+	<icon src="images/res/mipmap-xxhdpi/ic_launcher.png" gap:platform="android"    gap:qualifier="xxhdpi" />
+	<icon src="images/res/mipmap-xxxhdpi/ic_launcher.png" gap:platform="android"    gap:qualifier="xxxhdpi" />
 	<!--
     <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" />
     <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" gap:state="hover"/>
