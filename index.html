@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="windows-1251">
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Шaxдаг App</title>
 	<link rel="stylesheet"  href="css/jqm-icon-pack-fa.css" />
 	<link rel="stylesheet" href="css/default/jquery.mobile-1.4.5.min.css">
@@ -37,7 +37,7 @@
 	<!-- Velocity -->
 	<script type="text/javascript" src="js/velocity.min.js"></script>
 	
-	<!-- APP -->
+	<!-- APP для переключения между версиями необходимо 1) раскоментить нижние инклуды и GLOBAL_APP_VERS-->
 	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 	<script type="text/javascript" src="js/PushNotification.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
@@ -51,7 +51,7 @@
 <script language='javascript'>
 
 	<!----------------------------------------------------------------------------------- General events-->
-	var GLOBAL_APP_VERS = new Object({type: "web_mobile", version: "1.0"}); //app_mobile
+	var GLOBAL_APP_VERS = new Object({type: "app_mobile", version: "1.0"}); //app_mobile
 	var GLOBAL_SESSID=null;
 	var GLOBAL_SERVER="http://shaxdag.com/";
 	var GLOBAL_HOST="shaxdag.com";
@@ -4062,7 +4062,7 @@
 			
 			//инициализация мобильного приложения
 			if(GLOBAL_APP_VERS.type == "app_mobile"){
-				//app.initialize();
+				app.initialize();
 			}
 			
 		},
@@ -5497,7 +5497,6 @@
 			if(GLOBAL_APP_VERS.type=="app_mobile"){
 				$("#full_vers_link").css({display: "none"});
 			}
-			
 				
 			
 		},
