@@ -375,6 +375,7 @@
 
 #page_user_avatar{
 	text-align: center;
+	position: relative;
 }
 #page_user_avatar .file-avatar{
 	position: relative;
@@ -383,6 +384,13 @@
 	padding-top: 5px;
 	padding-bottom: 5px;
 	background: rgba(0, 0, 0, 0.45);
+}
+#page_user_avatar .like-avatar{
+	position: absolute;
+	font-size: 2em;
+	width: 100%;
+	opacity: 0.7;
+	cursor: pointer;
 }
 #page_user_avatar .ui-input-text{
 	overflow: hidden;

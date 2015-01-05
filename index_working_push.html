@@ -13,6 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="css/player360/360player.css" />
 	<link href="css/style.css?2" rel="stylesheet" type="text/css" />
 	
+	
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.mobile-1.4.5.min.js"></script>
 	<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
@@ -27,7 +28,6 @@
 
 	<script type="text/javascript" src="js/general.js"></script>
 	
-	<script type="text/javascript" src="js/audio_api_patch.js"></script> 
 
 	<!-- Audio -->
 	<script type="text/javascript" src="js/audio_api_patch.js"></script>
@@ -44,17 +44,18 @@
 	
 	
 	
-	
 </head>
 
 <body>
 <script language='javascript'>
 
 	<!----------------------------------------------------------------------------------- General events-->
-	var GLOBAL_APP_VERS = new Object({type: "web_mobile", version: "1.0"}); //app_mobile
+	//var GLOBAL_APP_VERS = new Object({type: "web_mobile", version: "1.0"}); //app_mobile
+	var GLOBAL_APP_VERS = new Object({type: "app_mobile", version: "1.0"}); //app_mobile
 	var GLOBAL_SESSID=null;
 	var GLOBAL_SERVER="http://shaxdag.com/";
 	var GLOBAL_HOST="shaxdag.com";
+
 	if(GLOBAL_APP_VERS.type == "web_mobile"){
 		GLOBAL_HOST=document.domain;
 		var GLOBAL_SERVER="http://"+GLOBAL_HOST+"/";
@@ -122,6 +123,7 @@
 	
 	
 	//документ готов
+
 	$( document ).ready(function() {
 		$.mobile.defaultPageTransition = "none"; 	
 		//---------------------обработчик показа страницы
@@ -1409,12 +1411,9 @@
 			$("#page_user_avatar").html(html);
 			$("#page_user_avatar img").error(function(){
 				var user_foto = $(this).attr("bd_src");
-				//если ошибка вызвана не старой миниатюрой, то отображаем старую миниатюру
+				//если ошибку вызвал src равный уменьшенной копии, то ничего не делаем, иначе:
 				if($(this).attr("src")!= User.html.avatar_url(user_foto, 200)){
 					$(this).attr("src", User.html.avatar_url(user_foto, 200));
-				}//если вызвано старой миниатюрой, то отображаем вопрос
-				else{
-					$(this).attr("src", User.html.avatar_url("no_avatar.png", 200));
 				}
 			});
 			$("#page_user_avatar img").load(function(){
@@ -1431,16 +1430,6 @@
 				//удаляем кнопку загрузки фотки
 				$("#page_user_avatar .file-avatar").remove();
 				$("#page_user_left .buttons .msg").css({display: "block"});
-			}
-			//если есть привязка к фотке из альбома, то добавляем кнопку лайка
-			if(resp_obj.user.userfoto!=null){
-				$("#page_user_avatar").prepend('<div class="like-avatar" base="users_fotos" mark="plus" t_key="'+resp_obj.user.userfoto.num+'"><i class="fa fa-heart"></i> <span>'+resp_obj.user.userfoto.rating+'</span></div>');
-				$("#page_user_avatar .like-avatar").off("vclick");
-				$("#page_user_avatar .like-avatar").on("vclick", Environment.Like);
-			
-			}
-			else{
-				$("#page_user_avatar .like-avatar").remove();
 			}
 			$("#page_user_left .buttons .msg").attr("user_id", resp_obj.user.id);
 			//----Основная инфа пользователя 
@@ -1717,12 +1706,7 @@
 									data = JSON.parse(res); 
 									if(data.auth_status == "success"){	
 										if(data.method_status == "success"){
-											User.I.foto = data.src;
-											$("#left_panel .user-avatar-circle").attr("src", User.html.avatar_url(data.src, 60)); 
 											$("#page_user_avatar img").attr("src", User.html.avatar_url(data.src, 200)); 
-											$("#page_user_avatar .like-avatar").remove();
-											
-											
 										}
 										else
 											show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
@@ -3997,7 +3981,6 @@
 		OnlineUsers : Object(),
 		System : { LastUnsuccessAjaxCall: Object(), LastAjaxCall : Object(), popupclose_timeout_id: -1, UnAuthAjaxCall: Object()},
 		init : function (data){
-			
 			Environment.Dics = data.dics;
 			Environment.Friends = data.friends;
 			Environment.OnlineUsers = data.online_users;
@@ -4006,7 +3989,6 @@
 			User.I = data.myInfo;
 			NavLefPanel.turnOn(data);
 			NavMsg.LoadMsgList(data.msg_list);
-			
 			//Устанавливаем  обработчики RealPlexor (вынести в функцию или объект)
 			//Подключаем RealPlexor
 			
@@ -4033,7 +4015,7 @@
 						Evants.Utils.increase_ntfy_obj("fotos",1);
 					}
 					else
-					if(data.type=="friend_req"){
+					if(data.type=="friend_req"){ 
 						Environment.Friends.income_users.total_all++;
 					}
 					NavLefPanel.Ntfy.refresh();
@@ -4059,10 +4041,9 @@
 			Evants.Display(data.evants, Evants.url_params);
 			//считываем с объектов оповещения и отображаем баджеры на боковой панели
 			NavLefPanel.Ntfy.refresh();
-			
-			//инициализация мобильного приложения
-			if(GLOBAL_APP_VERS.type == "app_mobile"){
-				app.initialize();
+			//если это мобильное приложение, то инициализируем апи
+			if(GLOBAL_APP_VERS.type=="app_mobile"){
+					 //app.initialize();
 			}
 			
 		},
@@ -4401,31 +4382,6 @@
 			silent_refresh : function(){
 			
 			}
-		},
-		Like : function(ev){
-			ev.preventDefault();
-			var page_id = $(":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id");
-			var params= {base: $(this).attr("base"), t_key: $(this).attr("t_key"), value: $(this).attr("mark"), method: "putMark"};
-			var link_obj = this;
-			rotateEffect1($(this));
-			$.get( LS("server/proc_votes.php"), params, 
-				function( data ) {
-					if(data.auth_status=="success" ){
-						if(data.method_status=="success"){
-							$(link_obj).find("span").html(data.vote.rating);
-	
-						}
-						else{
-							show_popup("message_not_sent", data.error_text);
-						}	
-					}
-					else{
-						Environment.Utils.handle_auth_error();
-					}
-				},
-				"json"
-			);
-			
 		}
 	});
 	//Геопозиционирование
