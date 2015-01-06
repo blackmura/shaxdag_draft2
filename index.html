@@ -3440,7 +3440,8 @@
 				user_vuz_name: null,
 				user_vuz_faculty: null,
 				user_id : null, //whom friend
-				online: 0
+				online: 0,
+				in_radius: 0
 			}
 		},
 		GoUsers : function(){ //функция открытия списка пользователей
@@ -3450,6 +3451,9 @@
 			//показываем навбар
 			$("#page_usersearch .navbar-public").css({display : "block"});
 			$("#page_usersearch_navbar").css({display : "block"});
+			//unhide geolocation
+			$("#page_usersearch .btn-in-radius").css({display : "inline-block;"});
+			
 			Environment.Utils.refresh_public_navbar("#page_usersearch .navbar-public", "btn-users");
 			
 			params=UserList.Filter;
@@ -3470,6 +3474,8 @@
 			//скрываем навбар
 			$("#page_usersearch .navbar-public").css({display : "none"});
 			$("#page_usersearch_navbar").css({display : "none"});
+			//hide geolocation
+			$("#page_usersearch .btn-in-radius").css({display : "none"});
 			//устанавливаем параметры запроса
 			UserList.Filter.user_id = user_id;
 			params=UserList.Filter;
@@ -3581,10 +3587,20 @@
 						}
 					html+='</h2>'; 
 					html+='<p>';
-					if(obj.nation_id>0)
-						html+="<span class='info_1'><i class='fa fa-globe'></i> "+Environment.Nations.nation_by_id(obj.nation_id).nationality+"</span> ";
+					if(obj.nation_id>0){
+						if(obj.nation_id == User.I.nation_id)
+							var nation_class = "my_nation";
+						else
+							var nation_class = "";
+						html+="<span class='info_1 "+nation_class+"'><i class='fa fa-globe'></i> "+Environment.Nations.nation_by_id(obj.nation_id).nationality+"</span> ";
+					}
+					if(obj.distance){
+						html+="<span class='info_1'><i class='fa fa-crosshairs'></i> "+Geo.Utils.distance_text(obj.distance)+"</span>";
+					}
+					else
 					if(obj.city)
-						html+="<span class='info_1'>Живет: "+obj.city+"</span>";					
+						html+="<span class='info_1'>Живет: "+obj.city+"</span>";	
+						
 					html+="<br>";
 					//откуда родом
 					if(obj.resp)
@@ -3682,8 +3698,11 @@
 					html+=UserList.SingleUser.html(resp_obj.users_data.users);
 					html+='</ul>';
 					//сколько найдено
-					if(params.initial==1)
+					if(params.initial==1){
 						UserList.Utils.display_found_number(resp_obj.users_data.total_all);
+						if(params.in_radius)
+							$("#page_usersearch .found_number").append(" в радиусе "+params.in_radius+"км");
+					}
 					$("#page_userlist_list").html(html);
 					$( "#page_userlist_list_ul" ).listview();
 					$( "#page_userlist_list_ul" ).listview('refresh');
@@ -3815,12 +3834,56 @@
 				setTimeout(UserList.link.refresh_navbar,100);
 				
 			},
+			btn_radius_onClick : function(ev){
+				var radius_distance = 10;
+				console.log("radius clicked");
+				ev.preventDefault();
+				var ExtendFilter = new Object();
+				if(UserList.Filter.in_radius==0){
+					ExtendFilter={online: 1, in_radius: radius_distance};
+				}
+				else{
+					ExtendFilter={online: 0, in_radius: 0};
+				}
+				var cached_obj = Geo.Utils.getCachedObj();
+				//проверка на доступность gps
+				if(window.navigator.geolocation) {
+					Geo.is_supported = true;
+				} else {
+					Geo.is_supported = false;
+				}
+				//если геоданные свежие
+				if(cached_obj!=null && !Geo.Utils.isTimedOut(cached_obj)){
+					UserList.GoSearch(ExtendFilter);
+					setTimeout(UserList.link.refresh_navbar,100);
+				}
+				//иначе пробуем обновить
+				else
+				if(Geo.is_supported){
+					navigator.geolocation.getCurrentPosition(function(position) {
+						Geo.ProcessGetPosition(position);
+						
+						UserList.GoSearch(ExtendFilter);
+						setTimeout(UserList.link.refresh_navbar,100);
+						
+					},function(){ //on error
+						show_popup("fast_ntfy", "Не удалось определить Ваше местоположение. Убедитесь, что Вы разрешили приложению определять ваше местоположение.");
+					}
+					);	
+				}
+				else{
+					show_popup("fast_ntfy", "Не удалось подключиться к вашему GPS приемнику");
+				}
+				
+				
+			},
 			
 			refresh_navbar : function(){
 				var dom_online=$("#page_usersearch_navbar .navbar_footer_online");
 				var dom_gender=$("#page_usersearch_navbar .navbar_footer_gender");
 				var dom_nation=$("#page_usersearch_navbar .navbar_footer_nation");
 				var dom_search=$("#page_usersearch_navbar .navbar_footer_search");
+				var dom_geo=$("#page_usersearch .btn-in-radius i");
 				
 				if(UserList.Filter.online>0){
 					dom_online.addClass("ui-btn-active"); 
@@ -3871,6 +3934,17 @@
 					dom_search.removeClass("ui-btn-active");
 
 				}
+				
+				// геолокация
+				if(UserList.Filter.in_radius>0){
+					dom_geo.addClass("fa-button-active"); 
+
+				}
+				else{
+					dom_geo.removeClass("fa-button-active"); 
+
+				}
+			
 			},
 			refresh_nation_selectmenu_sp : function(dom_list){
 				dom_list.append(Environment.Nations.nations_selectmenu()); 
@@ -4481,23 +4555,26 @@
 			}
 			
 		},
+		ProcessGetPosition : function(position){
+			var latitude = position.coords.latitude;
+			var longitude = position.coords.longitude;
+			var local_info = {x: String(latitude), y: String(longitude), time: String(getUnixTime()), id: User.I.id};
+			
+			Geo.pos = {x: latitude, y: longitude, time: getUnixTime()};
+			Geo.Send(Geo.pos);
+			if(GLOBAL_APP_VERS.type == "web_mobile"){
+				setCookie("m_geo", JSON.stringify(local_info));
+			}
+			else
+			if(GLOBAL_APP_VERS.type == "app_mobile"){					
+				window.localStorage.removeItem("geo");
+				window.localStorage.setItem("geo", JSON.stringify(local_info));
+			}
+		},
 		Get : function(){
 
 			navigator.geolocation.getCurrentPosition(function(position) {
-				var latitude = position.coords.latitude;
-				var longitude = position.coords.longitude;
-				var local_info = {x: String(latitude), y: String(longitude), time: String(getUnixTime()), id: User.I.id};
-				
-				Geo.pos = {x: latitude, y: longitude, time: getUnixTime()};
-				Geo.Send(Geo.pos);
-				if(GLOBAL_APP_VERS.type == "web_mobile"){
-					setCookie("m_geo", JSON.stringify(local_info));
-				}
-				else
-				if(GLOBAL_APP_VERS.type == "app_mobile"){					
-					window.localStorage.removeItem("geo");
-					window.localStorage.setItem("geo", JSON.stringify(local_info));
-				}
+				Geo.ProcessGetPosition(position);
 				
 			},function(){ //on error
 				show_popup("fast_ntfy", "Не удалось определить местоположение");
@@ -4605,6 +4682,41 @@
 			Go : function(){
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_map"), { transition: "none"} );
 				Geo.Map.init();
+			}
+		},
+		Utils : {
+			getCachedObj : function(){
+				if(GLOBAL_APP_VERS.type == "web_mobile"){
+					var pos_str = getCookie("m_geo");
+				}
+				else
+				if(GLOBAL_APP_VERS.type == "app_mobile"){					
+					var pos_str = window.localStorage.getItem("geo");
+				}
+				if(pos_str!=null){
+					return JSON.parse(pos_str);									
+				}
+				else
+					return null;
+			},
+			isTimedOut : function (cached_obj){
+				if((parseInt(cached_obj.time)+600 < getUnixTime()) || (cached_obj.id!=User.I.id)){
+						return true;
+				}
+				else{
+					return false;
+				}
+			},
+			distance_text: function(distance){
+				var text;
+				if(parseInt(distance)<1){
+					text = "Менее 1 км от Вас"
+				}
+				else
+				{
+					text = "В "+Math.round(parseInt(distance))+" км от Вас"
+				}
+				return text;
 			}
 		}
 	});
@@ -6410,6 +6522,7 @@
 		//присваиваем обработчики  к кнопкам фильтров
 		$( "#page_usersearch .navbar_footer_online").on( "vclick", UserList.link.btn_online_onClick);
 		$( "#page_usersearch .navbar_footer_gender_li").on( "vclick", UserList.link.btn_gender_onClick);
+		$( "#page_usersearch .btn-in-radius").on( "vclick", UserList.link.btn_radius_onClick);
 		UserList.link.refresh_nation_footer();
 		//панель навигации по разделам
 		$("#page_usersearch .navbar-public .btn-evants").on("vclick", Evants.Go);
@@ -6976,7 +7089,11 @@
 		<a href="#page_msg1" class='ui-btn ui-btn-a ui-corner-all ui-icon-envelope ui-btn-icon-notext topmenu-msg'>Сообщения </a>
 		</div>
 		<h1>Люди</h1>
-		
+		<div class='ui-btn-right'>
+			<a class="fa-button right btn-in-radius" href="#">
+				<i class="fa fa-map-marker fa-lg fa-button-theme-a"></i> 
+			</a>		
+		</div>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content page_limited" >

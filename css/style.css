@@ -23,6 +23,7 @@
 	min-width: 2.3em;
 	text-align: center;
 }
+
 .topheader .fa-button.right i {
     margin-top: 0.2em;
 	font-size: 2em;
@@ -33,6 +34,12 @@
 }
 .fa-button-theme-a{
 	color: rgb(139, 136, 136);
+}
+.fa-button-active{
+	color: #2AD;
+}
+.my_nation {
+	color: #1389B5;
 }
 .fa-button-theme-a-dark{
 	color: rgb(108, 107, 107)
