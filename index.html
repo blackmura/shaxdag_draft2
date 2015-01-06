@@ -84,7 +84,7 @@
 	//ќбработка ajax
 	$(document).ajaxSend(function(event, jqxhr, settings) { 
 		Environment.System.LastAjaxCall = settings;
-		if ( settings.url.indexOf("autocomplete/show")>0 || settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 ) {
+		if ( settings.url.indexOf("autocomplete/show")>0 || settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 || settings.url.indexOf("silent_mode=check_true")>0) {
 			//если автозаполнение  то ничего не делаем
 		}
 		else{
@@ -824,7 +824,8 @@
 			//прив€зываем событие на клик
 			i=0;
 			$.each(msgObj, function(key, obj){
-				$( "#nav-msg-list-li_"+msgObj[i].user.id ).on( "click", function(ev){
+				$( "#nav-msg-list-li_"+msgObj[i].user.id ).off( "vclick");
+				$( "#nav-msg-list-li_"+msgObj[i].user.id ).on( "vclick", function(ev){
 					ev.preventDefault();
 					NavMsg.OpenDialog($(this).attr("user_id"));
 					//console.log($(this).attr("user_id"));
@@ -866,7 +867,7 @@
 		},
 		OpenDialog : function(retrievers_id){
 			//очищаем предыдущую переписку
-			$("#dialog-msg-list").remove();
+			$("#page_msg2 .dialog-msg-list").remove();
 			NavMsg.initDialog();
 			$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_msg2") );
 			//загружаем данные с сервера и прорисовываем
@@ -956,7 +957,7 @@
 			var html_="";
 			var i=0;
 			var user = new Object();
-			html_+='<div  id="dialog-msg-list">';
+			html_+='<div  id="dialog-msg-list" class="dialog-msg-list">';
 			$.each(msg_obj.messages, function(key,obj){
 				if(i>0){
 					if(how_long_time(timestamp2date(msg_obj.messages[i].time)).day!=how_long_time(timestamp2date(msg_obj.messages[i-1].time)).day){
@@ -2566,7 +2567,7 @@
 		income_msg : {
 			play : function(){
 				if(GLOBAL_APP_VERS.type == "app_mobile"){
-					var my_media = new Media("/android_asset/www/bin/msg_in.mp3");
+					var my_media = new Media(app.getPhoneGapPath()+"bin/msg_in.mp3");
 					my_media.play();
 				}
 				else{
@@ -2581,7 +2582,7 @@
 		outcome_msg : {
 			play : function(){
 				if(GLOBAL_APP_VERS.type == "app_mobile"){
-					var my_media = new Media("/android_asset/www/bin/msg_out.mp3");
+					var my_media = new Media(app.getPhoneGapPath()+"bin/msg_out.mp3");
 					my_media.play();
 				}
 				else{
@@ -4441,18 +4442,18 @@
 		}
 	});
 	//√еопозиционирование
-	Geo = new Object({
+	Geo = new Object({ //инициализируем из двух мест, либо из app когда устройство готово, либо отсюда
 		is_supported : false,
 		pos : {x :-1, y: -1, time: getUnixTime()},
 		init : function(){
 			//проверка поддержки geo
-			if(GLOBAL_APP_VERS.type == "web_mobile"){
-				if(navigator.geolocation) {
-					Geo.is_supported = true;
-				} else {
-					Geo.is_supported = false;
-				}
+
+			if(window.navigator.geolocation) {
+				Geo.is_supported = true;
+			} else {
+				Geo.is_supported = false;
 			}
+			
 			
 			if(Geo.is_supported){
 				var pos_str;
@@ -4481,29 +4482,33 @@
 			
 		},
 		Get : function(){
-			if(GLOBAL_APP_VERS.type == "web_mobile"){
-				navigator.geolocation.getCurrentPosition(function(position) {
-					var latitude = position.coords.latitude;
-					var longitude = position.coords.longitude;
-					var local_info = {x: String(latitude), y: String(longitude), time: String(getUnixTime()), id: User.I.id};
-					
-					Geo.pos = {x: latitude, y: longitude, time: getUnixTime()};
-					Geo.Send(Geo.pos);
-					if(GLOBAL_APP_VERS.type == "web_mobile"){
-						setCookie("m_geo", JSON.stringify(local_info));
-					}
-					else
-					if(GLOBAL_APP_VERS.type == "app_mobile"){					
-						window.localStorage.removeItem("geo");
-						window.localStorage.setItem("geo", JSON.stringify(local_info));
-					}
-					
-				});	
+
+			navigator.geolocation.getCurrentPosition(function(position) {
+				var latitude = position.coords.latitude;
+				var longitude = position.coords.longitude;
+				var local_info = {x: String(latitude), y: String(longitude), time: String(getUnixTime()), id: User.I.id};
+				
+				Geo.pos = {x: latitude, y: longitude, time: getUnixTime()};
+				Geo.Send(Geo.pos);
+				if(GLOBAL_APP_VERS.type == "web_mobile"){
+					setCookie("m_geo", JSON.stringify(local_info));
+				}
+				else
+				if(GLOBAL_APP_VERS.type == "app_mobile"){					
+					window.localStorage.removeItem("geo");
+					window.localStorage.setItem("geo", JSON.stringify(local_info));
+				}
+				
+			},function(){ //on error
+				show_popup("fast_ntfy", "Ќе удалось определить местоположение");
 			}
+			);	
+			
 		},
 		Send : function(pos){
 			var params = pos;
 			params.method = "setLocation";
+			params.silent_mode = "true";
 			$.get( LS("server/proc_geo.php"), params, 
 				function( data ) {
 					if(data.auth_status=="success" ){

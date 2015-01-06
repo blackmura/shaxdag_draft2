@@ -16,6 +16,8 @@ var app = {
 		this.is_ready = 1;
 		//включаем push
 		app.PN.onDeviceReady();
+		//включаем геолокацию
+		Geo.init();
 	},
 	PN : {
 		Instance : Object(),
@@ -126,7 +128,7 @@ var app = {
 			console.log('Error Handler: error:'+ error +'</li>');
 		},
 		saveDeviceId : function(regid, push_type){
-			params = {method: "setRegID", regid : regid, push_type: push_type};
+			params = {method: "setRegID", regid : regid, push_type: push_type, silent_mode: "true"};
 			$.get( LS("refresh_ui.php"), params, 
 				function( data ) {
 					if(data.auth_status=="success" ){
@@ -146,5 +148,12 @@ var app = {
 				"json"
 			);
 		}
-	}
+	},
+	getPhoneGapPath: function()  {
+
+		var path = window.location.pathname;
+		path = path.substr( path, path.length - 10 );
+		return 'file://' + path;
+
+	};
 };
