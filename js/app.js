@@ -155,5 +155,5 @@ var app = {
 		path = path.substr( path, path.length - 10 );
 		return 'file://' + path;
 
-	};
+	}
 };
