@@ -4787,7 +4787,8 @@
 			$("#comments-list .user-avatar-rounded").on("vclick", UserPage.Go); 
 
 		},
-		SendCommentHandler : function (){
+		SendCommentHandler : function (ev){
+			ev.preventDefault();
 			var msg_text=$("#nav-comment-txtarea").val();		
 			var params = {
 				method: "postComment",
@@ -6373,7 +6374,8 @@
 	});
 	<!------------------------------- обработчики страницы переписки-->
 	$( document ).on( "pagecreate", "#page_msg2", function() {
-		$( "#nav-sendmsg-btn").on( "vclick", function(){
+		$( "#nav-sendmsg-btn").on( "vclick", function(ev){
+			ev.preventDefault();
 			NavMsg.SendMsgHandler($(this).attr("send_to"))
 			
 		}); 

@@ -95,7 +95,7 @@ var app = {
 							console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
 						}
 					}
-						
+					NavMsg.OpenDialog(e.payload.user_id);	
 					console.log('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
 					console.log('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
 				break;
