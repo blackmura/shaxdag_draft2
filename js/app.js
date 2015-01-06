@@ -79,27 +79,7 @@ var app = {
 				case 'message':
 					// if this flag is set, this notification happened while we were in the foreground.
 					// you might want to play a sound to get the user's attention, throw up a dialog, etc.
-					if (e.foreground)
-					{
-						console.log('<li>--INLINE NOTIFICATION--' + '</li>');
-						
-						// if the notification contains a soundname, play it.
-						//var my_media = new Media("/android_asset/www/"+e.soundname);
-						//my_media.play();
-					}
-					else
-					{	// otherwise we were launched because the user touched a notification in the notification tray.
-						if (e.coldstart){
-							NavMsg.OpenDialog(e.payload.user_id);
-							console.log('<li>--COLDSTART NOTIFICATION--' + '</li>');
-						}
-						else{
-							console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
-						}
-					}
-					NavMsg.OpenDialog(e.payload.user_id);	
-					console.log('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
-					console.log('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
+					app.PN.HandlePush(e);
 				break;
 				
 				case 'error':
@@ -120,8 +100,7 @@ var app = {
 		},
 
 		successHandler : function  (result) {
-			console.log('Success Handler: success:'+ result +'</li>');
-				
+			console.log('Success Handler: success:'+ result +'</li>');	
 		},
 
 		errorHandler: function  (error) {
@@ -147,6 +126,28 @@ var app = {
 				},
 				"json"
 			);
+		},
+		HandlePush : function(e){
+			if (e.foreground){
+				console.log('<li>--INLINE NOTIFICATION--' + '</li>');
+				// if the notification contains a soundname, play it.
+				//var my_media = new Media("/android_asset/www/"+e.soundname);
+				//my_media.play();
+			}
+			else{	// otherwise we were launched because the user touched a notification in the notification tray.
+				if (e.coldstart){
+					console.log('<li>--COLDSTART NOTIFICATION--' + '</li>');
+				}
+				else{
+					console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+					//если пришло сообщение
+					if(e.payload.type == "msg")
+						NavMsg.OpenDialog(e.payload.user_id);
+				}
+			}
+				
+			console.log('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
+			console.log('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
 		}
 	},
 	getPhoneGapPath: function()  {
