@@ -6,14 +6,14 @@
         id        = "com.shaxdag.app"
         version   = "1.0.0"> 
 
-    <name>shaxdag app</name>
+    <name>Shaxdag</name>
 
     <description>
-        This is the draft of multinational mobile communication platform
+        Mobile platform for small nations allowing you to communicate and share your cultural  heritage of your nation around the world
     </description>
 
-    <author href="http://shaxdag.com" email="support@shaxdag.com">
-        PhoneGap Team
+    <author href="http://shaxdag.com" email="blackmura@gmail.com">
+        Murad Agalarov
     </author>
 
     <!--
