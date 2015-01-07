@@ -37,11 +37,10 @@
 	<!-- Velocity -->
 	<script type="text/javascript" src="js/velocity.min.js"></script>
 	
-	<!-- APP для переключения между версиями необходимо 1) раскоментить нижние инклуды и GLOBAL_APP_VERS-->
+	 <!--APP для переключения между версиями необходимо 1) раскоментить нижние инклуды и GLOBAL_APP_VERS-->
 	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 	<script type="text/javascript" src="js/PushNotification.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
-	
 	
 	
 	
@@ -84,7 +83,7 @@
 	//Обработка ajax
 	$(document).ajaxSend(function(event, jqxhr, settings) { 
 		Environment.System.LastAjaxCall = settings;
-		if ( settings.url.indexOf("autocomplete/show")>0 || settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 || settings.url.indexOf("silent_mode=check_true")>0) {
+		if ( settings.url.indexOf("autocomplete/show")>0 || settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 || settings.url.indexOf("silent_mode=true")>0) {
 			//если автозаполнение  то ничего не делаем
 		}
 		else{
@@ -127,7 +126,8 @@
 		//---------------------обработчик показа страницы
 		$( ":mobile-pagecontainer" ).on( "pagecontainershow", function( event, ui ) {
 			var page_id = getCurrentPage();
-			console.log("PageShow Event Fired on :"+page_id);
+			//обрабатываем подсказки
+			setTimeout(Help.onPageShow,3000);
 			if(page_id == "page_user"){
 				var vars = getUrlVars();
 				console.log(vars);
@@ -159,7 +159,10 @@
 				if(vars.user_id)
 					Fotos.GoUsersFotos(vars.user_id);
 				else{
-					Fotos.GoGallery();
+					if(vars.album)
+						Fotos.GoGallery({album: vars.album});
+					else
+						Fotos.GoGallery();
 				}
 			}
 		}); 
@@ -392,6 +395,14 @@
 		else
 		if(type == "important_ntfy"){
 			var html='<div data-role="popup"  id="popup_window" data-overlay-theme="b" class="ui-content" style="max-width:280px; z-index:99;"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Закрыть</a>';
+				html+='<p>'+text+'</p></div>';
+			var popup_obj=$("#" +page_id).append(html);
+			$( "#popup_window" ).popup();
+			$( "#popup_window" ).popup( "open", {PositionTo : "window"} );
+		}
+		else
+		if(type == "help"){
+			var html='<div data-role="popup"  id="popup_window" data-overlay-theme="b" class="ui-content" style="max-width:280px; z-index:99;">';
 				html+='<p>'+text+'</p></div>';
 			var popup_obj=$("#" +page_id).append(html);
 			$( "#popup_window" ).popup();
@@ -982,34 +993,36 @@
 		SendMsgHandler : function (send_to){
 			var msg_text=$("#nav-msg-txtarea").val();
 			$("#nav-msg-txtarea").val(""); $("#nav-msg-txtarea").css({height: "auto"});
-			$.get( LS("server/proc_msg.php"), { method: "postMessage", retrievers_id: send_to, "msg" : msg_text}, 
-				function( data ) {
-					if(data.auth_status=="success"){
-						if(data.method_status=="success"){
-						//рисуем диалог
-							NavMsg.SingleMessage.Add(data, "prepend");
-							//обработка обновления спиков диалогов и переписки
-							NavMsg.Utils.process_add(data, "outcome");
-							//добавляем сообщение в массива
-							NavMsg.ActiveDialogObj.unshift(data.message);
-							//обновляем диалоги
-							NavMsg.LoadMsgList(NavMsg.MsgListObj);
-							//звуковое сопровождение
-							Audio_.outcome_msg.play();
+			if(msg_text){
+				$.get( LS("server/proc_msg.php"), { method: "postMessage", retrievers_id: send_to, "msg" : msg_text}, 
+					function( data ) {
+						if(data.auth_status=="success"){
+							if(data.method_status=="success"){
+							//рисуем диалог
+								NavMsg.SingleMessage.Add(data, "prepend");
+								//обработка обновления спиков диалогов и переписки
+								NavMsg.Utils.process_add(data, "outcome");
+								//добавляем сообщение в массива
+								NavMsg.ActiveDialogObj.unshift(data.message);
+								//обновляем диалоги
+								NavMsg.LoadMsgList(NavMsg.MsgListObj);
+								//звуковое сопровождение
+								Audio_.outcome_msg.play();
+								
+							}
+							else{
+								show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+							}
 							
 						}
-						else{
-							show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+						else{ 
+							Environment.Utils.handle_auth_error();
 						}
-						
-					}
-					else{ 
-						Environment.Utils.handle_auth_error();
-					}
-						console.log("SendMsgHandler");
-				},
-				"json"
-			);
+							console.log("SendMsgHandler");
+					},
+					"json"
+				);
+			}
 		},
 		SingleMessage : Object({ 
 			getHTML : function(singleMsgObj, SenderObj, RetrieverObj){
@@ -1345,6 +1358,7 @@
 	});
 
 	UserPage = new Object({
+		PS_list : Array(),
 		User : Object(),
 		Go : function (ev){
 			ev.preventDefault();
@@ -1389,6 +1403,7 @@
 		},
 		Display: function(resp_obj){ 
 			var html="";
+			UserPage.PS_list = new Array();
 			//обновляем ссылке в шапке
 			UserPage.Utils.refresh_dropdown_menu(resp_obj.user);
 			//прорисовываем страницу
@@ -1470,9 +1485,15 @@
 				html+='<div class="ui-btn-right"><a  id="page_user_fotos_allfotos" user_id="'+resp_obj.user.id+'" class="ui-btn ui-btn-inline ui-mini ui-corner-all" >все '+resp_obj.fotos_block.total+'</a></div>';
 				html+='</div>';
 				html+='<div class="ui-body ui-body-a"><p>';
-				var i=0;
+				
+				var i=0;				
 				$.each(resp_obj.fotos_block.fotos, function(key,obj){
-					html+= "<div class='foto'><img src='"+User.html.fotos_url(resp_obj.fotos_block.fotos[i].path, resp_obj.fotos_block.fotos[i].private_foto, "small")+"'></div>";
+					if(obj.private_foto)
+						var base="users_fotos";
+					else
+						var base="fotos";
+					UserPage.PS_list.push({base: base, user : UserPage.User, source: obj});
+					html+= "<div class='foto'><a href='"+User.html.fotos_url(obj.path, obj.private_foto, "full")+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos_block.fotos[i].path, resp_obj.fotos_block.fotos[i].private_foto, "small")+"'></a></div>";
 					i++;
 				});
 				html+='</p></div>';
@@ -1480,6 +1501,7 @@
 			}
 			$("#page_user_fotos").html(html);
 			$( "#page_user_fotos_allfotos" ).on( "vclick",  Fotos.Go);
+			PS.ReCreate($("#page_user_fotos .foto a"), UserPage.PS_list, null);
 			//----Друзья
 			html="";
 			if(resp_obj.friends_block != null){
@@ -2617,7 +2639,7 @@
 			}
 			else{
 				Fotos.init();
-				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_fotos"), { transition: "none", allowSamePageTransition: true} );
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_fotos"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_fotos?album=1"} );
 				//показываем навбар
 				$("#page_fotos .navbar-public").css({display : "block"});
 				Environment.Utils.refresh_public_navbar("#page_fotos .navbar-public", "btn-fotos");
@@ -3452,7 +3474,7 @@
 			$("#page_usersearch .navbar-public").css({display : "block"});
 			$("#page_usersearch_navbar").css({display : "block"});
 			//unhide geolocation
-			$("#page_usersearch .btn-in-radius").css({display : "inline-block;"});
+			$("#page_usersearch .btn-in-radius").css({display : "inline-block"});
 			
 			Environment.Utils.refresh_public_navbar("#page_usersearch .navbar-public", "btn-users");
 			
@@ -3499,6 +3521,8 @@
 			//показываем навбар
 			$("#page_usersearch .navbar-public").css({display : "block"});
 			$("#page_usersearch_navbar").css({display : "block"});
+			//unhide geolocation
+			$("#page_usersearch .btn-in-radius").css({display : "inline-block"});
 			UserList.GoSearch({city: city, country: country, resp: resp, raion: raion, selo: selo, user_nation: nation, online: online});
 		},
 		//функция перехода на страницу поиска людей
@@ -3835,7 +3859,7 @@
 				
 			},
 			btn_radius_onClick : function(ev){
-				var radius_distance = 10;
+				var radius_distance = 50;
 				console.log("radius clicked");
 				ev.preventDefault();
 				var ExtendFilter = new Object();
@@ -4086,6 +4110,7 @@
 		init : function (data){
 			
 			Environment.Dics = data.dics;
+			Help.popups = data.popups;
 			Environment.Friends = data.friends;
 			Environment.OnlineUsers = data.online_users;
 			//здесь будет обновление всего UI клиента
@@ -4138,7 +4163,7 @@
 			
 			realplexor.execute();
 			//Инициализируем геопозиционирование
-			//Geo.init();
+			
 			//Загружаем обновления
 			Evants.init();
 			Evants.total_all=data.evants.total_all;
@@ -4151,7 +4176,9 @@
 			if(GLOBAL_APP_VERS.type == "app_mobile"){
 				app.initialize();
 			}
-			
+			if(GLOBAL_APP_VERS.type == "web_mobile"){
+				Geo.init();
+			}
 		},
 		Nations : {
 			nations_selectmenu : function(selected_id){
@@ -4914,33 +4941,34 @@
 				base: $(this).attr("base"),
 				reply_to: $(this).attr("reply_to")
 			};
-			
-			$.get( LS("server/proc_comments.php"), params, 
-				function( data ) {
-					if(data.auth_status=="success"){
-						if(data.method_status=="success"){
-						//рисуем диалог
-							Comments.SingleComment.Add(data, "prepend");
-							//обработка обновления спиков диалогов и переписки
-							Comments.Utils.process_add(data, "outcome");
-							//добавляем сообщение в массива
-							Comments.list.unshift(data.comment);
-							//звуковое сопровождение
-							Audio_.outcome_msg.play();
-							console.log("SendCommentHandlerHandler. Получен ответ " + JSON.stringify(data));	
+			if(msg_text){
+				$.get( LS("server/proc_comments.php"), params, 
+					function( data ) {
+						if(data.auth_status=="success"){
+							if(data.method_status=="success"){
+							//рисуем диалог
+								Comments.SingleComment.Add(data, "prepend");
+								//обработка обновления спиков диалогов и переписки
+								Comments.Utils.process_add(data, "outcome");
+								//добавляем сообщение в массива
+								Comments.list.unshift(data.comment);
+								//звуковое сопровождение
+								Audio_.outcome_msg.play();
+								console.log("SendCommentHandlerHandler. Получен ответ " + JSON.stringify(data));	
+							}
+							else{
+								show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+							}
+							
 						}
-						else{
-							show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+						else{ 
+							Environment.Utils.handle_auth_error();
 						}
-						
-					}
-					else{ 
-						Environment.Utils.handle_auth_error();
-					}
-						console.log("SendMsgHandler");
-				},
-				"json"
-			);
+							console.log("SendMsgHandler");
+					},
+					"json"
+				);
+			}
 		},
 		Like : function(ev){
 			ev.preventDefault();
@@ -6450,10 +6478,36 @@
 		}
 	});
 	Help = new Object({
-		Show : function(type){
-			if(type=="fill page"){
-				
+		isShown: 0,
+		popups : Array(),
+		onPageShow : function(){
+			var page_id = getCurrentPage();
+			$.each(Help.popups, function(key,pop){
+				if(pop.page_id==page_id){
+					Help.Show(key);
+				}
+			});
+		},
+		Show: function(i){
+			if(Help.popups[i]!=null && Help.isShown == 0){
+				Help.isShown = 1;
+				show_popup("help", Help.popups[i].txt+'<a href="javascript: Help.Close('+Help.popups[i].num+');" class="ui-btn ui-corner-all ui-shadow ui-btn-b">Спасибо</a>');
+				Help.popups.splice(i,1);
 			}
+		},
+		Close : function(id){
+			var params = {method: "closePopup", num: id, "silent_mode": "true"};
+			$.get( LS("refresh_ui.php"), params, 
+				function( data ) {
+					if(data.auth_status=="success" ){
+						if(data.method_status=="success"){
+							$( "#popup_window" ).popup( "close");
+							Help.isShown=0;
+						}						
+					}
+				},
+				"json"
+			);
 		}
 	});
   <!-------------------------------------------------------------------------------------- обработчики страниц-->
