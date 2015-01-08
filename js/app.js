@@ -182,7 +182,7 @@ var app = {
 			if (app.CameraTrans.type == 1 || app.CameraTrans.type == 2){
 				options.fileKey = "userfile";
 				options.params = {method: "savePicture", upload_type: app.CameraTrans.type};
-				server = LS("server/proc_preview.php");
+				server = LS("server/proc_preview2.php");
 				
 				var ft = new FileTransfer();
 				ft.upload(uri, encodeURI(server), app.CameraTrans.onUpload,  app.CameraTrans.fail, options);
@@ -196,7 +196,7 @@ var app = {
 		},
 		onUpload : function(r){
 			var data = JSON.parse(r.response);
-			console.log("upload success" + r);
+			console.log("upload success" + r.response);
 			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
 				if(data.upload_type == 1)
 					base="fotos";
