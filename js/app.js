@@ -249,7 +249,7 @@ var app = {
 					if(data.method_status == "success"){
 						User.I.foto = data.src;
 						$("#left_panel .user-avatar-circle").attr("src", User.html.avatar_url(data.src, 60)); 
-						$("#page_user_avatar img").attr("src", User.html.avatar_url(data.src, 200)); 
+						$("#page_user_avatar img").attr("src", Environment.Utils.google_resize(User.html.avatar_url(data.src, 800),480)); 
 						$("#page_user_avatar .like-avatar").remove();
 					
 					}
