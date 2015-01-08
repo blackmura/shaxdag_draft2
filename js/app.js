@@ -156,5 +156,73 @@ var app = {
 		path = path.substr( path, path.length - 10 );
 		return 'file://' + path;
 
+	},
+	CameraTrans : {
+		type: 0,
+		onBtnExplore : function(ev){
+			ev.preventDeafult();
+			var upload_type = $(this).attr("upload_type");
+			app.CameraTrans.type == upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos 
+			//detect image format
+			var Camoptions = {
+			  destinationType : Camera.DestinationType.FILE_URI,
+			  sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
+			  mediaType: Camera.MediaType.PICTURE,
+			  encodingType: Camera.EncodingType.JPEG,
+			};
+			
+			navigator.camera.getPicture( app.CameraTrans.onImageChoose, app.CameraTrans.cameraError, Camoptions);
+		},
+		onImageChoose : function(uri){
+			var options = {};
+			var server; 
+			//получен путь к файлу
+			if (app.CameraTrans.type == 1 || app.CameraTrans.type == 2){
+				options.fileKey = "userfile";
+				options.params = {method: "savePicture", upload_type: app.CameraTrans.type};
+				server = LS("server/proc_preview.php");
+				
+				var ft = new FileTransfer();
+				ft.upload(uri, encodeURI(server), app.CameraTrans.onUpload,  app.CameraTrans.fail, options);
+				
+				
+				
+			}
+		},
+		onImageError : function(msg){
+			console.log(msg);
+		},
+		onUpload : function(r){
+			var data = JSON.parse(r.response);
+			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
+				if(data.upload_type == 1)
+					base="fotos";
+				else
+					base="users_fotos";
+				if(data.auth_status == "success"){	
+					if(data.method_status == "success"){
+						//сохраняем id текущей фотографии и отоображаем превью
+						Uploader.current ={id : data.num, src : data.src};
+						$("#page_upload .uploader .preview i").css({display: "none"}); 
+						$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, base));
+						$("#page_upload .uploader .preview .preview-src").css({display: "block"});
+						//отображаем кнопку снова
+						$("#page_upload .uploader .btn-save").css({display: "block"}); 
+					
+					}
+					else
+						show_popup("message_not_sent", data.error_text);
+				} 
+				else{
+					console.log(data);	
+				}
+				console.log(data);
+			}
+		},
+		fail : function(error){
+			console.log("upload error source " + error.source);
+			console.log("upload error target " + error.target);
+		}
+		
 	}
 };

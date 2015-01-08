@@ -44,7 +44,6 @@
 	
 	
 	
-	
 </head>
 
 <body>
@@ -6178,8 +6177,9 @@
 				}
 				else
 				if(GLOBAL_APP_VERS.type =="app_mobile"){
-					$("#page_upload .upload-btn input").off("change");
-					$("#page_upload .upload-btn input").on("change", Uploader.Fotos.Preview2);
+					$("#page_upload .upload-btn").attr("upload_type",1);
+					$("#page_upload .upload-btn").off("vclick");
+					$("#page_upload .upload-btn").on("vclick", app.CameraTrans.onBtnExplore);
 				}
 			},
 			html : {
