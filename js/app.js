@@ -160,6 +160,7 @@ var app = {
 	CameraTrans : {
 		type: 0,
 		onBtnExplore : function(ev){
+			console.log("btn clicked");
 			ev.preventDeafult();
 			var upload_type = $(this).attr("upload_type");
 			app.CameraTrans.type == upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos 
@@ -177,6 +178,7 @@ var app = {
 			var options = {};
 			var server; 
 			//получен путь к файлу
+			console.log(uri);
 			if (app.CameraTrans.type == 1 || app.CameraTrans.type == 2){
 				options.fileKey = "userfile";
 				options.params = {method: "savePicture", upload_type: app.CameraTrans.type};
@@ -194,6 +196,7 @@ var app = {
 		},
 		onUpload : function(r){
 			var data = JSON.parse(r.response);
+			console.log("upload success" + r);
 			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
 				if(data.upload_type == 1)
 					base="fotos";
