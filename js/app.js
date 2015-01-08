@@ -170,7 +170,7 @@ var app = {
 			  mediaType: Camera.MediaType.PICTURE,
 			  encodingType: Camera.EncodingType.JPEG
 			};
-			app.CameraTrans.type == upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos 
+			app.CameraTrans.type = upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos 
 			//detect image format
 			
 			
