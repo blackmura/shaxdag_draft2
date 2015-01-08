@@ -195,11 +195,10 @@ var app = {
 			console.log(msg);
 		},
 		onUpload : function(r){
-			//var data = JSON.parse(r.response);
-			
 			console.log(r);
-			
-			/*if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
+			var data = JSON.parse(r.response);
+
+			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
 				if(data.upload_type == 1)
 					base="fotos";
 				else
@@ -222,7 +221,7 @@ var app = {
 					console.log(data);	
 				}
 				console.log(data);
-			} */
+			} 
 		},
 		fail : function(error){
 			console.log("upload error source " + error.source);
