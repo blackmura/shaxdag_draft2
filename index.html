@@ -37,10 +37,11 @@
 	<!-- Velocity -->
 	<script type="text/javascript" src="js/velocity.min.js"></script>
 	
-	 <!--APP для переключения между версиями необходимо 1) раскоментить нижние инклуды и GLOBAL_APP_VERS-->
+	<!-- APP для переключения между версиями необходимо 1) раскоментить нижние инклуды и GLOBAL_APP_VERS-->
 	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 	<script type="text/javascript" src="js/PushNotification.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
+	
 	
 	
 	
@@ -6167,12 +6168,19 @@
 			refresh_upload_form : function(){
 				$("#page_upload .uploader p").html(Uploader.Fotos.html.uploadForm());	
 				$("#page_upload .uploader p").trigger("create");				
-				UserList.link.refresh_nation_selectmenu_sp($("#uploader_fotos_nation"));
-				$("#page_upload .upload-btn input").off("change");
-				$("#page_upload .upload-btn input").on("change", Uploader.Fotos.Preview);
+				UserList.link.refresh_nation_selectmenu_sp($("#uploader_fotos_nation"));				
 				$("#page_upload .uploader .btn-save").off("vclick");
 				$("#page_upload .uploader .btn-save").on("vclick", Uploader.Upload);
 				$("#page_upload .uploader .btn-save").css({display: "block"});
+				if(GLOBAL_APP_VERS.type =="web_mobile"){
+					$("#page_upload .upload-btn input").off("change");
+					$("#page_upload .upload-btn input").on("change", Uploader.Fotos.Preview2);
+				}
+				else
+				if(GLOBAL_APP_VERS.type =="app_mobile"){
+					$("#page_upload .upload-btn input").off("change");
+					$("#page_upload .upload-btn input").on("change", Uploader.Fotos.Preview2);
+				}
 			},
 			html : {
 				uploadForm : function(){
@@ -6249,6 +6257,54 @@
 					else{
 						show_popup("message_not_sent", "Фотография должна быть формата jpg/gif/png", $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
 					}
+				}
+			},
+			Preview2 : function(ev){
+				var	len = this.files.length; 
+				var file;				
+				var formdata = new FormData();
+				for ( i=0; i < len; i++ ) {
+					file = this.files[i];
+					console.log(this.files[i]);
+					//alert(JSON.stringify(file));
+
+						if (formdata) {
+							formdata.append("userfile", file);
+							formdata.append("method", "savePicture");
+							//скрываем кнопку сохранения на момент загрузки
+							$("#page_upload .uploader .btn-save").css({display: "none"});
+							$.ajax({
+								url: LS("server/proc_preview2.php"),
+								type: "POST",
+								data: formdata,
+								processData: false,
+								contentType: false,
+								success: function (res) {
+									var data;
+									console.log(res);
+									data = JSON.parse(res); 
+									if(data.auth_status == "success"){	
+										if(data.method_status == "success"){
+											//сохраняем id текущей фотографии и отоображаем превью
+											Uploader.current ={id : data.num, src : data.src};
+											$("#page_upload .uploader .preview i").css({display: "none"}); 
+											$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, "fotos"));
+											$("#page_upload .uploader .preview .preview-src").css({display: "block"});
+											//отображаем кнопку снова
+											$("#page_upload .uploader .btn-save").css({display: "block"}); 
+										
+										}
+										else
+											show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+									} 
+									else{
+										console.log(data);	
+										gl_logout();
+									}
+									console.log(data);
+								}
+							});
+						}
 				}
 			}
 		},
