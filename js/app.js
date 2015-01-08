@@ -159,7 +159,7 @@ var app = {
 	},
 	CameraTrans : {
 		type: 0,
-		Camoptions = {
+		Camoptions : {
 			  destinationType : Camera.DestinationType.FILE_URI,
 			  sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
 			  mediaType: Camera.MediaType.PICTURE,
