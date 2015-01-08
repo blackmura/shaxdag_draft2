@@ -1756,7 +1756,7 @@
 									if(data.method_status == "success"){
 										User.I.foto = data.src;
 										$("#left_panel .user-avatar-circle").attr("src", User.html.avatar_url(data.src, 60)); 
-										$("#page_user_avatar img").attr("src", User.html.avatar_url(data.src, 200)); 
+										$("#page_user_avatar img").attr("src", Environment.Utils.google_resize(User.html.avatar_url(data.src, 800),480)); 
 										$("#page_user_avatar .like-avatar").remove();
 										
 										
@@ -3521,6 +3521,7 @@
 		//функция поиска по ссылке
 		GoLink : function(ev){
 			ev.preventDefault();
+			UserList.init(); 
 			var city = $(this).attr("city");
 			var country = $(this).attr("country");
 			var resp = $(this).attr("resp");
@@ -3528,13 +3529,15 @@
 			var selo = $(this).attr("selo");
 			var nation = $(this).attr("nation");
 			var online = $(this).attr("online");
+			var in_radius = $(this).attr("in_radius");
+
 			
 			//показываем навбар
 			$("#page_usersearch .navbar-public").css({display : "block"});
 			$("#page_usersearch_navbar").css({display : "block"});
 			//unhide geolocation
 			$("#page_usersearch .btn-in-radius").css({display : "inline-block"});
-			UserList.GoSearch({city: city, country: country, resp: resp, raion: raion, selo: selo, user_nation: nation, online: online});
+			UserList.GoSearch({city: city, country: country, resp: resp, raion: raion, selo: selo, user_nation: nation, online: online, in_radius: in_radius});
 		},
 		//функция перехода на страницу поиска людей
 		GoSearch: function(filterObj){
