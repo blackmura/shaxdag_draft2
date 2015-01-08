@@ -101,6 +101,7 @@
 		Fotos.Utils.HandleAjax("stop", settings);
 	});
 	$( document ).ajaxError(function( event, request, settings ) {
+		$(".ajax-loader-center").hide();
 		if ( settings.url.indexOf("autocomplete/show")>0) {
 			
 		}
@@ -1437,9 +1438,23 @@
 				$(this).velocity("fadeIn",500);
 			});
 			//если страница моя, то добавляем кнопку обновления аватарки
-			if(resp_obj.user.id==User.I.id){   
-				$("#page_user_avatar").append('<div class="file-avatar"><i class="fa fa-plus fa-button-circle"></i> <input  type="file" name="images" id="upload_avatar" accept="image/jpeg,image/png,image/gif" /></div>');
-				$("#upload_avatar").on("change", User.Settings.UploadAvatar);
+			if(resp_obj.user.id==User.I.id){  
+				if(GLOBAL_APP_VERS.type =="web_mobile"){
+					$("#page_user_avatar").append('<div class="file-avatar"><i class="fa fa-plus fa-button-circle"></i> <input  type="file" name="images" id="upload_avatar" accept="image/jpeg,image/png,image/gif" /></div>');
+					$("#upload_avatar").on("change", User.Settings.UploadAvatar);
+					clickEffect1($("#page_user_avatar .file-avatar"));
+				}
+				else
+				if(GLOBAL_APP_VERS.type =="app_mobile"){
+					clickEffect1($("#page_upload .upload-btn"));
+					$("#page_user_avatar").append('<div class="file-avatar"><i class="fa fa-plus fa-button-circle"></i></div>');
+					$("#page_user_avatar .file-avatar").attr("upload_type",3);
+					$("#page_user_avatar .file-avatar").off("vclick");
+					$("#page_user_avatar .file-avatar").on("vclick", app.CameraTrans.onBtnExplore);
+					
+				}
+				
+				
 				$("#page_user_avatar .file-avatar").trigger("create");
 				$("#page_user_left .buttons .msg").css({display: "none"});
 			}
@@ -1725,43 +1740,39 @@
 					file = this.files[i];
 					console.log(this.files[i]);
 					//alert(JSON.stringify(file));
-					if (getFileExt(file.name)=="jpg" || getFileExt(file.name)=="jpeg" || getFileExt(file.name)=="png" ||  getFileExt(file.name)=="gif") {
-						if (formdata) {
-							formdata.append("userfile", file);
-							formdata.append("method", "setAvatar");
-							$.ajax({
-								url: LS("server/proc_settings.php"),
-								type: "POST",
-								data: formdata,
-								processData: false,
-								contentType: false,
-								success: function (res) {
-									var data;
-									data = JSON.parse(res); 
-									if(data.auth_status == "success"){	
-										if(data.method_status == "success"){
-											User.I.foto = data.src;
-											$("#left_panel .user-avatar-circle").attr("src", User.html.avatar_url(data.src, 60)); 
-											$("#page_user_avatar img").attr("src", User.html.avatar_url(data.src, 200)); 
-											$("#page_user_avatar .like-avatar").remove();
-											
-											
-										}
-										else
-											show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-									} 
-									else{
-										console.log(data);	
-										gl_logout();
+					if (formdata) {
+						formdata.append("userfile", file);
+						formdata.append("method", "setAvatar");
+						$.ajax({
+							url: LS("server/proc_settings.php"),
+							type: "POST",
+							data: formdata,
+							processData: false,
+							contentType: false,
+							success: function (res) {
+								var data;
+								data = JSON.parse(res); 
+								if(data.auth_status == "success"){	
+									if(data.method_status == "success"){
+										User.I.foto = data.src;
+										$("#left_panel .user-avatar-circle").attr("src", User.html.avatar_url(data.src, 60)); 
+										$("#page_user_avatar img").attr("src", User.html.avatar_url(data.src, 200)); 
+										$("#page_user_avatar .like-avatar").remove();
+										
+										
 									}
-									console.log(data);
+									else
+										show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+								} 
+								else{
+									console.log(data);	
+									gl_logout();
 								}
-							});
-						}
+								console.log(data);
+							}
+						});
 					}
-					else{
-						show_popup("message_not_sent", "Фотография должна быть формата jpg/gif/png", $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-					}
+					
 				}
 			},
 			
@@ -6172,15 +6183,18 @@
 				$("#page_upload .uploader .btn-save").on("vclick", Uploader.Upload);
 				$("#page_upload .uploader .btn-save").css({display: "block"});
 				if(GLOBAL_APP_VERS.type =="web_mobile"){
+					clickEffect1($("#page_upload .upload-btn"));
 					$("#page_upload .upload-btn input").off("change");
-					$("#page_upload .upload-btn input").on("change", Uploader.Fotos.Preview2);
+					$("#page_upload .upload-btn input").on("change", Uploader.Fotos.Preview);
 				}
 				else
 				if(GLOBAL_APP_VERS.type =="app_mobile"){
+					clickEffect1($("#page_upload .upload-btn"));
 					$("#page_upload .upload-btn input").remove();
 					$("#page_upload .upload-btn").attr("upload_type",1);
 					$("#page_upload .upload-btn").off("vclick");
 					$("#page_upload .upload-btn").on("vclick", app.CameraTrans.onBtnExplore);
+					
 				}
 			},
 			html : {
@@ -6216,108 +6230,71 @@
 					file = this.files[i];
 					console.log(this.files[i]);
 					//alert(JSON.stringify(file));
-					if (getFileExt(file.name)=="jpg" || getFileExt(file.name)=="jpeg" || getFileExt(file.name)=="png" ||  getFileExt(file.name)=="gif") {
-						if (formdata) {
-							formdata.append("userfile", file);
-							formdata.append("method", "savePicture");
-							//скрываем кнопку сохранения на момент загрузки
-							$("#page_upload .uploader .btn-save").css({display: "none"});
-							$.ajax({
-								url: LS("server/proc_preview.php"),
-								type: "POST",
-								data: formdata,
-								processData: false,
-								contentType: false,
-								success: function (res) {
-									var data;
-									console.log(res);
-									data = JSON.parse(res); 
-									if(data.auth_status == "success"){	
-										if(data.method_status == "success"){
-											//сохраняем id текущей фотографии и отоображаем превью
-											Uploader.current ={id : data.num, src : data.src};
-											$("#page_upload .uploader .preview i").css({display: "none"}); 
-											$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, "fotos"));
-											$("#page_upload .uploader .preview .preview-src").css({display: "block"});
-											//отображаем кнопку снова
-											$("#page_upload .uploader .btn-save").css({display: "block"}); 
-										
-										}
-										else
-											show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-									} 
-									else{
-										console.log(data);	
-										gl_logout();
+					
+					if (formdata) {
+						formdata.append("userfile", file);
+						formdata.append("method", "savePicture");
+						//скрываем кнопку сохранения на момент загрузки
+						$("#page_upload .uploader .btn-save").css({display: "none"});
+						$.ajax({
+							url: LS("server/proc_preview.php"),
+							type: "POST",
+							data: formdata,
+							processData: false,
+							contentType: false,
+							success: function (res) {
+								var data;
+								console.log(res);
+								data = JSON.parse(res); 
+								if(data.auth_status == "success"){	
+									if(data.method_status == "success"){
+										//сохраняем id текущей фотографии и отоображаем превью
+										Uploader.current ={id : data.num, src : data.src};
+										$("#page_upload .uploader .preview i").css({display: "none"}); 
+										$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, "fotos"));
+										$("#page_upload .uploader .preview .preview-src").css({display: "block"});
+										//отображаем кнопку снова
+										$("#page_upload .uploader .btn-save").css({display: "block"}); 
+									
 									}
-									console.log(data);
+									else
+										show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+								} 
+								else{
+									console.log(data);	
+									gl_logout();
 								}
-							});
-						}
+								console.log(data);
+							}
+						});
 					}
-					else{
-						show_popup("message_not_sent", "Фотография должна быть формата jpg/gif/png", $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-					}
-				}
-			},
-			Preview2 : function(ev){
-				var	len = this.files.length; 
-				var file;				
-				var formdata = new FormData();
-				for ( i=0; i < len; i++ ) {
-					file = this.files[i];
-					console.log(this.files[i]);
-					//alert(JSON.stringify(file));
-
-						if (formdata) {
-							formdata.append("userfile", file);
-							formdata.append("method", "savePicture");
-							//скрываем кнопку сохранения на момент загрузки
-							$("#page_upload .uploader .btn-save").css({display: "none"});
-							$.ajax({
-								url: LS("server/proc_preview2.php"),
-								type: "POST",
-								data: formdata,
-								processData: false,
-								contentType: false,
-								success: function (res) {
-									var data;
-									console.log(res);
-									data = JSON.parse(res); 
-									if(data.auth_status == "success"){	
-										if(data.method_status == "success"){
-											//сохраняем id текущей фотографии и отоображаем превью
-											Uploader.current ={id : data.num, src : data.src};
-											$("#page_upload .uploader .preview i").css({display: "none"}); 
-											$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, "fotos"));
-											$("#page_upload .uploader .preview .preview-src").css({display: "block"});
-											//отображаем кнопку снова
-											$("#page_upload .uploader .btn-save").css({display: "block"}); 
-										
-										}
-										else
-											show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-									} 
-									else{
-										console.log(data);	
-										gl_logout();
-									}
-									console.log(data);
-								}
-							});
-						}
+					
 				}
 			}
+			
 		},
 		Users_Fotos : {
 			refresh_upload_form : function(){
 				$("#page_upload .uploader p").html(Uploader.Users_Fotos.html.uploadForm());	
 				$("#page_upload .uploader p").trigger("create");				
-				$("#page_upload .upload-btn input").off("change");
-				$("#page_upload .upload-btn input").on("change", Uploader.Users_Fotos.Preview);
 				$("#page_upload .uploader .btn-save").off("vclick");
 				$("#page_upload .uploader .btn-save").on("vclick", Uploader.Upload);
 				$("#page_upload .uploader .btn-save").css({display: "block"});
+				
+				if(GLOBAL_APP_VERS.type =="web_mobile"){
+					clickEffect1($("#page_upload .upload-btn"));
+					$("#page_upload .upload-btn input").off("change");
+					$("#page_upload .upload-btn input").on("change", Uploader.Fotos.Preview);
+				}
+				else
+				if(GLOBAL_APP_VERS.type =="app_mobile"){
+					$("#page_upload .upload-btn input").remove();
+					clickEffect1($("#page_upload .upload-btn"));
+					$("#page_upload .upload-btn").attr("upload_type",1);
+					$("#page_upload .upload-btn").off("vclick");
+					$("#page_upload .upload-btn").on("vclick", app.CameraTrans.onBtnExplore);
+					
+				}
 			},
 			html : {
 				uploadForm : function(){
@@ -6341,47 +6318,44 @@
 					file = this.files[i];
 					console.log(this.files[i]);
 					//alert(JSON.stringify(file));
-					if (getFileExt(file.name)=="jpg" || getFileExt(file.name)=="jpeg" || getFileExt(file.name)=="png" ||  getFileExt(file.name)=="gif") {
-						if (formdata) {
-							formdata.append("userfile", file);
-							formdata.append("method", "savePicture");
-							//скрываем кнопку сохранения на момент загрузки
-							$("#page_upload .uploader .btn-save").css({display: "none"});
-							$.ajax({
-								url: LS("server/proc_preview.php"),
-								type: "POST",
-								data: formdata,
-								processData: false,
-								contentType: false,
-								success: function (res) {
-									var data;
-									console.log(res);
-									data = JSON.parse(res); 
-									if(data.auth_status == "success"){	
-										if(data.method_status == "success"){
-											//сохраняем id текущей фотографии и отоображаем превью
-											Uploader.current ={id : data.num, src : data.src};
-											$("#page_upload .uploader .preview i").css({display: "none"}); 
-											$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, "fotos"));
-											$("#page_upload .uploader .preview .preview-src").css({display: "block"}); 
-											//отображаем кнопку снова
-											$("#page_upload .uploader .btn-save").css({display: "block"}); 
-										}
-										else
-											show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-									} 
-									else{
-										console.log(data);	
-										gl_logout();
+
+					if (formdata) {
+						formdata.append("userfile", file);
+						formdata.append("method", "savePicture");
+						//скрываем кнопку сохранения на момент загрузки
+						$("#page_upload .uploader .btn-save").css({display: "none"});
+						$.ajax({
+							url: LS("server/proc_preview.php"),
+							type: "POST",
+							data: formdata,
+							processData: false,
+							contentType: false,
+							success: function (res) {
+								var data;
+								console.log(res);
+								data = JSON.parse(res); 
+								if(data.auth_status == "success"){	
+									if(data.method_status == "success"){
+										//сохраняем id текущей фотографии и отоображаем превью
+										Uploader.current ={id : data.num, src : data.src};
+										$("#page_upload .uploader .preview i").css({display: "none"}); 
+										$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, "fotos"));
+										$("#page_upload .uploader .preview .preview-src").css({display: "block"}); 
+										//отображаем кнопку снова
+										$("#page_upload .uploader .btn-save").css({display: "block"}); 
 									}
-									console.log(data);
+									else
+										show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+								} 
+								else{
+									console.log(data);	
+									gl_logout();
 								}
-							});
-						}
+								console.log(data);
+							}
+						});
 					}
-					else{
-						show_popup("message_not_sent", "Фотография должна быть формата jpg/gif/png", $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-					}
+					
 				}
 			}
 		},

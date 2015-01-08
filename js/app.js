@@ -161,16 +161,26 @@ var app = {
 		type: 0,
 		
 		onBtnExplore : function(ev){
-			ev.preventDefault()
-			console.log("btn clicked");			
+			ev.preventDefault()	
 			var upload_type = $(this).attr("upload_type");
-			var Camoptions = {
-			  destinationType : Camera.DestinationType.FILE_URI,
-			  sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
-			  mediaType: Camera.MediaType.PICTURE,
-			  encodingType: Camera.EncodingType.JPEG
-			};
-			app.CameraTrans.type = upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos 
+			app.CameraTrans.type = upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos  - avatar
+			if(app.CameraTrans.type == 1 || app.CameraTrans.type== 2 || app.CameraTrans.type == 3){
+				var Camoptions = {
+				  destinationType : Camera.DestinationType.FILE_URI,
+				  sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
+				  mediaType: Camera.MediaType.PICTURE,
+				  encodingType: Camera.EncodingType.JPEG
+				};
+			}
+			else{
+				var Camoptions = {
+				  destinationType : Camera.DestinationType.FILE_URI,
+				  sourceType : Camera.PictureSourceType.CAMERA,
+				  mediaType: Camera.MediaType.PICTURE,
+				  encodingType: Camera.EncodingType.JPEG
+				};
+			}
+			
 			//detect image format
 			navigator.camera.getPicture( app.CameraTrans.onImageChoose, app.CameraTrans.onImageError, Camoptions);
 		},
@@ -179,23 +189,34 @@ var app = {
 			var server; 
 			//получен путь к файлу
 			console.log(uri);
+			//если загружаем превью 
 			if (app.CameraTrans.type == 1 || app.CameraTrans.type == 2){
 				options.fileKey = "userfile";
 				options.params = {method: "savePicture", upload_type: app.CameraTrans.type};
-				server = LS("server/proc_preview2.php");
+				server = LS("server/proc_preview.php");
 				
 				var ft = new FileTransfer();
+				$(".ajax-loader-center").show();
 				ft.upload(uri, encodeURI(server), app.CameraTrans.onUpload,  app.CameraTrans.fail, options);
+			}
+			else
+			//если загружаем аватар
+			if (app.CameraTrans.type == 3){
+				options.fileKey = "userfile";
+				options.params = {method: "setAvatar", upload_type: app.CameraTrans.type};
+				server = LS("server/proc_settings.php");
 				
-				
-				
+				var ft = new FileTransfer();
+				$(".ajax-loader-center").show();
+				ft.upload(uri, encodeURI(server), app.CameraTrans.onUpload,  app.CameraTrans.fail, options);
 			}
 		},
 		onImageError : function(msg){
 			console.log(msg);
 		},
 		onUpload : function(r){
-			console.log(r);
+			$(".ajax-loader-center").hide();
+			//console.log(r);
 			var data = JSON.parse(r.response);
 
 			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
@@ -222,8 +243,27 @@ var app = {
 				}
 				console.log(data);
 			} 
+			else
+			if(data.upload_type == 3 ){ //обработчик загрузки avatar
+				if(data.auth_status == "success"){	
+					if(data.method_status == "success"){
+						User.I.foto = data.src;
+						$("#left_panel .user-avatar-circle").attr("src", User.html.avatar_url(data.src, 60)); 
+						$("#page_user_avatar img").attr("src", User.html.avatar_url(data.src, 200)); 
+						$("#page_user_avatar .like-avatar").remove();
+					
+					}
+					else
+						show_popup("message_not_sent", data.error_text);
+				} 
+				else{
+					console.log(data);	
+				}
+				console.log(data);
+			} 
 		},
 		fail : function(error){
+			$(".ajax-loader-center").hide();
 			console.log("upload error source " + error.source);
 			console.log("upload error target " + error.target);
 		}
