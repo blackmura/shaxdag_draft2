@@ -161,8 +161,8 @@ var app = {
 		type: 0,
 		
 		onBtnExplore : function(ev){
-			console.log("btn clicked");
-			ev.preventDeafult();
+			ev.preventDefault()
+			console.log("btn clicked");			
 			var upload_type = $(this).attr("upload_type");
 			var Camoptions = {
 			  destinationType : Camera.DestinationType.FILE_URI,
@@ -172,8 +172,6 @@ var app = {
 			};
 			app.CameraTrans.type = upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos 
 			//detect image format
-			
-			
 			navigator.camera.getPicture( app.CameraTrans.onImageChoose, app.CameraTrans.onImageError, Camoptions);
 		},
 		onImageChoose : function(uri){
