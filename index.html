@@ -6177,6 +6177,7 @@
 				}
 				else
 				if(GLOBAL_APP_VERS.type =="app_mobile"){
+					$("#page_upload .upload-btn input").remove();
 					$("#page_upload .upload-btn").attr("upload_type",1);
 					$("#page_upload .upload-btn").off("vclick");
 					$("#page_upload .upload-btn").on("vclick", app.CameraTrans.onBtnExplore);
