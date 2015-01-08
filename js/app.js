@@ -164,7 +164,7 @@ var app = {
 			  sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
 			  mediaType: Camera.MediaType.PICTURE,
 			  encodingType: Camera.EncodingType.JPEG
-			};
+			},
 		onBtnExplore : function(ev){
 			console.log("btn clicked");
 			ev.preventDeafult();
