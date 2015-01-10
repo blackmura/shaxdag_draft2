@@ -14,6 +14,7 @@ var app = {
 	},
 	onDeviceReady: function(){
 		this.is_ready = 1;
+		app.Device.appendListeners();
 		//включаем push
 		app.PN.onDeviceReady();
 		//включаем геолокацию
@@ -266,6 +267,20 @@ var app = {
 			$(".ajax-loader-center").hide();
 			console.log("upload error source " + error.source);
 			console.log("upload error target " + error.target);
+		}
+		
+	},
+	Device : {
+		status:0,
+		appendListeners : function(){
+			document.addEventListener("pause", app.Device.onPause, false);
+			document.addEventListener("resume", app.Device.onResume, false);
+		},
+		onPause : function(){
+			app.Device.status == "online";
+		},
+		onResume : function(){
+			app.Device.status == "offline";
 		}
 		
 	}

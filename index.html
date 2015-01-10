@@ -228,6 +228,7 @@
 			}
 		}); 
 		//-------------------- Авторизация по сохраненным данным в хранилище
+		Environment.System.last_hard_refresh = getUnixTime(); // последнее обновление
 		var auth_str = get_session_auth();
 		//если есть данные для авторизации
 		if(auth_str != null){
@@ -995,12 +996,16 @@
 			var msg_text=$("#nav-msg-txtarea").val();
 			$("#nav-msg-txtarea").val(""); $("#nav-msg-txtarea").css({height: "auto"});
 			if(msg_text){
-				$.get( LS("server/proc_msg.php"), { method: "postMessage", retrievers_id: send_to, "msg" : msg_text}, 
+				var fake_num = -1*rand(100000000);
+				var fake_dataObj = {sender_user : User.I, retriever_user: NavMsg.ActiveUser, message : NavMsg.SingleMessage.genFakeMsgObj(msg_text, fake_num, User.I, NavMsg.ActiveUser)};
+				NavMsg.SingleMessage.Add(fake_dataObj, "prepend");
+				var  params = { method: "postMessage", retrievers_id: send_to, "msg" : msg_text, "fake_id" : fake_num};
+				$.get( LS("server/proc_msg.php"),params, 
 					function( data ) {
 						if(data.auth_status=="success"){
 							if(data.method_status=="success"){
 							//рисуем диалог
-								NavMsg.SingleMessage.Add(data, "prepend");
+								NavMsg.SingleMessage.Add(data, "before", params.fake_id);
 								//обработка обновления спиков диалогов и переписки
 								NavMsg.Utils.process_add(data, "outcome");
 								//добавляем сообщение в массива
@@ -1035,7 +1040,19 @@
 				else{
 					user=RetrieverObj;
 				}
-				html_+="<div id='msg_"+singleMsgObj.num+"'>";
+				//обработка стилей если фейковые
+				if(singleMsgObj.num<0){
+					var style_root = "opacity: 0.8";
+					var icon_status = '<i class="fa fa-circle-o-notch fa-spin"></i> ';
+				}
+				else{
+					var style_root = "";
+					if(singleMsgObj.senders_id == User.I.id)
+						var icon_status = '<i class="fa fa-check"></i> ';
+					else
+						var icon_status="";
+				}
+				html_+="<div id='msg_"+singleMsgObj.num+"' style='"+style_root+"'>";
 				if(user.id==User.I.id){
 					html_+='<div style="float:right"><img src="'+User.html.avatar_url(user.foto,60)+'" class="user-avatar-rounded"></div>';
 					html_+='<div class="talk-bubble me tri-right round right-in" style="float:right"  msg_id="'+singleMsgObj.num+'">';
@@ -1045,7 +1062,7 @@
 					html_+='<div class="talk-bubble another tri-right round left-in" msg_id="'+singleMsgObj.num+'">';
 					}
 				html_+='		<div class="talktext">';
-				html_+='		<div class="options">'+how_long_time(timestamp2date(singleMsgObj.time)).msg_label+'</div>';
+				html_+='		<div class="options">'+icon_status+how_long_time(timestamp2date(singleMsgObj.time)).msg_label+'</div>';
 				html_+='			<p>'+ singleMsgObj.text +'</p>';
 				html_+='		</div>';
 				html_+='</div>';
@@ -1053,7 +1070,7 @@
 				html_+='<div style="clear:both"></div>';
 				return html_;
 			},
-			Add : function(responseMethodObj, append_type){
+			Add : function(responseMethodObj, append_type, before_id){
 				var new_msg_dom= new Object();
 				if(append_type == "prepend"){
 					$("#dialog-msg-list").prepend(NavMsg.SingleMessage.getHTML(responseMethodObj.message, responseMethodObj.sender_user, responseMethodObj.retriever_user));
@@ -1063,13 +1080,30 @@
 				if(append_type == "append"){
 					$("#dialog-msg-list").append(NavMsg.SingleMessage.getHTML(responseMethodObj.message, responseMethodObj.sender_user, responseMethodObj.retriever_user));
 				}
+				else
+				if(append_type == "before"){
+					$(NavMsg.SingleMessage.getHTML(responseMethodObj.message, responseMethodObj.sender_user, responseMethodObj.retriever_user)).insertBefore("#msg_"+before_id);
+					$.mobile.silentScroll(0);
+					$("#msg_"+before_id).remove();
+				}
 
 				new_msg_dom=$("#msg_"+responseMethodObj.message.num+" .talktext p");
 				new_msg_dom.text2richtext();
 				//добавляем эффект
 				clickEffect1($("#msg_"+responseMethodObj.message.num+" .talk-bubble"));
 				//обработчики клика на сообщение
-				$("#msg_"+responseMethodObj.message.num+" .talk-bubble").on ( "vclick", NavMsg.Utils.onSelect);
+				if(responseMethodObj.message.num>0) //если не фейковые
+					$("#msg_"+responseMethodObj.message.num+" .talk-bubble").on ( "vclick", NavMsg.Utils.onSelect);
+			},
+			genFakeMsgObj: function(text, msg_id, SenderObj, RetrieverObj){
+				var singleMsgObj = {
+					num : msg_id,
+					text: text,
+					time: getUnixTime(),
+					senders_id : SenderObj.id,
+					retrievers_id : RetrieverObj.id,
+				};
+				return singleMsgObj;
 			}
 		}),
 		Delete :{
@@ -3875,12 +3909,14 @@
 			btn_radius_onClick : function(ev){
 				var radius_distance = 50;
 				console.log("radius clicked");
-				ev.preventDefault();
+				ev.preventDefault();				
 				var ExtendFilter = new Object();
 				if(UserList.Filter.in_radius==0){
+					$(this).addClass("blink");
 					ExtendFilter={online: 1, in_radius: radius_distance};
 				}
 				else{
+					$(this).removeClass("blink");
 					ExtendFilter={online: 0, in_radius: 0};
 				}
 				var cached_obj = Geo.Utils.getCachedObj();
@@ -3892,6 +3928,7 @@
 				}
 				//если геоданные свежие
 				if(cached_obj!=null && !Geo.Utils.isTimedOut(cached_obj)){
+					$(this).removeClass("blink");
 					UserList.GoSearch(ExtendFilter);
 					setTimeout(UserList.link.refresh_navbar,100);
 				}
@@ -3900,16 +3937,17 @@
 				if(Geo.is_supported){
 					navigator.geolocation.getCurrentPosition(function(position) {
 						Geo.ProcessGetPosition(position);
-						
 						UserList.GoSearch(ExtendFilter);
 						setTimeout(UserList.link.refresh_navbar,100);
 						
 					},function(){ //on error
+						$("#page_usersearch .btn-in-radius").removeClass("blink");
 						show_popup("fast_ntfy", "Не удалось определить Ваше местоположение. Убедитесь, что Вы разрешили приложению определять ваше местоположение.");
 					}
 					);	
 				}
 				else{
+					$("#page_usersearch .btn-in-radius").removeClass("blink");
 					show_popup("fast_ntfy", "Не удалось подключиться к вашему GPS приемнику");
 				}
 				
@@ -4120,9 +4158,8 @@
 		Dics : Object(),
 		Friends : Object(),
 		OnlineUsers : Object(),
-		System : { LastUnsuccessAjaxCall: Object(), LastAjaxCall : Object(), popupclose_timeout_id: -1, UnAuthAjaxCall: Object()},
-		init : function (data){
-			
+		System : { LastUnsuccessAjaxCall: Object(), LastAjaxCall : Object(), popupclose_timeout_id: -1, UnAuthAjaxCall: Object(), last_hard_refresh: 0},
+		init : function (data){			
 			Environment.Dics = data.dics;
 			Help.popups = data.popups;
 			Environment.Friends = data.friends;
@@ -4191,8 +4228,15 @@
 				app.initialize();
 			}
 			if(GLOBAL_APP_VERS.type == "web_mobile"){
+	
 				Geo.init();
 			}
+			
+			if(GLOBAL_APP_VERS.type == "web_mobile" && /Android/i.test(navigator.userAgent)){
+				show_popup("important_ntfy", "Мобильное приложение Шах-Даг теперь доступно и на платформе Андроид. Поторопитесь скачать его на Google Play! <a href='https://play.google.com/store/apps/details?id=com.shaxdag.app' rel='external' class='ui-btn ui-corner-all ui-shadow ui-btn-b'><i class='fa fa-android'></i> Установить!</a>");
+				Geo.init();
+			}
+			
 		},
 		Nations : {
 			nations_selectmenu : function(selected_id){
@@ -4629,6 +4673,7 @@
 			params.silent_mode = "true";
 			$.get( LS("server/proc_geo.php"), params, 
 				function( data ) {
+					$("#page_usersearch .btn-in-radius").removeClass("blink");
 					if(data.auth_status=="success" ){
 						if(data.method_status=="success"){
 							
@@ -4647,7 +4692,9 @@
 					}
 				},
 				"json"
-			);
+			).fail(function(){
+					$("#page_usersearch .btn-in-radius").removeClass("blink");
+				});;
 		},
 		Map : {
 			obj : Object(),
@@ -5348,11 +5395,17 @@
 		},
 		//переходим на страницу с подгрузкой данных
 		Go : function (){
-			Evants.init();
-			$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_evants"), { transition: "none"} );			
-			$("#page_evants .navbar-public").css({display : "block"});
-			Environment.Utils.refresh_public_navbar("#page_evants .navbar-public", "btn-evants");
-			Evants.Load(Evants.url_params);
+			//если последнее полное обновление DOM было более 8 часов назад, то обновляем по жесткому
+			if(Environment.System.last_hard_refresh < getUnixTime()-28800){
+				Environment.UI.hard_refresh();
+			}			
+			else{
+				Evants.init();
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_evants"), { transition: "none"} );			
+				$("#page_evants .navbar-public").css({display : "block"});
+				Environment.Utils.refresh_public_navbar("#page_evants .navbar-public", "btn-evants");
+				Evants.Load(Evants.url_params);
+			}
 			
 		},
 		Load : function(params){ 
@@ -6791,7 +6844,7 @@
 					<div class="ui-block-a"></div>
 					<div class="ui-block-b">
 						<label for="auth_save_pass">Запомнить</label>
-						<input type="checkbox" id="auth_save_pass" name="save_pass">
+						<input type="checkbox" checked="checked" id="auth_save_pass" name="save_pass">
 					</div>
 					<div class="ui-block-c"><input type="button" data-icon="check" id="auth_login_btn" data-theme="b" value="Войти"></div>
 				</div>
