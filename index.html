@@ -4847,6 +4847,10 @@
 			$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_comment"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_comment?base="+base+"&t_key="+t_key} )
 					
 		},
+		GoParams : function(t_key, base){
+			$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_comment"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_comment?base="+base+"&t_key="+t_key} )
+					
+		},
 		OpenComments : function(t_key, base){
 			//очищаем предыдущую переписку
 			$("#comments-list").remove();
@@ -4995,20 +4999,26 @@
 		SendCommentHandler : function (ev){
 			ev.preventDefault();
 			var msg_text=$("#nav-comment-txtarea").val();		
-			var params = {
-				method: "postComment",
-				msg: msg_text,
-				t_key: $(this).attr("t_key"),
-				base: $(this).attr("base"),
-				reply_to: $(this).attr("reply_to")
-			};
+			
 			if(msg_text){
+				var fake_num = -1*rand(100000000);
+				var fake_dataObj = {comment : Comments.SingleComment.genFakeCommObj(msg_text, fake_num, User.I)};
+				Comments.SingleComment.Add(fake_dataObj, "prepend");
+				var params = {
+					method: "postComment",
+					msg: msg_text,
+					t_key: $(this).attr("t_key"),
+					base: $(this).attr("base"),
+					reply_to: $(this).attr("reply_to"),
+					"fake_id" : fake_num, 
+					silent_mode: "true"
+				};
 				$.get( LS("server/proc_comments.php"), params, 
 					function( data ) {
 						if(data.auth_status=="success"){
 							if(data.method_status=="success"){
 							//рисуем диалог
-								Comments.SingleComment.Add(data, "prepend");
+								Comments.SingleComment.Add(data, "before", params.fake_id);
 								//обработка обновления спиков диалогов и переписки
 								Comments.Utils.process_add(data, "outcome");
 								//добавляем сообщение в массива
@@ -5059,8 +5069,19 @@
 		SingleComment : Object({ 
 			getHTML : function(comment){
 				var html_="";
-				
-				html_+="<div id='comment_"+comment.num+"'>";
+				//обработка стилей если фейковые
+				if(comment.num<0){
+					var style_root = "opacity: 0.8";
+					var icon_status = '<i class="fa fa-circle-o-notch fa-spin"></i> ';
+				}
+				else{
+					var style_root = "";
+					if(comment.user.id == User.I.id)
+						var icon_status = '<i class="fa fa-check"></i> ';
+					else
+						var icon_status="";
+				}
+				html_+="<div id='comment_"+comment.num+"' style='"+style_root+"'>";
 				if(comment.user.id==User.I.id){
 					html_+='<div style="float:right"><img src="'+User.html.avatar_url(comment.user.foto,60)+'" user_id = "'+comment.user.id+'" class="user-avatar-rounded"></div>';
 					html_+='<div class="talk-bubble me tri-right round right-in" style="float:right"  user_id ="'+comment.user.id+'" name ="'+comment.user.name+'" comment_id="'+comment.num+'">';
@@ -5070,7 +5091,7 @@
 					html_+='<div class="talk-bubble another tri-right round left-in" user_id ="'+comment.user.id+'" name ="'+comment.user.name+'" comment_id="'+comment.num+'">';
 					}
 				html_+='		<div class="talktext">';
-				html_+='		<div class="options">'+User.html.online_status(comment.user, "tiny")+" "+ User.html.gender(comment.user)+ ' <b>'+comment.user.name+'</b> '+how_long_time(timestamp2date(comment.time)).msg_label+'</div>';
+				html_+='		<div class="options">'+icon_status+User.html.online_status(comment.user, "tiny")+" "+ User.html.gender(comment.user)+ ' <b>'+comment.user.name+'</b> '+how_long_time(timestamp2date(comment.time)).msg_label+'</div>';
 				html_+='			<p>'+ comment.text +'</p>';
 				html_+='		</div>';
 				html_+='</div>';
@@ -5078,7 +5099,7 @@
 				html_+='<div style="clear:both"></div>';
 				return html_;
 			},
-			Add : function(data, append_type){
+			Add : function(data, append_type, before_id){
 				var new_msg_dom= new Object();
 				if(append_type == "prepend"){
 					$("#comments-list").prepend(Comments.SingleComment.getHTML(data.comment));
@@ -5090,15 +5111,32 @@
 				if(append_type == "append"){
 					$("#comments-list").append(Comments.SingleComment.getHTML(data.comment));
 				}
+				else
+				if(append_type == "before"){
+					$(Comments.SingleComment.getHTML(data.comment)).insertBefore("#comment_"+before_id);
+					$.mobile.silentScroll(0);
+					$("#comment_"+before_id).remove();
+				}
 
 				new_msg_dom=$("#comment_"+data.comment.num+" .talktext p");
 				new_msg_dom.text2richtext();				
 				//обработчики клика на сообщение
-				$("#comment_"+data.comment.num+" .talk-bubble").on("taphold", Comments.Utils.onHold);
-				$("#comment_"+data.comment.num+" .talk-bubble").on ( "vclick", Comments.Utils.onSelect);
-				$("#comments-list .user-avatar-rounded").off("vclick");
-				$("#comments-list .user-avatar-rounded").on("vclick", UserPage.Go); 
+				if(data.comment.num>0){
+					$("#comment_"+data.comment.num+" .talk-bubble").on("taphold", Comments.Utils.onHold);
+					$("#comment_"+data.comment.num+" .talk-bubble").on ( "vclick", Comments.Utils.onSelect);
+					$("#comments-list .user-avatar-rounded").off("vclick");
+					$("#comments-list .user-avatar-rounded").on("vclick", UserPage.Go); 
+				}
 				
+			},
+			genFakeCommObj: function(text, comm_id, user){
+				var singleMsgObj = {
+					num : comm_id,
+					text: text,
+					time: getUnixTime(),
+					user : user
+				};
+				return singleMsgObj;
 			}
 		}),
 		Delete :{
@@ -6735,6 +6773,7 @@
 	});
 	<!------------------------------- обработчики страницы комментариев-->
 	$( document ).on( "pagecreate", "#page_comment", function() {
+		$( "#nav-sendcomment-btn").off( "vclick"); 
 		$( "#nav-sendcomment-btn").on( "vclick", Comments.SendCommentHandler); 
 		$( "#nav-comment-smile").on( "click", show_smiles);
 		$("#page_comment .topheader h1").on( "vclick", UserPage.Go);

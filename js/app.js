@@ -144,6 +144,9 @@ var app = {
 					//если пришло сообщение
 					if(e.payload.type == "msg")
 						NavMsg.OpenDialog(e.payload.user_id);
+					else
+					if(e.payload.type == "fotos" || e.payload.type == "users_fotos" || e.payload.type == "fotos_reply" || e.payload.type == "users_fotos_reply" || e.payload.type == "clips_reply" || e.payload.type == "music_reply")
+						Comments.GoParams(e.payload.t_key, e.payload.base);
 				}
 			}
 				
