@@ -999,7 +999,7 @@
 				var fake_num = -1*rand(100000000);
 				var fake_dataObj = {sender_user : User.I, retriever_user: NavMsg.ActiveUser, message : NavMsg.SingleMessage.genFakeMsgObj(msg_text, fake_num, User.I, NavMsg.ActiveUser)};
 				NavMsg.SingleMessage.Add(fake_dataObj, "prepend");
-				var  params = { method: "postMessage", retrievers_id: send_to, "msg" : msg_text, "fake_id" : fake_num};
+				var  params = { method: "postMessage", retrievers_id: send_to, "msg" : msg_text, "fake_id" : fake_num, silent_mode: "true"};
 				$.get( LS("server/proc_msg.php"),params, 
 					function( data ) {
 						if(data.auth_status=="success"){
