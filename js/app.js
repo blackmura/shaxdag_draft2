@@ -155,10 +155,13 @@ var app = {
 		}
 	},
 	getPhoneGapPath: function()  {
-
-		var path = window.location.pathname;
-		path = path.substr( path, path.length - 10 );
-		return 'file://' + path;
+		if(device.platform == "iOS")
+			return "";
+		else{
+			var path = window.location.pathname;
+			path = path.substr( path, path.length - 10 );
+			return 'file://' + path;
+		}
 
 	},
 	CameraTrans : {
