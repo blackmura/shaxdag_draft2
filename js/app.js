@@ -220,7 +220,7 @@ var app = {
 		},
 		onUpload : function(r){
 			$(".ajax-loader-center").hide();
-			//console.log(r);
+			console.log(r);
 			var data = JSON.parse(r.response);
 
 			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
