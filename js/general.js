@@ -1,3 +1,4 @@
+
 function rand( min, max ) { // Generate a random integer
     if( max ) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -25,7 +26,7 @@ function how_long_time(date){
 		day_1.setDate(day_1.getDate()-1);
 	var day_2= new Date();
 		day_2.setDate(day_2.getDate()-2);
-	//врем§
+	//врем≤
 	pos=date.toLocaleTimeString().indexOf(":");
 	if(pos!=-1){
 		pos=date.toLocaleTimeString().indexOf(":", pos+1);
@@ -42,7 +43,7 @@ function how_long_time(date){
 	else
 		date_label=date.getDate()+" "+(month_names[date.getMonth()])+" "+date.getFullYear();
 	
-	//если сегодн§
+	//если сегодн≤
 	if(date.getDate() == today.getDate()){
 		day_label="сегодн€";
 		text_label=time_label;
@@ -65,23 +66,32 @@ function how_long_time(date){
 	
 	return {day : day_label, msg_label: text_label, time : time_label}
 }
-function conv($1,$2){
+function conv($1,$2){ //внение ссылки на фотки, ютуб и url
 		 var text="";
 	
          var foto = /\S+\.(jpg|jpeg)$/i;
          var image = /\S+\.(gif|png)$/i;
 		 var youtube_match = /http:\/\/(www\.)?youtube\.com\/watch\?(?:.*&)?v=([A-Za-z0-9_\-]+)(&.*)?/i;
-		 var smotri_match = /http:\/\/(www\.)?smotri\.com\/video\/view\/\?id=([A-Za-z0-9_\-]+)(&.*)?/i;
-		 var rutube_match = /http:\/\/(www\.)?rutube\.ru\/tracks\/[0-9]+\.html\?v=([A-Za-z0-9_\-]+)(&.*)?/i;
-		 var videomail_match = /http:\/\/(www\.)?video\.mail\.ru\/(.+)\.html(\?.+)?/i;
          var user = /http:\/\/(www\.)?shax-dag\.ru.*info_name=.*/i;
          var internal_link=/^(http:\/\/(www\.)?shax-dag\.ru)/i;
 		 //фотографи€ JPEG
-         if(foto.test($2)) return " <div class='richtext_foto'><img src='https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url="+$2+"&container=focus&resize_w=150&refresh=31536000'></div> ";
+         if(foto.test($2)){
+			if(getCurrentPage() == "page_evants")//если это страница событий, то не включаем PS во избежание конфликтов
+				return " <div class='richtext_foto'><img src='https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url="+$2+"&container=focus&resize_w=150&refresh=31536000'></div> ";
+			else{
+				return " <div class='richtext_foto'><a href='"+$2+"' rel='external' class='ps-show' t_key='-1' base='-1'><img src='https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url="+$2+"&container=focus&resize_w=150&refresh=31536000'></a></div> ";
+			}
+		}
          //фотографи€ GIF PNG
 		 else if(image.test($2)) return " <img src='"+$2+"' class='gif_smile'> ";
 		 // ссылка на страницу соседа
-         else if(user.test($2)) return " <a href='"+$2+"'>ссылка на соседа</a> ";
+         else if(user.test($2)){
+			if(GLOBAL_APP_VERS.type=="web_mobile")
+				return " <a href='"+$2+"' rel='external' target='_blank' class='ui-link'>ссылка на соседа</a> ";
+			else
+				return "";
+			
+		}
 		 //ссылка на видео youtube
 		 else if  (youtube_match.test($2)){
 			text=$2;
@@ -89,39 +99,63 @@ function conv($1,$2){
 			return text;
 		 }			 
 		 //внутренн€€ ссылка
+		 /* отключаем дл€ мобильной версии и приложений
          else if(internal_link.test($2)){
              var internal_link1=/http:\/\/(www\.)?shax-dag\.ru(\/)+(login\.php)|(logout\.php)|(profile\.php)|(messages\.php)|(friends\.php)|(ajax\/delete_usersfotos\.php)/i;
              if(internal_link1.test($2))
                  return $2;
              else
-                 return " <a href='"+$2+"'>ссылка на страницу</a> ";
+                 return " <a href='"+$2+"' rel='external' target='_blank' class='ui-link'>ссылка на страницу</a> ";
          }
+		 */
 		 //внешние ссылки
-         else return " <a href='away.php?url="+encodeURIComponent($2)+"'>"+$2+"</a> ";
+         else{
+			if(GLOBAL_APP_VERS.type=="web_mobile")
+				return " <a href='"+GLOBAL_SERVER+"away.php?url="+encodeURIComponent($2)+"'  rel='external' target='_blank' class='ui-link'>"+$2+"</a> ";
+			else
+				return "";
+		
+		}
 }
-function source($1,$2,$3,$4){
+function source($1,$2,$3,$4){ // ссылки на ресурсы: 
 		
          if($2=="video")
-            return "<div t_key='"+$3+"' base='clips' class='richtext comments clips'><img src='http://video.shaxdag.com/shots/"+$4+"'></div>";
+            return "<div t_key='"+$3+"' base='clips' class='richtext_clips richtext-comments'><img src='http://video.shaxdag.com/shots/"+$4+"'></div>";
          else
          if($2=="music")
-            return "<div t_key='"+$3+"' base='music' class='richtext comments music'>"+$4+"</div>";
+            return "<div t_key='"+$3+"' base='music' class='richtext richtext-comments'><a><i class='fa fa-music'></i> "+$4+"</a></div>";
          else
-         if($2=="foto")
-            return "<div t_key='"+$3+"' base='fotos' class='richtext comments fotos'><img src='"+GLOBAL_SERVER+"fotos/small/"+$4+"'></div>";
+         if($2=="foto"){
+            if(getCurrentPage() == "page_evants")
+				return "<div t_key='"+$3+"' base='fotos' class='richtext_foto richtext-comments'><img src='"+GLOBAL_SERVER+"fotos/small/"+$4+"'></div>";
+			else
+				return "<div t_key='"+$3+"' base='fotos' class='richtext_foto'><a href='"+GLOBAL_SERVER+"fotos/"+$4+"' rel='external' class='ps-show' t_key='"+$3+"' base='fotos'><img src='"+GLOBAL_SERVER+"fotos/small/"+$4+"'></a></div>";
+		 }
 		 else
-         if($2=="users_fotos")
-            return "<div t_key='"+$3+"' base='users_fotos' class='richtext comments fotos'><img src='"+GLOBAL_SERVER+"users_fotos/small/"+$4+"'></div>";
-         else
+         if($2=="users_fotos"){
+			 if(getCurrentPage() == "page_evants")
+				return "<div t_key='"+$3+"' base='users_fotos' class='richtext_foto richtext-comments'><img src='"+GLOBAL_SERVER+"users_fotos/small/"+$4+"'></div>";
+            else
+				return "<div t_key='"+$3+"' base='users_fotos' class='richtext_foto'><a href='"+GLOBAL_SERVER+"users_fotos/"+$4+"' rel='external' class='ps-show' t_key='"+$3+"' base='users_fotos'><img src='"+GLOBAL_SERVER+"users_fotos/small/"+$4+"'></a></div>";
+         }
+		 else
             return "";
 			
 		
 }
 function attachment($1,$2,$3){         
-         if($2=="foto")
-            return "<div><img src='"+GLOBAL_SERVER+"attachments/fotos/small/"+$3+"' ></div>";
-         if($2=="graffiti")
-            return "<div><img src='"+GLOBAL_SERVER+"attachments/graffiti/small/"+$3+"'></div>";
+         if($2=="foto"){
+			if(getCurrentPage() == "page_evants")
+				return "<div class='richtext_foto'><img src='"+GLOBAL_SERVER+"attachments/fotos/small/"+$3+"' ></div>";
+			else
+				return "<div class='richtext_foto'><a href='"+GLOBAL_SERVER+"attachments/fotos/"+$3+"' rel='external' class='ps-show' t_key='-1' base='-1'><img src='"+GLOBAL_SERVER+"attachments/fotos/small/"+$3+"' ></a></div>";
+         }
+		 if($2=="graffiti"){
+			if(getCurrentPage() == "page_evants")
+				return "<div><img src='"+GLOBAL_SERVER+"attachments/graffiti/small/"+$3+"'></div>";
+			else
+				return "<div class='richtext_foto'><a href='"+GLOBAL_SERVER+"attachments/graffiti/"+$3+"' rel='external' class='ps-show' t_key='-1' base='-1'><img src='"+GLOBAL_SERVER+"attachments/graffiti/small/"+$3+"'></a></div>";
+		}
         
 		 else
             return "";
@@ -237,14 +271,14 @@ function makesmile(text){
 
 }
 $.fn.text2richtext = function () {
-	return this.each (function (){
+	this.each (function (){
 		var url_match = /(?:[^"]|^)(https?:\/\/([A-Za-z0-9\-]+\.)+[a-z]{2,4}(:\d+)?((\/|\?)\S*)?)(?:\s|$)/g;
 		var source_match = /\[a (video|music|foto|users_fotos)\=([0-9]+)]([^\[]+)\[\/a\]/g;
 		var attachment_match_foto = /\[(foto)\]([0-9A-Za-z_\.\/\-]+)\[\/foto\]/g;
 		var attachment_match_graffiti = /\[(graffiti)\]([0-9A-Za-z_\.\/\-]+)\[\/graffiti\]/g;
 		var extsmiles_match = /\*([0-9]+\.(gif|png|GIF|PNG))\*/g;
 		//text=makesmile(text);
-		/* надо допилить дл§ мобильной версии
+		/* надо допилить дл≤ мобильной версии
 		text=text.replace(url_match,conv);
 		text=text.replace(source_match,source);
 		text=text.replace(attachment_match_foto,attachment);
@@ -268,7 +302,9 @@ $.fn.text2richtext = function () {
 				$(this).html().replace(source_match,source)
 		);
 	});
-	$(".richtext.comments").on("vclick", Comments.Go);
+	$(".richtext-comments").on("vclick", Comments.Go);
+	PS.ReCreate($("#"+getCurrentPage()+" a.ps-show"), null, "ajax");
+	return true;
 }
 //выравнивает объекты по высоте
 var getMaxHeight = function ($elms) {
@@ -290,7 +326,16 @@ function put1(txt, txtarea_id){
 } 
 function show_smiles(){
 	var smile="";
-	if($(this).attr("txtarea_id")!=null){
+	$(this).parents("[data-role='popup']").popup("close");
+	/*
+	if(getCurrentPage()=="page_msg2")
+		$("#page_msg2_attach").popup("close");
+	else
+	if(getCurrentPage()=="page_comment")
+		$("#page_comment_attach").popup("close");
+		*/
+	
+	if($(this).attr("txtarea_id")!=null){		
 		smile+="<a href='javascript: put1(\":)\",\""+$(this).attr("txtarea_id")+"\");'><img src='images/smiles/2.png' border=0 class='emoticon'></a> ";
 		 smile+="<a href='javascript: put1(\":D\",\""+$(this).attr("txtarea_id")+"\");'><img src='images/smiles/1.png' border=0 class='emoticon'></a> ";
 		 smile+="<a href='javascript: put1(\":(\",\""+$(this).attr("txtarea_id")+"\");'><img src='images/smiles/3.png' border=0 class='emoticon'></a> ";
@@ -313,7 +358,9 @@ function show_smiles(){
 		 smile+="<a href='javascript: put1(\"]:-\",\""+$(this).attr("txtarea_id")+"\");'><img src='images/smiles/aq.png' border=0 class='emoticon'></a> ";
 		 smile+="<a href='javascript: put1(\"@=\",\""+$(this).attr("txtarea_id")+"\");'><img src='images/smiles/bb.png' border=0 class='emoticon'></a> ";
 		 smile+="<a href='javascript: put1(\"|m|\",\""+$(this).attr("txtarea_id")+"\");'><img src='images/smiles/bd.png' border=0 class='emoticon'></a> ";
-		show_popup("smiles", smile, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+		setTimeout(function(){
+			show_popup("smiles", smile);
+			},100);
 	}
 }
 function setCookie (name, value, expires, path, domain, secure) {
@@ -354,7 +401,7 @@ function getUrlVars(){
 	}
 	return vars;
 }
-function L(url){ // добавл§ет к любой ссылке параметр PHPSESSID и PHPUSERID если есть
+function L(url){ // добавл≤ет к любой ссылке параметр PHPSESSID и PHPUSERID если есть
 	/*
 	if(User.I.id!=null){
 		var $PHPUSERID_="PHPUSERID="+User.I.id;
@@ -388,10 +435,10 @@ function L(url){ // добавл§ет к любой ссылке параметр PHPSESSID и PHPUSERID если
 	else
 		return url + "?"+PHPSESSID_+"&"+$PHPUSERID_;
 }
-function LS(url){ //добавл§ет к ссылке PHPSESSID и вешний URL к http://shax-dag.ru/m/ їспользуетс§ дл§ доступа к серверным скриптам из ajax
+function LS(url){ //добавл≤ет к ссылке PHPSESSID и вешний URL к http://shax-dag.ru/m/ Ьспользуетс≤ дл≤ доступа к серверным скриптам из ajax
 	return L(GLOBAL_SERVER+'m/' + url);
 }
-function LS_wo(url){ //добавл§ет к ссылке вешний URL к http://shax-dag.ru/m/ їспользуетс§ дл§ доступа к серверным скриптам из ajax без PHPSESSID
+function LS_wo(url){ //добавл≤ет к ссылке вешний URL к http://shax-dag.ru/m/ Ьспользуетс≤ дл≤ доступа к серверным скриптам из ajax без PHPSESSID
 	return GLOBAL_SERVER+'m/' + url;
 }
 //путь к статике
@@ -414,9 +461,10 @@ function rotateEffect1(jqobj){
     jqobj.velocity({rotateY : "180deg"});
 	jqobj.velocity({rotateY : "0deg"});
 }
+
 //effect
 function removeEffect1(jqobj){
-    jqobj.velocity({opacity:'0.0'},{duration: 400, complete: function(obj){
+    jqobj.velocity({opacity:'0.0'},{duration: 400, complete: function(obj){ 
 		jqobj.remove();
 	}
 	});

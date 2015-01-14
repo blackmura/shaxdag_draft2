@@ -278,6 +278,18 @@
 	margin-left: 0px;
 	background-color: #FFA7A7;
 }
+/* кнопка отправки фотографии поверх миниатюры*/
+.foto .btn-choose{
+	position: relative;
+	top: -6px;
+	opacity:0.6;
+	filter: alpha(opacity = 60);
+	display: none;
+}
+.foto .btn-choose button{
+	margin-left: 0px;
+	background-color: #6AC0FA
+}
 /*
 ** mobile device class
 */
@@ -393,6 +405,13 @@
 	background: rgba(0, 0, 0, 0.45);
 }
 #page_user_avatar .like-avatar{
+	display: inline-block;
+}
+#page_user_avatar .comm-avatar{
+	display: inline-block;
+	margin-left: 1em;
+}
+#page_user_avatar .avatar-top-options{
 	position: absolute;
 	font-size: 2em;
 	width: 100%;

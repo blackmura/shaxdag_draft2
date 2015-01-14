@@ -83,7 +83,7 @@
 	//Обработка ajax
 	$(document).ajaxSend(function(event, jqxhr, settings) { 
 		Environment.System.LastAjaxCall = settings;
-		if ( settings.url.indexOf("autocomplete/show")>0 || settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 || settings.url.indexOf("silent_mode=true")>0) {
+		if (  settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 || settings.url.indexOf("silent_mode=true")>0) {
 			//если автозаполнение  то ничего не делаем
 		}
 		else{
@@ -99,6 +99,9 @@
 		$(".ajax-loader-center").hide();
 		//обработчики
 		Fotos.Utils.HandleAjax("stop", settings);
+		console.log(settings);
+		console.log(jqxhr);
+		console.log(event);
 	});
 	$( document ).ajaxError(function( event, request, settings ) {
 		$(".ajax-loader-center").hide();
@@ -145,13 +148,13 @@
 			}
 			else
 			if(page_id == "page_music"){
-				var vars = getUrlVars();
-				console.log(vars);
+				var vars = getUrlVars();	
 				if(vars.user_id)
-					Music.GoAll({user_id: vars.user_id},1);
+					Music.GoAll({user_id: vars.user_id},1, vars.share);
 				else{
-					Music.GoAll(null,1);
+					Music.GoAll(null,1, vars.share);
 				}
+				
 			}
 			else
 			if(page_id == "page_fotos" || page_id == "page_usersfotos"){
@@ -893,6 +896,7 @@
 			NavMsg.getDialogFromServer(retrievers_id, NavMsg.D_params);
 			//обновляем ссылки, кнопки и тд
 			$("#nav-sendmsg-btn").attr("send_to", retrievers_id); //меняем парметр кнопки
+			$("#page_msg2_attach .share").attr("user_id", retrievers_id); //меняем парметр кнопок share
 			//обновляем счетчик
 			var obj_index=NavMsg.Utils.get_dialog_index(retrievers_id);
 			if(obj_index>=0){
@@ -989,6 +993,8 @@
 			//добавляем смайлы и тд к полученной переписке
 			$("#page_msg2 .talktext p").text2richtext(); 
 			$("#page_msg2 .talk-bubble").on("vclick", NavMsg.Utils.onSelect);
+			//Если в обменнике есть готовые ресурсы, то отправляем
+			Exch.onReturn();
 			
 			
 		},
@@ -1499,13 +1505,16 @@
 			}
 			//если есть привязка к фотке из альбома, то добавляем кнопку лайка
 			if(resp_obj.user.userfoto!=null){
-				$("#page_user_avatar").prepend('<div class="like-avatar" base="users_fotos" mark="plus" t_key="'+resp_obj.user.userfoto.num+'"><i class="fa fa-heart"></i> <span>'+resp_obj.user.userfoto.rating+'</span></div>');
+				$("#page_user_avatar ").prepend('<div class="avatar-top-options"><div class="like-avatar" base="users_fotos" mark="plus" t_key="'+resp_obj.user.userfoto.num+'"><i class="fa fa-heart"></i> <span>'+resp_obj.user.userfoto.rating+'</span></div>'+
+					'<div class="comm-avatar" base="users_fotos" t_key="'+resp_obj.user.userfoto.num+'"><i class="fa fa-comments"></i> <span>'+resp_obj.user.userfoto.comments+'</span></div></div>');
 				$("#page_user_avatar .like-avatar").off("vclick");
 				$("#page_user_avatar .like-avatar").on("vclick", Environment.Like);
+				$("#page_user_avatar .comm-avatar").off("vclick");
+				$("#page_user_avatar .comm-avatar").on("vclick", Comments.Go);
 			
 			}
 			else{
-				$("#page_user_avatar .like-avatar").remove();
+				$("#page_user_avatar .avatar-top-options").remove();
 			}
 			$("#page_user_left .buttons .msg").attr("user_id", resp_obj.user.id);
 			//----Основная инфа пользователя 
@@ -1791,7 +1800,7 @@
 										User.I.foto = data.src;
 										$("#left_panel .user-avatar-circle").attr("src", User.html.avatar_url(data.src, 60)); 
 										$("#page_user_avatar img").attr("src", Environment.Utils.google_resize(User.html.avatar_url(data.src, 800),480)); 
-										$("#page_user_avatar .like-avatar").remove();
+										$("#page_user_avatar .avatar-top-options").remove();
 										
 										
 									}
@@ -2152,14 +2161,14 @@
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true});
 			}
 		},
-		GoUserMusic : function (){
-			
-				
-		},
-		GoAll : function (filter, init){
-			var params;
+		GoAll : function (filter, init, share){
+			var params;			
 			if(init==1){
-				Music.init();
+				//если не в режиме share то обнуляем объекты
+				if(!share || Exch.to.type==null){					
+					Exch.init();
+				}
+				Music.init();				
 				if(filter==null || filter.user_id==null){
 					//показываем навбар
 					$("#page_music .navbar-public").css({display : "block"});
@@ -2179,6 +2188,7 @@
 			if(filter!=null){
 				Music.Filter=$.extend(Music.Filter, filter);
 			}
+			Music.link.refresh_navbar();
 			//задаем параметры запроса
 			params=Music.Filter; 
 			params.initial=1;
@@ -2278,8 +2288,8 @@
 			//добавляем режим flex
 			$.each(resp_obj.musics, function(key,obj){
 
-				$("#"+page_id+" .mus_"+ obj.num).append('<div class="song_title"><div class="title" base="music" t_key="'+obj.num+'">'+obj.artist+' - '+obj.title+'</div></div>');
-				$("#"+page_id+" .mus_"+ obj.num).append('<div class="btn-add" base="music" t_key="'+obj.num+'"></div>');
+				$("#"+page_id+" .mus_"+ obj.num).append('<div class="song_title" base="music" t_key="'+obj.num+'" param1 = "'+obj.artist+' - '+obj.title+'"><div class="title" base="music" t_key="'+obj.num+'">'+obj.artist+' - '+obj.title+'</div></div>');
+				$("#"+page_id+" .mus_"+ obj.num).append('<div class="btn-add" base="music" t_key="'+obj.num+'" param1 = "'+obj.artist+' - '+obj.title+'"></div>');
 				
 				//добавляем кнопки снизу
 				html_menu="";
@@ -2291,11 +2301,18 @@
 				html_menu+="</div>";
 				
 				$("#"+page_id+" .mus_"+ obj.num+" .song_title").append(html_menu);				
-				Music.link.refresh_like_menu(obj);				
-				$("#"+page_id+" .mus_"+ obj.num+" .btn-like, #"+page_id+" .mus_"+ obj.num+" .btn-unlike").on ("vclick", Music.link.Like);
-				$("#"+page_id+" .mus_"+ obj.num+" .title, #"+page_id+" .mus_"+ obj.num+" .btn-comments").on ("vclick", Comments.Go);
-				$("#"+page_id+" .mus_"+ obj.num+" .rating").on ("vclick", Music.link.Like);
-				$("#"+page_id+" .mus_"+ obj.num+" .btn-add").on ("vclick", Music.link.add);
+				Music.link.refresh_like_menu(obj);
+				//добавляем обработчики
+				if(Exch.to.type == null){ // если это обычный режим
+					$("#"+page_id+" .mus_"+ obj.num+" .btn-like, #"+page_id+" .mus_"+ obj.num+" .btn-unlike").on ("vclick", Music.link.Like);
+					$("#"+page_id+" .mus_"+ obj.num+" .btn-comments").on ("vclick", Comments.Go);
+					$("#"+page_id+" .mus_"+ obj.num+" .rating").on ("vclick", Music.link.Like);
+					$("#"+page_id+" .mus_"+ obj.num+" .btn-add").on ("vclick", Music.link.add);
+					$("#"+page_id+" .mus_"+ obj.num+" .title").on ("vclick", Comments.Go);
+				}
+				else{
+					$("#"+page_id+" .mus_"+ obj.num+" .song_title, #"+page_id+" .mus_"+ obj.num+" .btn-add").on ("vclick", Exch.onChoose);
+				}
 			});
 		},
 		Single :{
@@ -2354,44 +2371,51 @@
 				$("#page_music_nation_popup").change (Music.link.btn_nations_onClick);
 			},
 			refresh_navbar : function(){
-				var dom_sort=$("#page_music_navbar .navbar_footer_sort");
-				var dom_nation=$("#page_music_navbar .navbar_footer_nation");
-				var dom_nation_title=$("#page_music_navbar .navbar_footer_nation span");
-				var dom_search=$("#page_music_navbar .navbar_footer_search");
-				
-				if(Music.Filter.order>0){
-					dom_sort.addClass("ui-btn-active"); 
-
+				if(Exch.to.type!=null){ //если в режиме share, то скрываем нижний навбар и показываем меню принять-отклонить
+					$("#page_music_navbar").hide();
+					$(".share-panel").show();
 				}
 				else{
-					dom_sort.removeClass("ui-btn-active");
+					$(".share-panel").hide();
+					var dom_sort=$("#page_music_navbar .navbar_footer_sort");
+					var dom_nation=$("#page_music_navbar .navbar_footer_nation");
+					var dom_nation_title=$("#page_music_navbar .navbar_footer_nation span");
+					var dom_search=$("#page_music_navbar .navbar_footer_search");
+					
+					if(Music.Filter.order>0){
+						dom_sort.addClass("ui-btn-active"); 
 
-				}
-								
-				//подсветка меню наций
-				if(Music.Filter.nation_id!=null){
-					dom_nation.addClass("ui-btn-active"); 
-					dom_nation_title.html(Environment.Nations.modify(Environment.Nations.nation_by_id(Music.Filter.nation_id).title, "ие"));
+					}
+					else{
+						dom_sort.removeClass("ui-btn-active");
 
-				}
-				else{
-					dom_nation.removeClass("ui-btn-active");
-					dom_nation_title.html("Народы");
+					}
+									
+					//подсветка меню наций
+					if(Music.Filter.nation_id!=null){
+						dom_nation.addClass("ui-btn-active"); 
+						dom_nation_title.html(Environment.Nations.modify(Environment.Nations.nation_by_id(Music.Filter.nation_id).title, "ие"));
 
-				}
-				
-				//подсветка меню поиска
-				if(Music.Filter.searchterm!=null){
-					dom_search.addClass("ui-btn-active"); 
+					}
+					else{
+						dom_nation.removeClass("ui-btn-active");
+						dom_nation_title.html("Народы");
 
-				}
-				else{
-					dom_search.removeClass("ui-btn-active");
+					}
+					
+					//подсветка меню поиска
+					if(Music.Filter.searchterm!=null){
+						dom_search.addClass("ui-btn-active"); 
 
+					}
+					else{
+						dom_search.removeClass("ui-btn-active");
+
+					}
+					//настраиваем панель поиска
+					$("#page_music .ui-footer .searchform").css({display: "none"});
+					$("#page_music_navbar").css({display: "block"});
 				}
-				//настраиваем панель поиска
-				$("#page_music .ui-footer .searchform").css({display: "none"});
-				$("#page_music_navbar").css({display: "block"});
 				
 			},
 			btn_nations_onClick : function(ev){ 
@@ -2455,15 +2479,26 @@
 					}
 				}
 				
-				//если добавлен в мои записи
-				if(obj.added>0){
-					$("#"+page_id+" .mus_"+ obj.num+" .btn-add").html('<i class="fa fa-minus fa-button-circle fa-button-theme-a"></i>'); 
-					$("#"+page_id+" .mus_"+ obj.num+" .btn-add").attr('method', 'delete');
+				//колонка с плюсиком/минусом
+				if(Exch.to.type!=null){
+					if(Exch.Utils.check_exist(obj.num, "music")>=0){//если ресурс уже в стеке
+						$("#"+page_id+" .mus_"+ obj.num+" .btn-add").html('<i class="fa fa-check fa-button-active" style="font-size: 2em;"></i>'); 
+					}
+					else{
+						$("#"+page_id+" .mus_"+ obj.num+" .btn-add").html('<i class="fa fa-plus fa-button-theme-a" style="font-size: 1.6em;"></i>'); 
+					}
 				}
-				else{ 
-					// круглый плюс $("#mus_"+ obj.num+" .btn-add").html('<a href="#" class="ui-btn ui-icon-plus ui-btn-icon-notext ui-corner-all ui-mini">Добавить</a>');
-					$("#"+page_id+" .mus_"+ obj.num+" .btn-add").html('<i class="fa fa-plus fa-button-circle fa-button-theme-a"></i>'); 
-					$("#"+page_id+" .mus_"+ obj.num+" .btn-add").attr('method', 'add');
+				else{ //если мы не в режиме отправки ресурса в сообщении
+					//если добавлен в мои записи
+					if(obj.added>0){
+						$("#"+page_id+" .mus_"+ obj.num+" .btn-add").html('<i class="fa fa-minus fa-button-circle fa-button-theme-a"></i>'); 
+						$("#"+page_id+" .mus_"+ obj.num+" .btn-add").attr('method', 'delete');
+					}
+					else{ 
+						// круглый плюс $("#mus_"+ obj.num+" .btn-add").html('<a href="#" class="ui-btn ui-icon-plus ui-btn-icon-notext ui-corner-all ui-mini">Добавить</a>');
+						$("#"+page_id+" .mus_"+ obj.num+" .btn-add").html('<i class="fa fa-plus fa-button-circle fa-button-theme-a"></i>'); 
+						$("#"+page_id+" .mus_"+ obj.num+" .btn-add").attr('method', 'add');
+					}	
 				}				
 			},
 			SearchForm: {
@@ -2679,13 +2714,32 @@
 			var user_id = $(this).attr("user_id");
 			if(user_id){
 				Fotos.init();
+				Exch.init();
+				$("#page_fotos .navbar-public").css({display : "none"});
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_usersfotos"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_usersfotos?user_id="+user_id} );
+			}
+			else{
+				Fotos.init();
+				Exch.init();
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_fotos"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_fotos?album=1"} );
+				//показываем навбар
+				$("#page_fotos_navbar").show();
+				$("#page_fotos .navbar-public").css({display : "block"});
+				Environment.Utils.refresh_public_navbar("#page_fotos .navbar-public", "btn-fotos");
+			}
+		},
+		GoShare : function(user_id){
+			$(".share-panel").show();
+			if(user_id){
+				Fotos.init();
 				$("#page_fotos .navbar-public").css({display : "none"});
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_usersfotos"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_usersfotos?user_id="+user_id} );
 			}
 			else{
 				Fotos.init();
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_fotos"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_fotos?album=1"} );
-				//показываем навбар
+				//показываем навбар	
+				$("#page_fotos_navbar").hide();				
 				$("#page_fotos .navbar-public").css({display : "block"});
 				Environment.Utils.refresh_public_navbar("#page_fotos .navbar-public", "btn-fotos");
 			}
@@ -2809,15 +2863,25 @@
 							base = "users_fotos";
 						else
 							base = "fotos";
-						html+= "<div class='foto num_"+resp_obj.fotos.fotos[i].num+"'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>";
+						if(Exch.to.type!=null){//если в режиме отправки то убираем ссылки с фотографии
+							html+= "<div class='foto num_"+resp_obj.fotos.fotos[i].num+"' t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' param1 = '"+resp_obj.fotos.fotos[i].path+"' style='opacity: 0.4;'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'>";
+						}
+						else
+							html+= "<div class='foto num_"+resp_obj.fotos.fotos[i].num+"'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>";
 						html+="<div class='btn-delete'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' confirm_type='delete_source' class='ui-btn ui-icon-delete ui-btn-icon-left ui-mini go-confirm'>Удалить</button></div>";
+						html+="<div class='btn-choose'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"'  class='ui-btn ui-icon-check ui-btn-icon-left ui-mini'>Выбрано</button></div>";
 						html+="</div>";
 						i++;
 					});
 					$("#page_usersfotos_list").html(html);
-									
-					//применяем Swipe
-					Fotos.PS.ReCreate($("#page_usersfotos_list .foto a"));
+					if(Exch.to.type!=null){//если мы в режиме отправки
+						$("#page_usersfotos_list .foto").off("vclick");
+						$("#page_usersfotos_list .foto").on("vclick", Exch.onChoose);
+					}
+					else{				
+						//применяем Swipe
+						Fotos.PS.ReCreate($("#page_usersfotos_list .foto a"));
+					}
 					
 					//обработчик удаления
 					Fotos.link.refresh_del_mode();
@@ -2870,20 +2934,31 @@
 							base = "users_fotos";
 						else
 							base = "fotos";
-						html+= "<div class='foto'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>";
+						if(Exch.to.type!=null){//если в режиме отправки то убираем ссылки с фотографии
+							html+= "<div class='foto num_"+resp_obj.fotos.fotos[i].num+"' t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' param1 = '"+resp_obj.fotos.fotos[i].path+"' style='opacity: 0.4;'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'>";
+						}
+						else
+							html+= "<div class='foto num_"+resp_obj.fotos.fotos[i].num+"'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>";
 						html+="<div class='btn-delete'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' confirm_type='delete_source' class='ui-btn ui-icon-delete ui-btn-icon-left ui-mini go-confirm'>Удалить</button></div>";
+						html+="<div class='btn-choose'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"'  class='ui-btn ui-icon-check ui-btn-icon-left ui-mini'>Выбрано</button></div>";
 						html+="</div>";
 						i++;
 					});
 					$("#page_usersfotos_list").append(html);
-					//если PS открыт, то закрываем, обновляем и открываем
-					if(Fotos.PS.isShown==1){
-						photoSwipeInstance.hide();
-						Fotos.PS.ReCreate($("#page_usersfotos_list .foto a"));
-						photoSwipeInstance.show(Fotos.PS.cursor);
+					if(Exch.to.type!=null){//если мы в режиме отправки
+						$("#page_usersfotos_list .foto").off("vclick");
+						$("#page_usersfotos_list .foto").on("vclick", Exch.onChoose);
 					}
 					else{
-						Fotos.PS.ReCreate($("#page_usersfotos_list .foto a"));
+						//если PS открыт, то закрываем, обновляем и открываем
+						if(Fotos.PS.isShown==1){
+							photoSwipeInstance.hide();
+							Fotos.PS.ReCreate($("#page_usersfotos_list .foto a"));
+							photoSwipeInstance.show(Fotos.PS.cursor);
+						}
+						else{
+							Fotos.PS.ReCreate($("#page_usersfotos_list .foto a"));
+						}
 					}
 					//обработчик удаления фоток
 					Fotos.link.refresh_del_mode(); 
@@ -4869,6 +4944,9 @@
 			$("#nav-sendcomment-btn").attr("t_key", t_key); //меняем парметр кнопки
 			$("#nav-sendcomment-btn").attr("base", base); //меняем парметр кнопки
 			
+			$("#page_comment_attach .share").attr("t_key", t_key); //подставляем параметры  кнопки share
+			$("#page_comment_attach .share").attr("base", base); //подставляем параметры  кнопки share
+			
 		}, 
 		getCommentsFromServer : function(params){
 			Comments.loading_data=1;
@@ -4994,10 +5072,19 @@
 			//gпереход на страницу пользователя
 			$("#comments-list .user-avatar-rounded").off("vclick");
 			$("#comments-list .user-avatar-rounded").on("vclick", UserPage.Go); 
+			//Если в обменнике есть готовые ресурсы, то отправляем
+			Exch.onReturn();
 
 		},
 		SendCommentHandler : function (ev){
 			ev.preventDefault();
+			var t_key = $(this).attr("t_key");
+			var base = $(this).attr("base");
+			var reply_to = $(this).attr("reply_to");
+			Comments.SendCommentHandlerParams(t_key, base, reply_to);
+		},
+		SendCommentHandlerParams : function (t_key, base, reply_to){
+
 			var msg_text=$("#nav-comment-txtarea").val();		
 			
 			if(msg_text){
@@ -5007,9 +5094,9 @@
 				var params = {
 					method: "postComment",
 					msg: msg_text,
-					t_key: $(this).attr("t_key"),
-					base: $(this).attr("base"),
-					reply_to: $(this).attr("reply_to"),
+					t_key: t_key,
+					base: base,
+					reply_to: reply_to,
 					"fake_id" : fake_num, 
 					silent_mode: "true"
 				};
@@ -5926,6 +6013,11 @@
 			if(PS.mode == "ajax" && PS.list[e.index].user==null){
 				PS.refreshFromServer(e.index);
 			}
+			else
+			//если мы в режиме подгрузки данных, и данных нет, то обновляем
+			if(PS.mode == ""){
+				PS.refreshFromServer(e.index);
+			}
 			else{
 				PS.cursor=e.index;
 				PS.Toolbar.refresh(); 
@@ -5947,13 +6039,15 @@
 		Toolbar :{
 			get : function(){ 
 				var html;
+				var css_visibility_arrows="";
 				if(PS.list.length==1)
-					var css_visibility="visibility: hidden;";
+					css_visibility_arrows="visibility: hidden;";
+
 				html='<div class="ps-toolbar-close ps-btn-close" ><i class="fa fa-times fa-lg fa-button-theme-a"></i></div>';
-				html+='<div class="ps-toolbar-previous ps-btn-back" style="'+css_visibility+'"><i class="fa fa-chevron-left fa-lg fa-button-theme-a"></i></div>';
-				html+='<div class="ps-btn-like" base="" t_key=""><i class="fa fa-heart-o fa-lg fa-button-theme-a"></i><span></span></div>'; 
-				html+='<div class="ps-btn-comments"><i class="fa fa-comment-o fa-lg fa-button-theme-a"></i><span></span></div>'; 
-				html+='<div class="ps-toolbar-next ps-btn-forward" style="'+css_visibility+'"><i class="fa fa-chevron-right fa-lg fa-button-theme-a"></i></div>';
+				html+='<div class="ps-toolbar-previous ps-btn-back" style="'+css_visibility_arrows+'"><i class="fa fa-chevron-left fa-lg fa-button-theme-a"></i></div>';
+				html+='<div class="ps-btn-like" base="" t_key="" ><i class="fa fa-heart-o fa-lg fa-button-theme-a"></i><span></span></div>'; 
+				html+='<div class="ps-btn-comments" ><i class="fa fa-comment-o fa-lg fa-button-theme-a"></i><span></span></div>'; 
+				html+='<div class="ps-toolbar-next ps-btn-forward" style="'+css_visibility_arrows+'"><i class="fa fa-chevron-right fa-lg fa-button-theme-a"></i></div>';
 				return html;
 			},
 			refresh : function(){
@@ -5983,7 +6077,15 @@
 				$(".ps-btn-comments").attr("t_key", PS.list[PS.cursor].source.num);//comment
 				$(".ps-btn-comments").attr("base", base);
 				
-					
+				
+				//если фотка не из ресурсов
+				if(PS.list[PS.cursor].base==-1 || PS.list[PS.cursor].t_key==-1){
+					$(".ps-btn-like, .ps-btn-comments").css({visibility: "hidden"});
+				}
+				else{
+					$(".ps-btn-like, .ps-btn-comments").css({visibility: "visible"});
+				}
+				
 				if(PS.list[PS.cursor].voted!=null){
 					$(".ps-btn-like i").removeClass("fa-heart-o");
 					$(".ps-btn-like i").addClass("fa-heart");
@@ -5992,6 +6094,16 @@
 					$(".ps-btn-like i").removeClass("fa-heart"); 
 					$(".ps-btn-like i").addClass("fa-heart-o");
 				}
+				//краяние фотки в очереди
+				if(PS.cursor==0)
+					$(".ps-toolbar-previous").css({visibility: "hidden"});
+				else
+					$(".ps-toolbar-previous").css({visibility: "visible"});
+				if(PS.cursor==(PS.list.length-1))
+					$(".ps-toolbar-next").css({visibility: "hidden"});
+				else
+					$(".ps-toolbar-next").css({visibility: "visible"});
+				
 			},
 			refresh_caption : function(){
 				var html;
@@ -6013,7 +6125,7 @@
 					$(".ps-btn-comments").on("vclick", PS.Toolbar.Handler.Comment);
 				}
 				else{
-					$(".ps-caption-content").html("загрузка...");
+					$(".ps-caption-content").html("");
 				}
 			},
 			Handler : { 
@@ -6072,27 +6184,34 @@
 		refreshFromServer : function(cursor){
 			var base = PS.list[cursor].base;
 			var t_key = PS.list[cursor].source.num;
-			$.get( LS("server/proc_source.php"), {method : "getSourceInfo", t_key: t_key, base: base}, 
-				function( data ) {
-					console.log(data);
-					if(data.auth_status=="success" ){
-						if(data.method_status=="success"){
-							//обновляем туллбар к фотке по которой пришел ответ
-							PS.list[cursor]=data.element;	
-							PS.cursor=cursor;
-							PS.Toolbar.refresh(); 
-							PS.Toolbar.refresh_caption();
+			if(base!=-1 && t_key!=-1){
+				$.get( LS("server/proc_source.php"), {method : "getSourceInfo", t_key: t_key, base: base}, 
+					function( data ) {
+						console.log(data);
+						if(data.auth_status=="success" ){
+							if(data.method_status=="success"){
+								//обновляем туллбар к фотке по которой пришел ответ
+								PS.list[cursor]=data.element;	
+								PS.cursor=cursor;
+								PS.Toolbar.refresh(); 
+								PS.Toolbar.refresh_caption();
+							}
+							else{
+								show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+							}	
 						}
 						else{
-							show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
-						}	
-					}
-					else{
-						Environment.Utils.handle_auth_error();
-					}
-				},
-				"json"
-			);
+							Environment.Utils.handle_auth_error();
+						}
+					},
+					"json"
+				);
+			}
+			else{
+				PS.cursor=cursor;
+				PS.Toolbar.refresh(); 
+				PS.Toolbar.refresh_caption();
+			}
 		},
 		getFromServer : function(cursor){
 			var base = PS.list[cursor].base;
@@ -6109,10 +6228,23 @@
 			console.log(data);
 		},
 		ReCreate : function(dom_fotos,list_obj, mode){
-			PS.list = list_obj;
+			
 			PS.isShown=0;
 			PS.cursor=0;
 			PS.mode=mode;
+			if(list_obj == null){
+				PS.list = new Array();
+				$.each(dom_fotos, function(key,obj){
+					PS.list.push({
+						num : $(obj).attr("t_key"), 
+						base: $(obj).attr("base"), 
+						source : { num: $(obj).attr("t_key")} 
+					});
+				});
+			}
+			else{
+				PS.list = list_obj;
+			}
 			if(dom_fotos.length==0){
 				return false;
 			}
@@ -6520,7 +6652,7 @@
 						function( data ) {
 							if(data.method_status == "success"){
 								var html = "<h3>Поздравляем!</h3>";
-								html+="Вы почти зарегистрированы на ШахДаге.<br> Для активации аккаунта, Вам необходимо перейти по ссылке, которую мы отправили Вам по почте.";
+								html+="Вы почти зарегистрированы на ШахДаге.<br> Для активации аккаунта, Вам необходимо перейти по ссылке, которую мы отправили Вам по почте.<br><b>Если Вы не нашли письмо, то поищите его в папке Спам.</b>";
 								html+='<p><a href="javascript: gl_logout();" data-icon="check" class="ui-btn ui-shadow ui-corner-all ui-btn-b">Далее</a></p>';
 								show_popup("important_ntfy", html);
 							}
@@ -6635,6 +6767,145 @@
 			);
 		}
 	});
+	Exch = new Object({
+		sources : {type: null, list: Array()}, //что вставляем
+		to : {type: null, keys: Object()}, //куда вставляем
+		status: 0,
+		init : function(){
+			Exch.sources = {type: null, list: Array()}; //что вставляем
+			Exch.to = {type: null, keys: Object()}; //куда вставляем
+			Exch.status = 0;
+			$(".share-panel").hide();
+			Exch.Utils.refresh_count();
+		},
+		Go: function(ev){
+			ev.preventDefault();
+			Exch.init();
+			var to_type = $(this).attr("to_type"); //куда вставляем
+			if(to_type == "msg"){
+				var user_id = $(this).attr("user_id"); 
+				Exch.to = {type: to_type, keys: {user_id: user_id}};
+			}
+			else
+			if(to_type == "comments"){
+				var t_key = $(this).attr("t_key"); 
+				var base = $(this).attr("base"); 
+				Exch.to = {type: to_type, keys: {t_key: t_key, base: base}};
+			}
+			var source_type = $(this).attr("source_type"); // откдуа берем
+			Exch.sources.type = source_type;
+			if(source_type == "my_fotos"){
+				Fotos.GoShare(User.I.id);
+			}
+			else
+			if(source_type == "my_music"){
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_music?user_id="+user_id+"&share=1"} )
+			}
+			
+		},
+		onChoose : function(ev){
+			ev.preventDefault();
+			var t_key = $(this).attr("t_key"); 
+			var base = $(this).attr("base"); 
+			var param1 = $(this).attr("param1"); 
+			var found_i = Exch.Utils.check_exist(t_key, base);
+			//обработчики визуализации
+			if(getCurrentPage() == "page_usersfotos"){
+				//если добавляем
+				if(found_i<0){
+					Exch.sources.list.push({t_key: t_key, base: base, param1: param1});
+					$(this).css({opacity: "1"});
+					$(this).children(".btn-choose").show();
+				}
+				else{
+					Exch.sources.list.splice(found_i,1);
+					$(this).css({opacity: "0.4"});
+					$(this).children(".btn-choose").hide();
+				}
+			}
+			else
+			if(getCurrentPage() == "page_music"){
+				//если добавляем
+				if(found_i<0){
+					Exch.sources.list.push({t_key: t_key, base: base, param1: param1});
+					$("#page_music .mus_"+ t_key+" .btn-add").html('<i class="fa fa-check fa-button-active" style="font-size: 2em;"></i>'); 
+				}
+				else{
+					Exch.sources.list.splice(found_i,1);
+					$("#page_music .mus_"+ t_key+" .btn-add").html('<i class="fa fa-plus fa-button-theme-a" style="font-size: 1.6em;"></i>'); 
+				}
+			}
+			Exch.Utils.refresh_count();
+		},
+		onSend : function(){
+			if(Exch.sources.list.length>0){
+				Exch.status = 1;
+				if(Exch.to.type == "msg" && Exch.to.keys.user_id>0){
+					NavMsg.OpenDialog(Exch.to.keys.user_id);
+				}
+				else
+				if(Exch.to.type == "comments" && Exch.to.keys.t_key>0 && Exch.to.keys.base){
+					Comments.GoParams(Exch.to.keys.t_key, Exch.to.keys.base);
+				}
+			}
+			else{
+				show_popup("fast_ntfy", "Не выбрано ни одного элемента");
+			}
+		},
+		onCancel : function(){
+			Exch.init();
+			history.back();
+		},
+		onReturn : function(){//функция которая вызвается при открытии страниц сообщений и комментарий			
+			var post_arr = new Array();
+			$.each(Exch.sources.list, function(key,obj){
+				if(obj.base == "users_fotos")
+					post_arr[key] = "[a users_fotos="+obj.t_key+"]"+obj.param1+"[/a]";
+				else
+				if(obj.base == "fotos")
+					post_arr[key] = "[a fotos="+obj.t_key+"]"+obj.param1+"[/a]";
+				else
+				if(obj.base == "music")
+					post_arr[key] = "[a music="+obj.t_key+"]"+obj.param1+"[/a]";
+				else
+				if(obj.base == "clips")
+					post_arr[key] = "[a video="+obj.t_key+"]"+obj.param1+"[/a]";
+			});
+			var post_str = post_arr.join(" ");
+			if(getCurrentPage() == "page_msg2"){//если открыта страница сообщений, то проверяем есть ли готовые ресурсы для отправки этому юзеру
+				if(NavMsg.ActiveUser.id == Exch.to.keys.user_id && Exch.status == 1 && Exch.sources.list.length>0){
+					$("#nav-msg-txtarea").val(post_str);
+					NavMsg.SendMsgHandler(Exch.to.keys.user_id);
+					Exch.init();
+				}
+			}
+			else
+			if(getCurrentPage() == "page_comment"){//если открыта страница сообщений, то проверяем есть ли готовые ресурсы для отправки этому юзеру
+				if(Comments.source.base == Exch.to.keys.base && Comments.source.t_key == Exch.to.keys.num && Exch.status == 1 && Exch.sources.list.length>0){
+					$("#nav-comment-txtarea").val(post_str);
+					Comments.SendCommentHandlerParams(Exch.to.keys.t_key, Exch.to.keys.base, $( "#nav-comment-btn").attr("reply_to"));
+					Exch.init();
+				}
+			}
+		},
+		Utils :{
+			check_exist : function(t_key, base){
+				var found_i =-1;
+				$.each(Exch.sources.list, function(key,obj){
+					if(obj.t_key == t_key && obj.base == base)
+						found_i = key;
+				});
+				return found_i;
+			},
+			refresh_count : function(){
+				if(Exch.sources.list.length>0)
+					$(".btn-share-ok").html("Отправить ("+Exch.sources.list.length+")");
+				else
+					$(".btn-share-ok").html("Отправить");
+			}
+		}
+		
+	});
   <!-------------------------------------------------------------------------------------- обработчики страниц-->
   <!------------------------------- обработчики страниц авторизации-->
 	$( document ).on( "pagecreate", "#page_auth", function() {
@@ -6675,12 +6946,18 @@
 			NavMsg.SendMsgHandler($(this).attr("send_to"))
 			
 		}); 
+		$('#nav-msg-txtarea').keydown(function (e) {
+			if (e.ctrlKey && e.keyCode == 13) {
+				NavMsg.SendMsgHandler($( "#nav-sendmsg-btn").attr("send_to"));
+			}
+		});
 		$( "#nav-sendmsg-smile").on( "click", show_smiles);
 		$("#page_msg2 .topheader h1").on( "vclick", UserPage.Go);
 		$("#page_msg2-trashbutton").on ( "vclick", NavMsg.Delete.Do);
 		$("#page_msg2_confirm_delete_yes").on ( "vclick", NavMsg.Delete.Do);
 		$("#page_msg2_menu .page_msg2_menu_li").on ("vclick", NavMsg.Utils.confirm);
 		$("#nav-msg-txtarea").on("keyup", NavMsg.Utils.keyPress.send_handler);
+		$("#page_msg2_attach .share").on("vclick", Exch.Go);
 	});
 	
 	$( document ).on( "pagecreate", "#page_music", function() {
@@ -6696,6 +6973,9 @@
 		$("#page_music .navbar-public .btn-fotos").on("vclick", Fotos.Go);
 		$("#page_music .navbar-public .btn-users").on("vclick", UserList.GoUsers);
 		$("#page_music .navbar-public .btn-music").on("vclick", Music.Go);
+		//кнопки отмены или принятия share
+		$( "#page_music .btn-share-ok").on("vclick", Exch.onSend);
+		$( "#page_music .btn-share-close").on("vclick", Exch.onCancel);
 	});
 	$( document ).on( "pagecreate", "#page_usersearch", function() {
 		//присваиваем обработчики  к кнопкам фильтров
@@ -6733,7 +7013,8 @@
 				Fotos.delete_mode=0;
 			Fotos.link.refresh_del_mode();
 		});		
-		
+		$( "#page_usersfotos .btn-share-ok").on("vclick", Exch.onSend);
+		$( "#page_usersfotos .btn-share-close").on("vclick", Exch.onCancel);
 	});
 	//обработчик страницы поиска людей
 	$( document ).on( "pagecreate", "#page_usersearch_sp", function() {
@@ -6773,11 +7054,17 @@
 	});
 	<!------------------------------- обработчики страницы комментариев-->
 	$( document ).on( "pagecreate", "#page_comment", function() {
+		$('#nav-comment-txtarea').keydown(function (e) {
+			if (e.ctrlKey && e.keyCode == 13) {
+				Comments.SendCommentHandlerParams($( "#nav-comment-btn").attr("t_key"), $( "#nav-comment-btn").attr("base"), $( "#nav-comment-btn").attr("reply"));
+			}
+		});
 		$( "#nav-sendcomment-btn").off( "vclick"); 
 		$( "#nav-sendcomment-btn").on( "vclick", Comments.SendCommentHandler); 
 		$( "#nav-comment-smile").on( "click", show_smiles);
 		$("#page_comment .topheader h1").on( "vclick", UserPage.Go);
 		$("#page_comment-trashbutton").on ( "vclick", Comments.Delete.Do);
+		$("#page_comment_attach .share").on("vclick", Exch.Go);
 	});
 	<!------------------------------- обработчики страницы событий-->
 	$( document ).on( "pagecreate", "#page_evants", function() {
@@ -6991,6 +7278,14 @@
             <li><a href="#"  class="page_msg2_menu_li" option_type="ban"><i class="fa fa-ban fa-lg"></i>  Заблокировать</a></li>
         </ul>
 	</div>
+	<!-- меню приаттачивания -->
+	<div data-role="popup" id="page_msg2_attach" data-theme="b">
+        <ul data-role="listview" data-inset="true" style="min-width:210px;">
+			<li><a href="#" to_type='msg' user_id='' source_type='my_fotos' class='share'><i class="fa fa-camera"></i>  Мои фотографии</a></li>
+            <li><a href="#"  to_type='msg' user_id='' source_type='my_music' class='share'><i class="fa fa-music"></i>  Моя музыка</a></li>
+			<li><a href="#"  id="nav-sendmsg-smile" txtarea_id="nav-msg-txtarea"><i class="fa fa-smile-o"></i>  Смайлики</a></li>
+        </ul>
+	</div>
 	<!-- окно подтверждения -->
 	<div data-role="popup" id="page_msg2_confirm_delete" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
 		<div data-role="header" data-theme="a">
@@ -7006,8 +7301,8 @@
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false">
 
 		<div class="footer-msg-form">
-			<div id="nav-sendmsg-smile" class="smile-div" txtarea_id="nav-msg-txtarea">
-				<a href="#" class="fa-button" ><i class="fa fa-smile-o fa-lg "></i></a>
+			<div class="smile-div" >
+				<a data-rel="popup" href="#page_msg2_attach" class="fa-button" ><i class="fa fa-plus fa-lg "></i></a>
 			</div>
 			<div class="txt-div">
 					<textarea id="nav-msg-txtarea" placeholder="Отправить сообщение..."></textarea>	
@@ -7123,6 +7418,10 @@
 		<div class="searchform">
 			<input type="search" class="input-search"  data-wrapper-class="ui-btn">
 			<button class="controlgroup-btn btn-find ui-btn-active">Найти</button><button class="controlgroup-btn btn-close"><i class="fa fa-times"></i></button>
+		</div>
+		
+		<div class="share-panel">
+			<button class="controlgroup-btn btn-share-ok ui-btn-active" style='width:50%'>Отправить</button><button class="controlgroup-btn btn-share-close" style='width:50%'>Отмена</button>
 		</div>
 	</div>
 	<!-- список полов -->
@@ -7252,7 +7551,9 @@
 	
 	
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
-		
+		<div class="share-panel">
+			<button class="controlgroup-btn btn-share-ok ui-btn-active" style='width:50%'>Отправить</button><button class="controlgroup-btn btn-share-close" style='width:50%'>Отмена</button>
+		</div>
 	</div>
 </div>
 
@@ -7455,12 +7756,19 @@
 			
         </ul>
 	</div>
-	
+	<!-- меню приаттачивания -->
+	<div data-role="popup" id="page_comment_attach" data-theme="b">
+        <ul data-role="listview" data-inset="true" style="min-width:210px;">
+			<li><a href="#" to_type='comments' t_key='' base='' source_type='my_fotos' class='share'><i class="fa fa-camera"></i>  Мои фотографии</a></li>
+            <li><a href="#"  to_type='comments' t_key='' base='' source_type='my_music' class='share'><i class="fa fa-music"></i>  Моя музыка</a></li>
+			<li><a href="#"  id="nav-comment-smile" txtarea_id="nav-comment-txtarea"><i class="fa fa-smile-o"></i>  Смайлики</a></li>
+        </ul>
+	</div>
 
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false">
 		<div class="footer-msg-form">
-			<div id="nav-comment-smile" class="smile-div" txtarea_id="nav-comment-txtarea">
-				<a href="#" class="fa-button" ><i class="fa fa-smile-o fa-lg "></i></a>
+			<div  class="smile-div">
+				<a  data-rel="popup" href="#page_comment_attach" class="fa-button" ><i class="fa fa-plus fa-lg "></i></a>
 			</div>
 			<div class="txt-div">
 					<textarea id="nav-comment-txtarea" placeholder="Отправить сообщение..."></textarea>	
