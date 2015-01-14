@@ -99,9 +99,7 @@
 		$(".ajax-loader-center").hide();
 		//обработчики
 		Fotos.Utils.HandleAjax("stop", settings);
-		console.log(settings);
-		console.log(jqxhr);
-		console.log(event);
+		console.log(jqxhr.responseText);
 	});
 	$( document ).ajaxError(function( event, request, settings ) {
 		$(".ajax-loader-center").hide();
