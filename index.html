@@ -41,7 +41,7 @@
 	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 	<script type="text/javascript" src="js/PushNotification.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
-	<script src="http://jsconsole.com/remote.js?18E00C2E-5FA2-4618-AC3F-8F996F3C1A65"></script>
+	
 	
 	
 </head>
@@ -83,7 +83,7 @@
 	//Обработка ajax
 	$(document).ajaxSend(function(event, jqxhr, settings) { 
 		Environment.System.LastAjaxCall = settings;
-		if (  settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 || settings.url.indexOf("silent_mode=true")>0) {
+		if ( settings.url.indexOf("autocomplete/show")>0 || settings.url.indexOf("method=clearDialogNtfy")>0 || settings.url.indexOf("server/proc_typing.php")>0 || settings.url.indexOf("method=refreshOnline")>0 || settings.url.indexOf("method=check_input")>0 || settings.url.indexOf("silent_mode=true")>0) {
 			//если автозаполнение  то ничего не делаем
 		}
 		else{
@@ -99,7 +99,6 @@
 		$(".ajax-loader-center").hide();
 		//обработчики
 		Fotos.Utils.HandleAjax("stop", settings);
-		console.log(jqxhr.responseText);
 	});
 	$( document ).ajaxError(function( event, request, settings ) {
 		$(".ajax-loader-center").hide();
@@ -7095,16 +7094,6 @@
 			maxItemsToShow:6
 		  });
 		  $("#page_settings_resp").autocomplete(LS("server/autocomplete/show_regions.php"), {
-			delay:10,
-			minChars:2,
-			matchSubset:0,
-			autoFill:false,
-			matchContains:1,
-			cacheLength:1,
-			selectFirst:true,
-			maxItemsToShow:6
-		  });
-		  $("#page_settings_raion, #page_settings_selo").autocomplete(LS("server/autocomplete/show_kladr.php"), {
 			delay:10,
 			minChars:2,
 			matchSubset:0,
