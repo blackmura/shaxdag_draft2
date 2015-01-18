@@ -289,5 +289,23 @@ var app = {
 			app.Device.status == "offline";
 		}
 		
+	},
+	Download: {
+		music : function(url){
+			var fileTransfer = new FileTransfer();
+			console.log("About to start transfer");
+			/*
+			fileTransfer.download(url, store + fileName, 
+				function(entry) {
+					console.log("Success!");
+					appStart();
+				}, 
+				function(err) {
+					console.log("Error");
+					console.dir(err);
+				});
+				*/
+			
+		}
 	}
 };

@@ -303,7 +303,8 @@ $.fn.text2richtext = function () {
 		);
 	});
 	$(".richtext-comments").on("vclick", Comments.Go);
-	PS.ReCreate($("#"+getCurrentPage()+" a.ps-show"), null, "ajax");
+	if(getCurrentPage()!="page_evants")
+		PS.ReCreate($("#"+getCurrentPage()+" a.ps-show"), null, "ajax");
 	return true;
 }
 //выравнивает объекты по высоте

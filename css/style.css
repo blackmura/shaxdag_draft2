@@ -746,7 +746,7 @@
 	display:none;
 	z-index:9999999;
 	position:fixed;
-	top:50%;
+	top: 0.4em;
 	left:50%;
 	border:0;
 }
@@ -853,6 +853,9 @@ div.ajax-overlay{
 	margin-left:0.5em;
 } 
 #comments-content .btn-unlike{
+	margin-left:0.5em;
+}
+#comments-content .btn-download{
 	margin-left:0.5em;
 }
 #comments-content  span.rating {
