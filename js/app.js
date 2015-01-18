@@ -292,6 +292,7 @@ var app = {
 	},
 	Download: {
 		music : function(url, filename){
+			/*
 			var fileTransfer = new FileTransfer();
 			var FileName = getUnixTime()+".mp3";
 			var store = cordova.file.dataDirectory;
@@ -307,7 +308,7 @@ var app = {
 					console.dir(err);
 				});
 				
-			
+			*/
 		}
 	}
 };
