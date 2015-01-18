@@ -294,7 +294,7 @@ var app = {
 		music : function(url, filename){
 			
 			var fileTransfer = new FileTransfer();
-			var FileName = getUnixTime()+".mp3";
+			var fileName = getUnixTime()+".mp3";
 			var store = cordova.file.dataDirectory;
 			console.log("About to start transfer");
 			
