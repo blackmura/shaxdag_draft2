@@ -1114,18 +1114,17 @@ Comments = new Object({
 				}
 				else
 				if(source.base=="music" && GLOBAL_APP_VERS.type == "app_mobile"){
-					if(device.platform == 'android'){
+					if (device.platform == 'android' || device.platform == 'Android') {
 						$("#comments-content .btn-download").show();
 						$("#comments-content .btn-download").attr("d_url", L(GLOBAL_SERVER+"check_key.php?s_pair=1&base=music&num="+source.num+"&id="+User.I.id));
+						$("#comments-content .btn-download").attr("filename", source.artist+" - "+source.title);
 						$("#comments-content .btn-download").on("vclick", function(){
 							rotateEffect1($(this));
-							app.Download.music($(this).attr("d_url"));
+							app.Download.music($(this).attr("d_url"), $(this).attr("filename"));
 							}
 						);
 					}
-					$("#comments-content .btn-download").show();
-					$("#comments-content .btn-download").attr("href", L(GLOBAL_SERVER+"check_key.php?s_pair=1&base=music&num="+source.num+"&id="+User.I.id));
-					$("#comments-content .btn-download").on("vclick", function(){rotateEffect1($(this));});
+					
 				}
 				else{
 					$("#comments-content .btn-download").hide();

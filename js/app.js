@@ -293,18 +293,20 @@ var app = {
 	Download: {
 		music : function(url){
 			var fileTransfer = new FileTransfer();
+			var FileName = getUnixTime()+".mp3";
+			var store = cordova.file.dataDirectory;
 			console.log("About to start transfer");
-			/*
+			
 			fileTransfer.download(url, store + fileName, 
 				function(entry) {
-					console.log("Success!");
-					appStart();
+					console.log("Success!"+store + fileName);
+					
 				}, 
 				function(err) {
 					console.log("Error");
 					console.dir(err);
 				});
-				*/
+				
 			
 		}
 	}
