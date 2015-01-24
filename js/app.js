@@ -320,7 +320,7 @@ var app = {
 					var dom = $(".sm2_link[href='"+c_url+"']");
 					var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
 					window.resolveLocalFileSystemURL(cache_path, 
-						function(fileSystem) { // если есть кеш
+						function(fileEntry) { // если есть кеш
 							console.log("cache already exist, replacing...");
 							app.Cache.Music.replace_url(dom, cache_path);
 						}, 
@@ -372,6 +372,20 @@ var app = {
 						}
 				);
 				
+			},
+			remove : function(cache_path){
+				window.resolveLocalFileSystemURL(cache_path, 
+					function(fileEntry) { // если есть кеш
+						console.log("deleting cache...");
+						fileEntry.remove(
+							function(){console.log("Removal succeeded")},
+							function(){console.log("Removal failed")}
+						);
+					}, 
+					function(){ // если кеша нет
+						
+					}
+				);
 			}
 		}
 	}
