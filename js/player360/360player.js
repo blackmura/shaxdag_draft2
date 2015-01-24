@@ -1,4 +1,5 @@
 /**
+MURAD: added new Music.onPlay handler to  this.events.play, stop, pause object
  *
  * SoundManager 2 Demo: 360-degree / "donut player"
  * ------------------------------------------------
@@ -316,18 +317,21 @@ function ThreeSixtyPlayer() {
       this._360data.className = pl.css.sPlaying;
       pl.addClass(this._360data.oUIBox,this._360data.className);
       self.fanOut(this);
+	  Music.onPlay(this);
     },
 
     stop: function() {
       pl.removeClass(this._360data.oUIBox,this._360data.className);
       this._360data.className = '';
       self.fanIn(this);
+	   Music.onStop(this);
     },
 
     pause: function() {
       pl.removeClass(this._360data.oUIBox,this._360data.className);
       this._360data.className = pl.css.sPaused;
       pl.addClass(this._360data.oUIBox,this._360data.className);
+	  Music.onPause(this);
     },
 
     resume: function() {

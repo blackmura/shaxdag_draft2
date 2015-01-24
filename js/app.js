@@ -293,13 +293,13 @@ var app = {
 	Download: {
 		music : function(url, filename){
 			
-			var fileTransfer = new FileTransfer();
+			var  fileTransfer= new FileTransfer();
 			var fileName = getUnixTime()+".mp3";
-			var store = cordova.file.dataDirectory;
+			var store = cordova.file.cacheDirectory;
 			console.log("About to start transfer");
 			
 			fileTransfer.download(url, store + fileName, 
-				function(entry) {
+				function(entry) { // если есть кеш
 					console.log("Success!"+store + fileName);
 					
 				}, 
@@ -309,6 +309,68 @@ var app = {
 				});
 				
 			
+		}
+	},
+	Cache : {
+		Music : {
+			onPlay : function(c_url){
+				if (app.is_ready == 1){
+					console.log("Going to cache "+c_url);
+					var dom = $(".sm2_link[href='"+c_url+"']");
+					var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
+					window.resolveLocalFileSystemURL(cache_path, 
+						function(fileSystem) { // если есть кеш
+							console.log("cache already exist, replacing...");
+							app.Cache.Music.replace_url(dom, cache_path);
+						}, 
+						function(){ // если кеша нет
+							console.log("cache not exist. Downloading data...");
+							fileTransfer.download(c_url, cache_path, 
+								function(entry) { // если есть кеш
+									console.log("Success!"+store + fileName);
+									app.Cache.Music.replace_url(dom, cache_path);
+									
+								}, 
+								function(err) {
+									console.log("Error while trying to download the cache");
+								}
+							);
+						}
+					);
+				}
+				else
+					return false;
+			},
+			replace_url : function(dom, cache_path){
+				dom.attr("href", cache_path);
+				dom.parents(".song-item").children(".btn-add").append("<div class='cache-flag'><i class='fa fa-check'></i>кэш</div>");
+				console.log("music cached");
+			},
+			apply_cache : function (musics){
+				console.log("getting info about cached music");
+				if(musics.length){
+					$.each(musics, function(key,obj){ 
+						app.Cache.apply_single_cache(obj);
+					});
+				}
+				else{
+					app.Cache.apply_single_cache(musics);
+				}				
+			},
+			apply_single_cache : function(obj){
+				var c_url = Music.Utils.full_url(obj.path);
+				var dom = $("#"+getCurrentPage()+" .mus_"+ obj.num+" .sm2_link");
+				var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
+				window.resolveLocalFileSystemURL(cache_path, 
+						function(fileSystem) { // если есть кеш
+							app.Cache.Music.replace_url(dom, cache_path);
+						}, 
+						function(){ // если кеша нет
+						
+						}
+				);
+				
+			}
 		}
 	}
 };

@@ -290,6 +290,12 @@
 	margin-left: 0px;
 	background-color: #6AC0FA
 }
+.chache-flag {
+	font-size: 11px;
+	text-align: center;
+	margin-top: 0.2em;
+	color: #898989;
+}
 /*
 ** mobile device class
 */

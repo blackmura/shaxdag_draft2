@@ -211,32 +211,32 @@
 		//обработчик догрузок контента при скроллинге
 		$(document).on("scrollstop", function(){
 			if (getCurrentPage()=="page_fotos" || getCurrentPage()=="page_usersfotos"){
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 100) && Fotos.loading_data==0){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Fotos.loading_data==0){
 					Fotos.GoAppend();
 				}
 			}
 			if ($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id")=="page_usersearch"){
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 100) && UserList.loading_data==0){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && UserList.loading_data==0){
 					UserList.GoAppend();
 				}
 			}
 			if ($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id")=="page_msg2"){				
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 100) && NavMsg.loading_data==0 && !$('#nav-msg-txtarea').is(':focus')){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && NavMsg.loading_data==0 && !$('#nav-msg-txtarea').is(':focus')){
 					NavMsg.GoAppendDialog();
 				}
 			}
 			if ($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id")=="page_comment"){				
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 100) && Comments.loading_data==0 && !$('#nav-comment-txtarea').is(':focus')){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Comments.loading_data==0 && !$('#nav-comment-txtarea').is(':focus')){
 					Comments.GoAppend();
 				}
 			}
 			if ($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id")=="page_music"){	
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 100) && Music.loading_data==0 && !$('#page_music .input-search').is(':focus')){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Music.loading_data==0 && !$('#page_music .input-search').is(':focus')){
 					Music.GoAppend();
 				}
 			}
 			if ($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id")=="page_evants"){				
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 100) && Evants.loading_data==0){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Evants.loading_data==0){
 					Evants.onScroll();
 				}
 			}

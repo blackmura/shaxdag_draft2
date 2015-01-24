@@ -1,13 +1,14 @@
 Music = new Object({
 		list : Object(),
 		active_user : Object(),
-		el_per_page : 32,
+		el_per_page : 12,
 		loading_data : 0,
 		total_all: 0,
 		url_params : Object(),
+		sm2_curr_id: 0,
 		init : function(){
 			Music.list = new Array();
-			Music.el_per_page = 32;
+			Music.el_per_page = 12;
 			Music.loading_data =0;
 			Music.total_all = 0;
 			Music.url_params = new Object();
@@ -121,7 +122,7 @@ Music = new Object({
 			var i=0;
 			var page_id = $(":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id");
 			$.each(resp_obj.musics, function(key,obj){
-				html+= "<div class='song-item mus_"+resp_obj.musics[i].num+"'><div class='ui360'><a href='http://media.shaxdag.com/Music/"+resp_obj.musics[i].path+"'>"+resp_obj.musics[i].artist+" "+resp_obj.musics[i].title+"</a></div></div>";
+				html+= "<div class='song-item mus_"+resp_obj.musics[i].num+"'><div class='ui360'><a href='"+Music.Utils.full_url(resp_obj.musics[i].path)+"'>"+resp_obj.musics[i].artist+" "+resp_obj.musics[i].title+"</a></div></div>";
 				i++;
 			});
 			 
@@ -183,6 +184,10 @@ Music = new Object({
 					$("#"+page_id+" .mus_"+ obj.num+" .song_title, #"+page_id+" .mus_"+ obj.num+" .btn-add").on ("vclick", Exch.onChoose);
 				}
 			});
+			//включаем кеш
+			if(GLOBAL_APP_VERS.type == "app_mobile" && app.is_ready == 1){
+				app.Cache.Music.apply_cache(resp_obj.musics); 
+			}
 		},
 		Single :{
 			insert : function(container_id, obj){
@@ -197,7 +202,7 @@ Music = new Object({
 				else
 					title = obj.title;
 				Music.list.push(obj);
-				html+= "<div class='song-item mus_"+obj.num+"'><div class='ui360'><a href='http://media.shaxdag.com/Music/"+obj.path+"'>"+title+"</a></div></div>";
+				html+= "<div class='song-item mus_"+obj.num+"'><div class='ui360'><a href='"+Music.Utils.full_url(obj.path)+"'>"+title+"</a></div></div>";
 				$("#"+container_id).html(html);
 				threeSixtyPlayer.config.playNext=false;
 				threeSixtyPlayer.init();
@@ -206,6 +211,11 @@ Music = new Object({
 				//добавляем кнопки снизу				
 				Music.link.refresh_like_menu(obj);				
 				$("#"+container_id+" .mus_"+ obj.num+" .btn-add").on ("vclick", Music.link.add);
+				//включаем кеш
+				if(GLOBAL_APP_VERS.type == "app_mobile" && app.is_ready == 1){
+					app.Cache.Music.apply_cache(obj);
+				}
+				
 			}
 		},
 		Utils : {
@@ -227,6 +237,9 @@ Music = new Object({
 				}
 				else
 					$("#page_music .found_number").html("Не найдено ни одной песни");
+			},
+			full_url : function(path){
+				return 'http://media.shaxdag.com/Music/'+path;
 			}
 		},
 		link : {
@@ -468,8 +481,20 @@ Music = new Object({
 				
 			},
 			
+		},
+		onPlay : function(e){
+			if(GLOBAL_APP_VERS.type=="app_mobile"){
+				app.Cache.Music.onPlay(e.url);
+			}
+			Music.sm2_curr_id = e.id;
+		},
+		onStop : function(e){
+			console.log(e);
+		},
+		onPause : function(e){
+			console.log(e);
 		}
-	
+		
 	});
 	Audio_ = new Object({
 		context :  Object(),
