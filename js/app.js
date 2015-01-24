@@ -13,7 +13,7 @@ var app = {
 		document.addEventListener('deviceready', this.onDeviceReady, false);
 	},
 	onDeviceReady: function(){
-		this.is_ready = 1;
+		app.is_ready = 1;
 		app.Device.appendListeners();
 		//включаем push
 		app.PN.onDeviceReady();

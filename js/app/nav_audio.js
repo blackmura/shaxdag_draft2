@@ -489,10 +489,10 @@ Music = new Object({
 			Music.sm2_curr_id = e.id;
 		},
 		onStop : function(e){
-			console.log(e);
+			console.log("stop");
 		},
 		onPause : function(e){
-			console.log(e);
+			console.log("pause");
 		}
 		
 	});
