@@ -324,6 +324,7 @@ var app = {
 							app.Cache.Music.replace_url(dom, cache_path);
 						}, 
 						function(){ // если кеша нет
+							var  fileTransfer= new FileTransfer();
 							console.log("cache not exist. Downloading data...");
 							fileTransfer.download(c_url, cache_path, 
 								function(entry) { // если есть кеш
