@@ -435,11 +435,12 @@ function ThreeSixtyPlayer() {
         thisSound.togglePause();
       } else {
         // different sound
-        thisSound.togglePause(); // start playing current
+      
         sm._writeDebug('sound different than last sound: '+self.lastSound.id);
         if (!self.config.allowMultiple && self.lastSound) {
           self.stopSound(self.lastSound);
         }
+		setTimeout(function(){thisSound.togglePause()},100); // start playing current
       }
 
     } else {
