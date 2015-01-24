@@ -350,11 +350,11 @@ var app = {
 				console.log("getting info about cached music");
 				if(musics.length){
 					$.each(musics, function(key,obj){ 
-						app.Cache.apply_single_cache(obj);
+						app.Cache.Music.apply_single_cache(obj);
 					});
 				}
 				else{
-					app.Cache.apply_single_cache(musics);
+					app.Cache.Music.apply_single_cache(musics);
 				}				
 			},
 			apply_single_cache : function(obj){
