@@ -15,9 +15,9 @@ var app = {
 	onDeviceReady: function(){
 		app.is_ready = 1;
 		app.Device.appendListeners();
-		//РІРєР»СЋС‡Р°РµРј push
+		//включаем push
 		app.PN.onDeviceReady();
-		//РІРєР»СЋС‡Р°РµРј РіРµРѕР»РѕРєР°С†РёСЋ
+		//включаем геолокацию
 		Geo.init();
 	},
 	PN : {
@@ -141,7 +141,7 @@ var app = {
 				}
 				else{
 					console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
-					//РµСЃР»Рё РїСЂРёС€Р»Рѕ СЃРѕРѕР±С‰РµРЅРёРµ
+					//если пришло сообщение
 					if(e.payload.type == "msg")
 						NavMsg.OpenDialog(e.payload.user_id);
 					else
@@ -170,7 +170,7 @@ var app = {
 		onBtnExplore : function(ev){
 			ev.preventDefault()	
 			var upload_type = $(this).attr("upload_type");
-			app.CameraTrans.type = upload_type; //1- Р·Р°РіСЂСѓР·РєР° preview fotos, 2 -Р·Р°РіСЂСѓР·РєР° preview users_fotos  - avatar
+			app.CameraTrans.type = upload_type; //1- загрузка preview fotos, 2 -загрузка preview users_fotos  - avatar
 			if(app.CameraTrans.type == 1 || app.CameraTrans.type== 2 || app.CameraTrans.type == 3){
 				var Camoptions = {
 				  destinationType : Camera.DestinationType.FILE_URI,
@@ -194,9 +194,9 @@ var app = {
 		onImageChoose : function(uri){
 			var options = {};
 			var server; 
-			//РїРѕР»СѓС‡РµРЅ РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ
+			//получен путь к файлу
 			console.log(uri);
-			//РµСЃР»Рё Р·Р°РіСЂСѓР¶Р°РµРј РїСЂРµРІСЊСЋ 
+			//если загружаем превью 
 			if (app.CameraTrans.type == 1 || app.CameraTrans.type == 2){
 				options.fileKey = "userfile";
 				options.params = {method: "savePicture", upload_type: app.CameraTrans.type};
@@ -207,7 +207,7 @@ var app = {
 				ft.upload(uri, encodeURI(server), app.CameraTrans.onUpload,  app.CameraTrans.fail, options);
 			}
 			else
-			//РµСЃР»Рё Р·Р°РіСЂСѓР¶Р°РµРј Р°РІР°С‚Р°СЂ
+			//если загружаем аватар
 			if (app.CameraTrans.type == 3){
 				options.fileKey = "userfile";
 				options.params = {method: "setAvatar", upload_type: app.CameraTrans.type};
@@ -226,19 +226,19 @@ var app = {
 			console.log(r);
 			var data = JSON.parse(r.response);
 
-			if(data.upload_type == 1 || data.upload_type == 2){ //РѕР±СЂР°Р±РѕС‚С‡РёРє Р·Р°РіСЂСѓР·РєРё РїСЂРµРІСЊСЋ С„РѕС‚РѕРє
+			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
 				if(data.upload_type == 1)
 					base="fotos";
 				else
 					base="users_fotos";
 				if(data.auth_status == "success"){	
 					if(data.method_status == "success"){
-						//СЃРѕС…СЂР°РЅСЏРµРј id С‚РµРєСѓС‰РµР№ С„РѕС‚РѕРіСЂР°С„РёРё Рё РѕС‚РѕРѕР±СЂР°Р¶Р°РµРј РїСЂРµРІСЊСЋ
+						//сохраняем id текущей фотографии и отоображаем превью
 						Uploader.current ={id : data.num, src : data.src};
 						$("#page_upload .uploader .preview i").css({display: "none"}); 
 						$("#page_upload .uploader .preview .preview-src img").attr("src", User.html.preview_url("large_800/"+data.src, base));
 						$("#page_upload .uploader .preview .preview-src").css({display: "block"});
-						//РѕС‚РѕР±СЂР°Р¶Р°РµРј РєРЅРѕРїРєСѓ СЃРЅРѕРІР°
+						//отображаем кнопку снова
 						$("#page_upload .uploader .btn-save").css({display: "block"}); 
 					
 					}
@@ -251,7 +251,7 @@ var app = {
 				console.log(data);
 			} 
 			else
-			if(data.upload_type == 3 ){ //РѕР±СЂР°Р±РѕС‚С‡РёРє Р·Р°РіСЂСѓР·РєРё avatar
+			if(data.upload_type == 3 ){ //обработчик загрузки avatar
 				if(data.auth_status == "success"){	
 					if(data.method_status == "success"){
 						User.I.foto = data.src;
@@ -299,7 +299,7 @@ var app = {
 			console.log("About to start transfer");
 			
 			fileTransfer.download(url, store + fileName, 
-				function(entry) { // РµСЃР»Рё РµСЃС‚СЊ РєРµС€
+				function(entry) { // если есть кеш
 					console.log("Success!"+store + fileName);
 					
 				}, 
@@ -314,21 +314,22 @@ var app = {
 	Cache : {
 		Music : {
 			onPlay : function(c_url){
-				if (app.is_ready == 1){
+				if (app.is_ready == 1 && !c_url.indexOf("http://")>0){
+					
 					console.log("Going to cache "+c_url);
 					var dom = $(".sm2_link[href='"+c_url+"']");
 					var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
 					window.resolveLocalFileSystemURL(cache_path, 
-						function(fileSystem) { // РµСЃР»Рё РµСЃС‚СЊ РєРµС€
+						function(fileSystem) { // если есть кеш
 							console.log("cache already exist, replacing...");
 							app.Cache.Music.replace_url(dom, cache_path);
 						}, 
-						function(){ // РµСЃР»Рё РєРµС€Р° РЅРµС‚
+						function(){ // если кеша нет
 							var  fileTransfer= new FileTransfer();
 							console.log("cache not exist. Downloading data...");
 							fileTransfer.download(c_url, cache_path, 
-								function(entry) { // РµСЃР»Рё РµСЃС‚СЊ РєРµС€
-									console.log("Success!"+store + fileName);
+								function(entry) { // если есть кеш
+									console.log(cache_path+" Successfully cached");
 									app.Cache.Music.replace_url(dom, cache_path);
 									
 								}, 
@@ -344,7 +345,7 @@ var app = {
 			},
 			replace_url : function(dom, cache_path){
 				dom.attr("href", cache_path);
-				dom.parents(".song-item").children(".btn-add").append("<div class='cache-flag'><i class='fa fa-check'></i>РєСЌС€</div>");
+				dom.parents(".song-item").children(".btn-add").append("<div class='cache-flag'><i class='fa fa-check'></i>кэш</div>");
 				console.log("music cached");
 			},
 			apply_cache : function (musics){
@@ -363,10 +364,10 @@ var app = {
 				var dom = $("#"+getCurrentPage()+" .mus_"+ obj.num+" .sm2_link");
 				var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
 				window.resolveLocalFileSystemURL(cache_path, 
-						function(fileSystem) { // РµСЃР»Рё РµСЃС‚СЊ РєРµС€
+						function(fileSystem) { // если есть кеш
 							app.Cache.Music.replace_url(dom, cache_path);
 						}, 
-						function(){ // РµСЃР»Рё РєРµС€Р° РЅРµС‚
+						function(){ // если кеша нет
 						
 						}
 				);
