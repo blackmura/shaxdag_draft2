@@ -328,17 +328,20 @@ var app = {
 				var found_i = -1;
 				var filename;
 				var c_url;
+				var mus_obj;
 				found_i = Music.Utils.get_obj_index(Music.list, t_key);
 				if (app.is_ready == 1 && found_i>=0){
 					filename = Music.list[found_i].path.substring(Music.list[found_i].path.lastIndexOf('/')+1);
 					var cache_path = cordova.file.cacheDirectory+filename;
 					c_url = Music.Utils.full_url(Music.list[found_i].path);
+					mus_obj = Music.list[found_i];
 					console.log("Going to cache "+filename);
 
 					window.resolveLocalFileSystemURL(cache_path, 
 						function(fileEntry) { // если есть кеш
 							console.log("cache already exist, replacing...");
 							app.Cache.Music.replace_url(dom, cache_path);
+							app.Cache.Music.insertDB(mus_obj);
 						}, 
 						function(){ // если кеша нет
 							var  fileTransfer= new FileTransfer();
@@ -348,6 +351,7 @@ var app = {
 								function(entry) { // если есть кеш
 									console.log(cache_path+" Successfully cached");
 									app.Cache.Music.replace_url(dom, cache_path);
+									app.Cache.Music.insertDB(mus_obj);
 									
 								}, 
 								function(err) {
@@ -377,13 +381,14 @@ var app = {
 							fileEntry.remove(
 								function(){
 									app.Cache.Music.place_cache_btn(dom);
-									console.log("Removal succeeded")
+									console.log("Removal succeeded");
+									app.Cache.Music.deleteDB(t_key);
 								},
 								function(){console.log("Removal failed")}
 							);
 						}, 
 						function(){ // если кеша нет
-							
+							app.Cache.Music.deleteDB(t_key);
 						}
 					);
 				}
@@ -393,8 +398,8 @@ var app = {
 				var btn_cache = dom.find(".btn-cache");
 				if(btn_cache){
 					btn_cache.append("<i class='fa fa-cloud-download'></i>");
-					dom.off("click");
-					dom.on("click", app.Cache.Music.onRemoveBtn);
+					btn_cache("click");
+					btn_cache("click", app.Cache.Music.onRemoveBtn);
 				}
 				console.log("added cache flag");
 				
@@ -403,8 +408,8 @@ var app = {
 				var btn_cache = dom.find(".btn-cache");
 				if(btn_cache){
 					btn_cache.append("<i class='fa fa-cloud-download' style='color:#ccc;'></i>");		
-					dom.off("click");
-					dom.on("click", app.Cache.Music.onCacheBtn);
+					btn_cache.off("click");
+					btn_cache.on("click", app.Cache.Music.onCacheBtn);
 				}
 				console.log("not cached flag");
 			},
@@ -432,7 +437,32 @@ var app = {
 						}
 				);
 				
-			}
+			},
+			insertDB : function(mus_obj){
+				var db = window.sqlitePlugin.openDatabase({name: "DB"});
+				db.transaction(function(tx) {
+					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
+					tx.executeSql("delete from cache_music where num ="+mus_obj.num, [], function(tx, res) {
+
+						db.transaction(function(tx) {
+							tx.executeSql("insert into cache_music (num, data) values (?,?)", [mus_obj.num, JSON.stringify(mus_obj)], function(tx, res) {
+							  console.log("DB: row inserted: "+JSON.stringify(mus_obj));
+							});
+						});
+					});
+				});
+				
+			},
+			deleteDB : function(num){
+				var db = window.sqlitePlugin.openDatabase({name: "DB"});
+				db.transaction(function(tx) {
+					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
+					tx.executeSql("delete from cache_music where num ="+num, [], function(tx, res) {
+				
+					});
+				});
+				
+			},
 			
 		}
 	}
