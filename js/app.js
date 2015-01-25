@@ -465,7 +465,7 @@ var app = {
 			},
 			loadDB : function(params){
 				var db = window.sqlitePlugin.openDatabase({name: "DB"});
-				params = {initial: 1, user_id: User.I.id};
+				params = {initial: 1, user_id: User.I.id, cache: 1};
 				db.transaction(function(tx) {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("select data from cache_music;", [], function(tx, res) {
@@ -484,6 +484,7 @@ var app = {
 						//дополняем список песен
 						Music.list=data.musics;
 						Music.active_user = User.I;
+						$("#page_music_navbar").hide();
 						Music.Display(data, params);
 						console.log("Show cached music");
 						
