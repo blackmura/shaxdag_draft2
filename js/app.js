@@ -487,8 +487,7 @@ var app = {
 					},
 					function(e) {
 					  console.log("ERROR: " + e.message);
-					};
-					
+					}
 					);
 				});
 				
