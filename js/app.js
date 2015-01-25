@@ -479,7 +479,7 @@ var app = {
 						Music.list=data.musics;
 						Music.active_user = User.I;
 						Music.Display(data, params);
-						console.log("Load initial Music");
+						console.log("Show cached music");
 						
 					});
 				});
