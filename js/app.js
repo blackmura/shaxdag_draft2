@@ -467,15 +467,18 @@ var app = {
 				var db = window.sqlitePlugin.openDatabase({name: "DB"});
 				params = {initial: 1, user_id: User.I.id};
 				db.transaction(function(tx) {
-					//tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
+					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("select data from cache_music;", [], function(tx, res) {
-						console.log("Show cached music");
+						var i=0;
 						var data = {method_status: "success", auth_status: "success", musics: Array()};
 						Music.url_params=params;
 						Music.total_all=res.rows.length;
+						console.log("Show cached music "+Music.total_all);
 						//преобразуем к формату ответа с сервера
 						for (i=0;i<Music.total_all;i++){
-							data.musics[key] = JSON.parse(row.item(i).data);
+							data.musics[i] = JSON.parse(res.rows.item(i).data);
+							console.log("row: "+res.rows.item(i).data);
+							console.log(data.musics[i]);
 						}
 						
 						//дополняем список песен
