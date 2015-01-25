@@ -472,7 +472,7 @@ var app = {
 						var i=0;
 						var data = {method_status: "success", auth_status: "success", musics: Array()};
 						Music.url_params=params;
-						Music.total_all=res.rows.length;
+						data.total_all=res.rows.length;
 						//console.log("Show cached music "+Music.total_all);
 						//преобразуем к формату ответа с сервера
 						for (i=0;i<Music.total_all;i++){
@@ -496,6 +496,11 @@ var app = {
 				});
 				
 			},
+			pl_refresh_links : function(){
+				$.each(threeSixtyPlayer.links, function(key,obj){
+					threeSixtyPlayer.indexByURL[$(obj).attr("href")] = key;
+				});
+			}
 			
 		}
 	}

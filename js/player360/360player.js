@@ -1,5 +1,7 @@
 /**
 MURAD: added new Music.onPlay handler to  this.events.play, stop, pause object
+deleted check for mp3 link in onclick event
+line 352 added link refresh for app_mobile
  *
  * SoundManager 2 Demo: 360-degree / "donut player"
  * ------------------------------------------------
@@ -348,9 +350,10 @@ function ThreeSixtyPlayer() {
       this._360data.didFinish = true; // so fan draws full circle
       self.fanIn(this);
       if (pl.config.playNext) {
+		if(GLOBAL_APP_VERS.type=="app_mobile"){
+			app.Cache.Music.pl_refresh_links();
+		}
         nextLink = (pl.indexByURL[this._360data.oLink.href]+1);
-		console.log(nextLink+" "+this._360data.oLink.href);
-		console.log(pl.links);
         if (nextLink<pl.links.length) {
           pl.handleClick({'target':pl.links[nextLink]});
         }
