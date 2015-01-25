@@ -992,6 +992,9 @@ div.ajax-overlay{
 	cursor: pointer;
 }
 /*--------------------- Музыка-------------------------*/ 
+#page_music .topheader .btn-cache{
+	display: none;
+}
 .sm2-360ui {
 	background-color: rgba(16, 185, 225, 0.33);
 }

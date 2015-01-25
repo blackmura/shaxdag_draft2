@@ -14,9 +14,6 @@
 	<link href="css/style.css?4" rel="stylesheet" type="text/css" />
 	<link href="css/loaders.css?4" rel="stylesheet" type="text/css" />
 	
-	<script src="http://jsconsole.com/remote.js?CAA3A009-B710-47E8-BF9F-17357912180D"></script>
-
-	
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.mobile-1.4.5.min.js"></script>
 	<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
@@ -58,7 +55,6 @@
 	<script type="text/javascript" src="js/app/nav_geo.js"></script>
 	<script type="text/javascript" src="js/app/nav_video.js"></script>
 	<script type="text/javascript" src="js/app/nav_uploader.js"></script>
-	
 	
 </head>
 
@@ -616,6 +612,8 @@
 		//кнопки отмены или принятия share
 		$( "#page_music .btn-share-ok").on("vclick", Exch.onSend);
 		$( "#page_music .btn-share-close").on("vclick", Exch.onCancel);
+		//кэш
+		$("#page_music .topheader .btn-cache").on("vclick", Music.GoCache);
 	});
 	$( document ).on( "pagecreate", "#page_usersearch", function() {
 		//присваиваем обработчики  к кнопкам фильтров
@@ -1006,7 +1004,11 @@
 		<a href="#page_msg1" class='ui-btn ui-btn-a ui-corner-all ui-icon-envelope ui-btn-icon-notext topmenu-msg'>Сообщения </a>
 		</div>
 		<h1>Музыка</h1>
-		
+		<div class="ui-btn-right">
+			<a class="fa-button right btn-cache" href mode="cache" >
+				<i class="fa fa-cloud-download fa-lg fa-button-theme-a"></i> 
+			</a>
+		</div>
 	</div><!-- /header -->
 
 	<div role="main" class="ui-content page_limited" >
