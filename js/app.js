@@ -94,7 +94,7 @@ var app = {
 		},
 
 		tokenHandler: function  (result) {
-			console.log('Token handler: token: '+ result +'</li>');
+			//console.log('Token handler: token: '+ result +'</li>');
 			app.PN.saveDeviceId(result,2);
 			// Your iOS push server needs to know the token before it can push to this device
 			// here is where you might want to send it the token for later use.
@@ -130,17 +130,17 @@ var app = {
 		},
 		HandlePush : function(e){
 			if (e.foreground){
-				console.log('<li>--INLINE NOTIFICATION--' + '</li>');
+				//console.log('<li>--INLINE NOTIFICATION--' + '</li>');
 				// if the notification contains a soundname, play it.
 				//var my_media = new Media("/android_asset/www/"+e.soundname);
 				//my_media.play();
 			}
 			else{	// otherwise we were launched because the user touched a notification in the notification tray.
 				if (e.coldstart){
-					console.log('<li>--COLDSTART NOTIFICATION--' + '</li>');
+					//console.log('<li>--COLDSTART NOTIFICATION--' + '</li>');
 				}
 				else{
-					console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+					//console.log('<li>--BACKGROUND NOTIFICATION--' + '</li>');
 					//если пришло сообщение
 					if(e.payload.type == "msg")
 						NavMsg.OpenDialog(e.payload.user_id);
@@ -150,8 +150,8 @@ var app = {
 				}
 			}
 				
-			console.log('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
-			console.log('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
+			//console.log('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
+			//console.log('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
 		}
 	},
 	getPhoneGapPath: function()  {
@@ -195,7 +195,7 @@ var app = {
 			var options = {};
 			var server; 
 			//получен путь к файлу
-			console.log(uri);
+			//console.log(uri);
 			//если загружаем превью 
 			if (app.CameraTrans.type == 1 || app.CameraTrans.type == 2){
 				options.fileKey = "userfile";
@@ -219,11 +219,11 @@ var app = {
 			}
 		},
 		onImageError : function(msg){
-			console.log(msg);
+			//console.log(msg);
 		},
 		onUpload : function(r){
 			$(".ajax-loader-center").hide();
-			console.log(r);
+			//console.log(r);
 			var data = JSON.parse(r.response);
 
 			if(data.upload_type == 1 || data.upload_type == 2){ //обработчик загрузки превью фоток
@@ -246,9 +246,9 @@ var app = {
 						show_popup("message_not_sent", data.error_text);
 				} 
 				else{
-					console.log(data);	
+					//console.log(data);	
 				}
-				console.log(data);
+				//console.log(data);
 			} 
 			else
 			if(data.upload_type == 3 ){ //обработчик загрузки avatar
@@ -264,15 +264,15 @@ var app = {
 						show_popup("message_not_sent", data.error_text);
 				} 
 				else{
-					console.log(data);	
+					//console.log(data);	
 				}
-				console.log(data);
+				//console.log(data);
 			} 
 		},
 		fail : function(error){
 			$(".ajax-loader-center").hide();
-			console.log("upload error source " + error.source);
-			console.log("upload error target " + error.target);
+			//console.log("upload error source " + error.source);
+			//console.log("upload error target " + error.target);
 		}
 		
 	},
@@ -295,25 +295,25 @@ var app = {
 			onPlay : function(c_url){
 				if (app.is_ready == 1 && !c_url.indexOf("http://")>0){
 					
-					console.log("Going to cache "+c_url);
+					//console.log("Going to cache "+c_url);
 					var dom = $(".sm2_link[href='"+c_url+"']");
 					var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
 					window.resolveLocalFileSystemURL(cache_path, 
 						function(fileEntry) { // если есть кеш
-							console.log("cache already exist, replacing...");
+							//console.log("cache already exist, replacing...");
 							app.Cache.Music.replace_url(dom, cache_path);
 						}, 
 						function(){ // если кеша нет
 							var  fileTransfer= new FileTransfer();
-							console.log("cache not exist. Downloading data...");
+							//console.log("cache not exist. Downloading data...");
 							fileTransfer.download(c_url, cache_path, 
 								function(entry) { // если есть кеш
-									console.log(cache_path+" Successfully cached");
+									//console.log(cache_path+" Successfully cached");
 									app.Cache.Music.replace_url(dom, cache_path);
 									
 								}, 
 								function(err) {
-									console.log("Error while trying to download the cache");
+									//console.log("Error while trying to download the cache");
 								}
 							);
 						}
@@ -335,21 +335,21 @@ var app = {
 					var cache_path = cordova.file.cacheDirectory+filename;
 					c_url = Music.Utils.full_url(Music.list[found_i].path);
 					mus_obj = Music.list[found_i];
-					console.log("Going to cache "+filename);
+					//console.log("Going to cache "+filename);
 
 					window.resolveLocalFileSystemURL(cache_path, 
 						function(fileEntry) { // если есть кеш
-							console.log("cache already exist, replacing...");
+							//console.log("cache already exist, replacing...");
 							app.Cache.Music.replace_url(dom, cache_path);
 							app.Cache.Music.insertDB(mus_obj);
 						}, 
 						function(){ // если кеша нет
 							var  fileTransfer= new FileTransfer();
 							dom.html('<i class="fa fa-circle-o-notch fa-spin" style="color:#ccc;"></i>');
-							console.log("cache not exist. Downloading data...");
+							//console.log("cache not exist. Downloading data...");
 							fileTransfer.download(c_url, cache_path, 
 								function(entry) { // если есть кеш
-									console.log(cache_path+" Successfully cached");
+									//console.log(cache_path+" Successfully cached");
 									app.Cache.Music.replace_url(dom.parents(".song-item"), cache_path);
 									app.Cache.Music.insertDB(mus_obj);
 									
@@ -377,11 +377,11 @@ var app = {
 					cache_path = cordova.file.cacheDirectory+filename;
 					window.resolveLocalFileSystemURL(cache_path, 
 						function(fileEntry) { // если есть кеш
-							console.log("deleting cache...");
+							//console.log("deleting cache...");
 							fileEntry.remove(
 								function(){
 									app.Cache.Music.place_cache_btn(dom.parents(".song-item"));
-									console.log("Removal succeeded");
+									//console.log("Removal succeeded");
 									app.Cache.Music.deleteDB(t_key);
 								},
 								function(){console.log("Removal failed")}
@@ -401,7 +401,7 @@ var app = {
 					btn_cache.off("click");
 					btn_cache.on("click", app.Cache.Music.onRemoveBtn);
 				}
-				console.log("added cache flag");
+				//console.log("added cache flag");
 				
 			},
 			place_cache_btn : function(dom){
@@ -411,10 +411,10 @@ var app = {
 					btn_cache.off("click");
 					btn_cache.on("click", app.Cache.Music.onCacheBtn);
 				}
-				console.log("not cached flag");
+				//console.log("not cached flag");
 			},
 			apply_cache : function (musics){
-				console.log("getting info about cached music");
+				//console.log("getting info about cached music");
 				if(musics.length){
 					$.each(musics, function(key,obj){ 
 						app.Cache.Music.apply_single_cache(obj);
@@ -446,7 +446,7 @@ var app = {
 
 						db.transaction(function(tx) {
 							tx.executeSql("insert into cache_music (num, data) values (?,?)", [mus_obj.num, JSON.stringify(mus_obj)], function(tx, res) {
-							  console.log("DB: row inserted: "+JSON.stringify(mus_obj));
+							  //console.log("DB: row inserted: "+JSON.stringify(mus_obj));
 							});
 						});
 					});
@@ -458,7 +458,7 @@ var app = {
 				db.transaction(function(tx) {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("delete from cache_music where num ="+num, [], function(tx, res) {
-						console.log("deleted from sqlite");
+						//console.log("deleted from sqlite");
 					});
 				});
 				
@@ -473,12 +473,12 @@ var app = {
 						var data = {method_status: "success", auth_status: "success", musics: Array()};
 						Music.url_params=params;
 						Music.total_all=res.rows.length;
-						console.log("Show cached music "+Music.total_all);
+						//console.log("Show cached music "+Music.total_all);
 						//преобразуем к формату ответа с сервера
 						for (i=0;i<Music.total_all;i++){
 							data.musics[i] = JSON.parse(res.rows.item(i).data);
-							console.log("row: "+res.rows.item(i).data);
-							console.log(data.musics[i]);
+							//console.log("row: "+res.rows.item(i).data);
+							//console.log(data.musics[i]);
 						}
 						
 						//дополняем список песен
@@ -486,7 +486,7 @@ var app = {
 						Music.active_user = User.I;
 						$("#page_music_navbar").hide();
 						Music.Display(data, params);
-						console.log("Show cached music");
+						//console.log("Show cached music");
 						
 					},
 					function(e) {

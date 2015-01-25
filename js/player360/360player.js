@@ -418,8 +418,12 @@ function ThreeSixtyPlayer() {
     }
 
     sURL = o.getAttribute('href');
-
+	/*
     if (!o.href || !sm.canPlayLink(o) || self.hasClass(o,self.excludeClass)) {
+      return true; // pass-thru for non-MP3/non-links
+    }
+	*/
+	if (!o.href || self.hasClass(o,self.excludeClass)) {
       return true; // pass-thru for non-MP3/non-links
     }
 
@@ -440,7 +444,7 @@ function ThreeSixtyPlayer() {
         if (!self.config.allowMultiple && self.lastSound) {
           self.stopSound(self.lastSound);
         }
-		setTimeout(function(){thisSound.togglePause()},100); // start playing current
+		thisSound.togglePause(); // start playing current
       }
 
     } else {
