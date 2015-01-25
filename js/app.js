@@ -389,8 +389,8 @@ var app = {
 				}
 			},
 			replace_url : function(dom, cache_path){//подставляем в песню кешированный урл
-				dom.children(".sm2_link").attr("href", cache_path);
-				var btn_cache = dom.children(".btn-cache");
+				dom.find(".sm2_link").attr("href", cache_path);
+				var btn_cache = dom.find(".btn-cache");
 				if(btn_cache){
 					btn_cache.append("<i class='fa fa-cloud-download'></i>");
 					dom.off("click");
@@ -400,7 +400,7 @@ var app = {
 				
 			},
 			place_cache_btn : function(dom){
-				var btn_cache = dom.children(".btn-cache");
+				var btn_cache = dom.find(".btn-cache");
 				if(btn_cache){
 					btn_cache.append("<i class='fa fa-cloud-download' style='color:#ccc;'></i>");		
 					dom.off("click");
@@ -421,7 +421,7 @@ var app = {
 			},
 			apply_single_cache : function(obj){
 				var c_url = Music.Utils.full_url(obj.path);
-				var dom = $("#"+getCurrentPage()+" .mus_"+ obj.num+"");
+				var dom = $("#"+getCurrentPage()+"  .mus_"+ obj.num+"");
 				var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
 				window.resolveLocalFileSystemURL(cache_path, 
 						function(fileSystem) { // если есть кеш
