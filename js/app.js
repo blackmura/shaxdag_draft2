@@ -398,8 +398,8 @@ var app = {
 				var btn_cache = dom.find(".btn-cache");
 				if(btn_cache){
 					btn_cache.append("<i class='fa fa-cloud-download'></i>");
-					btn_cache("click");
-					btn_cache("click", app.Cache.Music.onRemoveBtn);
+					btn_cache.off("click");
+					btn_cache.on("click", app.Cache.Music.onRemoveBtn);
 				}
 				console.log("added cache flag");
 				
@@ -459,6 +459,28 @@ var app = {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("delete from cache_music where num ="+num, [], function(tx, res) {
 				
+					});
+				});
+				
+			},
+			loadDB : function(params){
+				var db = window.sqlitePlugin.openDatabase({name: "DB"});
+				db.transaction(function(tx) {
+					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
+					tx.executeSql("select data from cache_music", [], function(tx, res) {
+						var data = {method_status: "success", auth_status: :"success", musics: Array()};
+						Music.url_params=params;
+						Music.total_all=res.rows.length;
+						//преобразуем к формату ответа с сервера
+						$.each(res.rows, function(key,row){ 
+							data.musics[key] = JSON.parse(row.data);
+						});
+						//дополняем список песен
+						Music.list=data.musics;
+						Music.active_user = User.I;
+						Music.Display(data, params);
+						console.log("Load initial Music");
+						
 					});
 				});
 				
