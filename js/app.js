@@ -470,12 +470,11 @@ var app = {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("select data from cache_music;", [], function(tx, res) {
 						var i=0;
-						var data = {method_status: "success", auth_status: "success", musics: Array()};
+						var data = {method_status: "success", auth_status: "success", musics: Array(), total_all: res.rows.length};
 						Music.url_params=params;
-						data.total_all=res.rows.length;
 						//console.log("Show cached music "+Music.total_all);
 						//преобразуем к формату ответа с сервера
-						for (i=0;i<Music.total_all;i++){
+						for (i=0;i<data.total_all;i++){
 							data.musics[i] = JSON.parse(res.rows.item(i).data);
 							//console.log("row: "+res.rows.item(i).data);
 							//console.log(data.musics[i]);
