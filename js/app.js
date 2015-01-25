@@ -350,7 +350,7 @@ var app = {
 							fileTransfer.download(c_url, cache_path, 
 								function(entry) { // если есть кеш
 									console.log(cache_path+" Successfully cached");
-									app.Cache.Music.replace_url(dom, cache_path);
+									app.Cache.Music.replace_url(dom.parents(".song-item"), cache_path);
 									app.Cache.Music.insertDB(mus_obj);
 									
 								}, 
@@ -380,7 +380,7 @@ var app = {
 							console.log("deleting cache...");
 							fileEntry.remove(
 								function(){
-									app.Cache.Music.place_cache_btn(dom);
+									app.Cache.Music.place_cache_btn(dom.parents(".song-item"));
 									console.log("Removal succeeded");
 									app.Cache.Music.deleteDB(t_key);
 								},
@@ -458,23 +458,25 @@ var app = {
 				db.transaction(function(tx) {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("delete from cache_music where num ="+num, [], function(tx, res) {
-				
+						console.log("deleted from sqlite");
 					});
 				});
 				
 			},
 			loadDB : function(params){
 				var db = window.sqlitePlugin.openDatabase({name: "DB"});
+				params = {initial: 1, user_id: User.I.id};
 				db.transaction(function(tx) {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
-					tx.executeSql("select data from cache_music", [], function(tx, res) {
+					tx.executeSql("select data from cache_music;", [], function(tx, res) {
 						var data = {method_status: "success", auth_status: "success", musics: Array()};
 						Music.url_params=params;
 						Music.total_all=res.rows.length;
 						//преобразуем к формату ответа с сервера
-						$.each(res.rows, function(key,row){ 
-							data.musics[key] = JSON.parse(row.data);
-						});
+						for (i=0;i<Music.total_all;i++){
+							data.musics[key] = JSON.parse(row.item(i).data);
+						}
+						
 						//дополняем список песен
 						Music.list=data.musics;
 						Music.active_user = User.I;
