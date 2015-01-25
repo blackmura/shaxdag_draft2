@@ -397,7 +397,7 @@ var app = {
 				dom.find(".sm2_link").attr("href", cache_path);
 				var btn_cache = dom.find(".btn-cache");
 				if(btn_cache){
-					btn_cache.append("<i class='fa fa-cloud-download'></i>");
+					btn_cache.html("<i class='fa fa-cloud-download'></i>");
 					btn_cache.off("click");
 					btn_cache.on("click", app.Cache.Music.onRemoveBtn);
 				}
@@ -407,7 +407,7 @@ var app = {
 			place_cache_btn : function(dom){
 				var btn_cache = dom.find(".btn-cache");
 				if(btn_cache){
-					btn_cache.append("<i class='fa fa-cloud-download' style='color:#ccc;'></i>");		
+					btn_cache.html("<i class='fa fa-cloud-download' style='color:#ccc;'></i>");		
 					btn_cache.off("click");
 					btn_cache.on("click", app.Cache.Music.onCacheBtn);
 				}
@@ -467,8 +467,9 @@ var app = {
 				var db = window.sqlitePlugin.openDatabase({name: "DB"});
 				params = {initial: 1, user_id: User.I.id};
 				db.transaction(function(tx) {
-					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
+					//tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("select data from cache_music;", [], function(tx, res) {
+						console.log("Show cached music");
 						var data = {method_status: "success", auth_status: "success", musics: Array()};
 						Music.url_params=params;
 						Music.total_all=res.rows.length;
@@ -483,7 +484,12 @@ var app = {
 						Music.Display(data, params);
 						console.log("Show cached music");
 						
-					});
+					},
+					function(e) {
+					  console.log("ERROR: " + e.message);
+					};
+					
+					);
 				});
 				
 			},
