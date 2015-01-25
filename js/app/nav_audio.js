@@ -68,6 +68,18 @@ Music = new Object({
 			params.last=0;
 			Music.Load(params);
 		},
+		GoCache : function(ev){
+			ev.preventDefault();
+			var mode = $(this).attr("mode");
+			if(mode == "my"){
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_music?user_id="+User.I.id} );
+				$(this).attr("mode", "cache");
+			}
+			else{
+				$(this).attr("mode", "my");
+				app.Cache.Music.loadDB();
+			}
+		},
 		Load : function(params){
 			Music.loading_data=1;
 			$.get( LS("server/proc_music.php"), params, 
@@ -130,18 +142,40 @@ Music = new Object({
 			if(params.initial == 1){
 				$("#page_music_list").html(html);
 				$.mobile.silentScroll(0);
+				//облако в правом верхнем углу
+				$("#page_music .topheader .btn-cache").css({display: "none"});
 				//меняем заголовок
 				if(params.user_id!=null){
 					//если моя музыка
 					if(params.user_id == User.I.id){
-						$("#page_music .topheader h1").html("Моя музыка");
-						//если моих песен нет, то пишем подсказку
-						if(resp_obj.total_all==0)
-							$("#page_music_list").html("<div class='no-data-info'><p>Здесь будут отображаться песни, которые вы добавите в свой список</p><p>Все доступные песни можно найти на Главной станице в разделе Музыка</p></div>");
+						if(params.cache==1){
+							$("#page_music .topheader h1").html("Мой кэш");
+							//если моих песен нет, то пишем подсказку
+							if(resp_obj.total_all==0)
+								$("#page_music_list").html("<div class='no-data-info'><p>Здесь будут отображаться песни, которые вы добавите в кэш своего устройства. Это позволит слушать песни своего народа даже если нет соединения с интернетом!<br>Для добавления песни в кэш, нажмите на значок <i class='fa fa-cloud-download' style='color:#ccc;'></i> рядом с песней.</p></div>");
+							//облако в правом верхнем углу
+							if(GLOBAL_APP_VERS.type == "app_mobile"){
+								$("#page_music .topheader .btn-cache").css({display: "block"});
+								$("#page_music .topheader .btn-cache i").addClass("fa-button-active");
+							}
+						}
+						else{
+							$("#page_music .topheader h1").html("Моя музыка");
+							//если моих песен нет, то пишем подсказку
+							if(resp_obj.total_all==0)
+								$("#page_music_list").html("<div class='no-data-info'><p>Здесь будут отображаться песни, которые вы добавите в свой список</p><p>Все доступные песни можно найти на Главной станице в разделе Музыка</p></div>");
+							//облако в правом верхнем углу
+							if(GLOBAL_APP_VERS.type == "app_mobile"){
+								$("#page_music .topheader .btn-cache").css({display: "block"});
+								$("#page_music .topheader .btn-cache i").removeClass("fa-button-active");
+							}
+						}
+						
 					}
 					else{
 						$("#page_music .topheader h1").html(User.html.online_status(resp_obj.user,"tiny")+ " "+resp_obj.user.name);
 						$("#page_music .topheader h1").attr("user_id", resp_obj.user.id);
+						
 					}
 				}
 				else{
