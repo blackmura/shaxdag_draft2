@@ -290,27 +290,6 @@ var app = {
 		}
 		
 	},
-	Download: {
-		music : function(url, filename){
-			
-			var  fileTransfer= new FileTransfer();
-			var fileName = getUnixTime()+".mp3";
-			var store = cordova.file.cacheDirectory;
-			console.log("About to start transfer");
-			
-			fileTransfer.download(url, store + fileName, 
-				function(entry) { // если есть кеш
-					console.log("Success!"+store + fileName);
-					
-				}, 
-				function(err) {
-					console.log("Error");
-					console.dir(err);
-				});
-				
-			
-		}
-	},
 	Cache : {
 		Music : {
 			onPlay : function(c_url){
@@ -343,10 +322,91 @@ var app = {
 				else
 					return false;
 			},
-			replace_url : function(dom, cache_path){
-				dom.attr("href", cache_path);
-				dom.parents(".song-item").children(".btn-add").append("<div class='cache-flag'><i class='fa fa-check'></i>кэш</div>");
-				console.log("music cached");
+			onCacheBtn : function(ev){
+				var t_key = $(this).attr("t_key");
+				var dom  = $(this);
+				var found_i = -1;
+				var filename;
+				var c_url;
+				found_i = Music.Utils.get_obj_index(Music.list, t_key);
+				if (app.is_ready == 1 && found_i>=0){
+					filename = Music.list[found_i].path.substring(Music.list[found_i].path.lastIndexOf('/')+1);
+					var cache_path = cordova.file.cacheDirectory+filename;
+					c_url = Music.Utils.full_url(Music.list[found_i].path);
+					console.log("Going to cache "+filename);
+
+					window.resolveLocalFileSystemURL(cache_path, 
+						function(fileEntry) { // если есть кеш
+							console.log("cache already exist, replacing...");
+							app.Cache.Music.replace_url(dom, cache_path);
+						}, 
+						function(){ // если кеша нет
+							var  fileTransfer= new FileTransfer();
+							dom.html('<i class="fa fa-circle-o-notch fa-spin" style="color:#ccc;"></i>');
+							console.log("cache not exist. Downloading data...");
+							fileTransfer.download(c_url, cache_path, 
+								function(entry) { // если есть кеш
+									console.log(cache_path+" Successfully cached");
+									app.Cache.Music.replace_url(dom, cache_path);
+									
+								}, 
+								function(err) {
+									dom.html('ошибка');
+									console.log("Error while trying to download the cache");
+								}
+							);
+						}
+					);
+				}
+				else
+					return false;
+			},
+			onRemoveBtn : function(ev){
+				var t_key = $(this).attr("t_key");
+				var dom  = $(this);
+				var found_i = -1;
+				var cache_path;
+				var filename;
+				found_i = Music.Utils.get_obj_index(Music.list, t_key);
+				if(found_i>=0){
+					filename = Music.list[found_i].path.substring(Music.list[found_i].path.lastIndexOf('/')+1);
+					cache_path = cordova.file.cacheDirectory+filename;
+					window.resolveLocalFileSystemURL(cache_path, 
+						function(fileEntry) { // если есть кеш
+							console.log("deleting cache...");
+							fileEntry.remove(
+								function(){
+									app.Cache.Music.place_cache_btn(dom);
+									console.log("Removal succeeded")
+								},
+								function(){console.log("Removal failed")}
+							);
+						}, 
+						function(){ // если кеша нет
+							
+						}
+					);
+				}
+			},
+			replace_url : function(dom, cache_path){//подставляем в песню кешированный урл
+				dom.children(".sm2_link").attr("href", cache_path);
+				var btn_cache = dom.children(".btn-cache");
+				if(btn_cache){
+					btn_cache.append("<i class='fa fa-cloud-download'></i>");
+					dom.off("click");
+					dom.on("click", app.Cache.Music.onRemoveBtn);
+				}
+				console.log("added cache flag");
+				
+			},
+			place_cache_btn : function(dom){
+				var btn_cache = dom.children(".btn-cache");
+				if(btn_cache){
+					btn_cache.append("<i class='fa fa-cloud-download' style='color:#ccc;'></i>");		
+					dom.off("click");
+					dom.on("click", app.Cache.Music.onCacheBtn);
+				}
+				console.log("not cached flag");
 			},
 			apply_cache : function (musics){
 				console.log("getting info about cached music");
@@ -361,32 +421,19 @@ var app = {
 			},
 			apply_single_cache : function(obj){
 				var c_url = Music.Utils.full_url(obj.path);
-				var dom = $("#"+getCurrentPage()+" .mus_"+ obj.num+" .sm2_link");
+				var dom = $("#"+getCurrentPage()+" .mus_"+ obj.num+"");
 				var cache_path = cordova.file.cacheDirectory+c_url.substring(c_url.lastIndexOf('/')+1);
 				window.resolveLocalFileSystemURL(cache_path, 
 						function(fileSystem) { // если есть кеш
 							app.Cache.Music.replace_url(dom, cache_path);
 						}, 
 						function(){ // если кеша нет
-						
+							app.Cache.Music.place_cache_btn(dom);
 						}
 				);
 				
-			},
-			remove : function(cache_path){
-				window.resolveLocalFileSystemURL(cache_path, 
-					function(fileEntry) { // если есть кеш
-						console.log("deleting cache...");
-						fileEntry.remove(
-							function(){console.log("Removal succeeded")},
-							function(){console.log("Removal failed")}
-						);
-					}, 
-					function(){ // если кеша нет
-						
-					}
-				);
 			}
+			
 		}
 	}
 };

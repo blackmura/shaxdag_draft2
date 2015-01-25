@@ -1039,6 +1039,12 @@ div.ajax-overlay{
 	font-size: 1.4em;
 	color: #403F3F;
 }
+.song-item .btn-cache { 
+	margin-left: 1em;
+	cursor: pointer;
+	font-size: 1.4em;
+	color: #403F3F;
+}
 .song-item .btn-like { 
 	display: none;
 }

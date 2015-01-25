@@ -19,7 +19,8 @@ Music = new Object({
 			return {
 				searchterm: null,
 				nation_id: null,
-				order: null
+				order: null,
+				user_id: null
 			}
 		},
 		Go :function(){
@@ -167,7 +168,7 @@ Music = new Object({
 				html_menu+="<div class='options'>";				
 				html_menu+='<a base="music" t_key="'+obj.num+'" mark="plus" class="ui-btn ui-btn-inline ui-mini ui-corner-all ui-icon-thumbs-o-up ui-btn-icon-notext btn-like" >Нравится</a>';
 				html_menu+='<a base="music" t_key="'+obj.num+'" mark="minus"  class="ui-btn ui-btn-inline ui-mini ui-corner-all ui-icon-thumbs-o-down ui-btn-icon-notext btn-unlike" >Не нравится</a>';
-				html_menu+='<span base="music" t_key="'+obj.num+'" mark="plus" class="rating"></span><span base="music" t_key="'+obj.num+'"  class="btn-comments" ></span>';				
+				html_menu+='<span base="music" t_key="'+obj.num+'" mark="plus" class="rating"></span><span base="music" t_key="'+obj.num+'"  class="btn-comments" ></span><span base="music" t_key="'+obj.num+'"  class="btn-cache" ></span>';				
 				html_menu+="</div>";
 				
 				$("#"+page_id+" .mus_"+ obj.num+" .song_title").append(html_menu);				
@@ -483,9 +484,9 @@ Music = new Object({
 			
 		},
 		onPlay : function(e){
-			if(GLOBAL_APP_VERS.type=="app_mobile"){
+			/*if(GLOBAL_APP_VERS.type=="app_mobile" && Music.Filter.user_id == User.I.id){
 				app.Cache.Music.onPlay(e.url);
-			}
+			}*/
 			Music.sm2_curr_id = e.id;
 		},
 		onStop : function(e){
