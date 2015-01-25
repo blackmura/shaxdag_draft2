@@ -349,6 +349,8 @@ function ThreeSixtyPlayer() {
       self.fanIn(this);
       if (pl.config.playNext) {
         nextLink = (pl.indexByURL[this._360data.oLink.href]+1);
+		console.log(nextLink+" "+this._360data.oLink.href);
+		console.log(pl.links);
         if (nextLink<pl.links.length) {
           pl.handleClick({'target':pl.links[nextLink]});
         }
