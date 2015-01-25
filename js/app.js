@@ -468,7 +468,7 @@ var app = {
 				db.transaction(function(tx) {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
 					tx.executeSql("select data from cache_music", [], function(tx, res) {
-						var data = {method_status: "success", auth_status: :"success", musics: Array()};
+						var data = {method_status: "success", auth_status: "success", musics: Array()};
 						Music.url_params=params;
 						Music.total_all=res.rows.length;
 						//преобразуем к формату ответа с сервера
