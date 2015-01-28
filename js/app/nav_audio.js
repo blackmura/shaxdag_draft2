@@ -26,6 +26,7 @@ Music = new Object({
 		Go :function(){
 			var user_id = $(this).attr("user_id");
 			if(user_id){
+				console.log("*************);
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_music?user_id="+user_id} )
 			}
 			else{
