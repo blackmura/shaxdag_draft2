@@ -173,6 +173,7 @@ Music = new Object({
 							if(GLOBAL_APP_VERS.type == "app_mobile"){
 								$("#page_music .topheader .btn-cache").css({display: "block"});
 								$("#page_music .topheader .btn-cache i").removeClass("fa-button-active");
+								$("#page_music .topheader .btn-cache").attr("mode", "cache");
 							}
 						}
 						
