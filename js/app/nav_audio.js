@@ -26,10 +26,11 @@ Music = new Object({
 		Go :function(){
 			var user_id = $(this).attr("user_id");
 			if(user_id){
-				console.log("*************);
+				console.log("************* Go");
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_music?user_id="+user_id} )
 			}
 			else{
+				console.log("************* Go 2");
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true});
 			}
 		},
@@ -73,10 +74,12 @@ Music = new Object({
 			ev.preventDefault();
 			var mode = $(this).attr("mode");
 			if(mode == "my"){
+				console.log("************* GoCache");
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_music?user_id="+User.I.id} );
 				$(this).attr("mode", "cache");
 			}
 			else{
+				console.log("************* GoCache2");
 				$(this).attr("mode", "my");
 				app.Cache.Music.loadDB();
 			}
@@ -134,6 +137,7 @@ Music = new Object({
 			var html="";
 			var html_menu="";
 			var i=0;
+			console.log(params);
 			var page_id = $(":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id");
 			$.each(resp_obj.musics, function(key,obj){
 				html+= "<div class='song-item mus_"+resp_obj.musics[i].num+"'><div class='ui360'><a href='"+Music.Utils.full_url(resp_obj.musics[i].path)+"'>"+resp_obj.musics[i].artist+" "+resp_obj.musics[i].title+"</a></div></div>";
