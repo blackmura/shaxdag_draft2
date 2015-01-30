@@ -15,6 +15,7 @@ NavLefPanel = new Object({
 					'<input type="button" data-icon="gear" data-iconpos="notext"  data-inline="true" data-mini="true" id="nav-settings" value="Настрокйи">'+
 					'<input type="button" data-iconpos="notext" data-icon="refresh"  data-inline="true"  data-mini="true" class="cl_nav-hrefresh" value="Обновить">'+
 					'<input type="button" data-iconpos="notext" data-icon="power"  data-inline="true"  data-mini="true" class="cl_nav-logout" confirm_type="logout" value="Выход">'+
+					'<input type="button" data-iconpos="notext" data-icon="play"  data-inline="true"  data-mini="true" id="play_btn"  value="">'+ 
 					'</div>';
 				html_left_panel+='</div>';
 				
@@ -39,11 +40,13 @@ NavLefPanel = new Object({
 				$( ".cl_nav-logout" ).button();
 				$( ".cl_nav-hrefresh" ).button();
 				$( "#nav-settings" ).button();
+				$( "#play_btn" ).button();
 				
 				//adding events
 				$( ".cl_nav-logout" ).on( "vclick", Environment.Confirm.onShow);
 				$( ".cl_nav-hrefresh" ).on( "vclick",Environment.UI.hard_refresh);
 				$( "#nav-settings" ).on( "vclick",  User.Settings.Page.Go);
+				$( "#play_btn" ).on("vclick", Music.link.onPanelPlay);
 				
 				$( "#left_panel .user-avatar-wrapper, .user-name-wrapper" ).on( "vclick",  UserPage.Go); 
 				$( "#nav-listview1 .nav-music" ).on( "vclick",  Music.Go); 
