@@ -441,11 +441,11 @@ var app = {
 			insertDB : function(mus_obj){
 				var db = window.sqlitePlugin.openDatabase({name: "DB"});
 				db.transaction(function(tx) {
-					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
+					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer, add_time integer)');
 					tx.executeSql("delete from cache_music where num ="+mus_obj.num, [], function(tx, res) {
 
 						db.transaction(function(tx) {
-							tx.executeSql("insert into cache_music (num, data) values (?,?)", [mus_obj.num, JSON.stringify(mus_obj)], function(tx, res) {
+							tx.executeSql("insert into cache_music (num, data, add_time) values (?,?,?)", [mus_obj.num, JSON.stringify(mus_obj),getUnixTime()], function(tx, res) {
 							  //console.log("DB: row inserted: "+JSON.stringify(mus_obj));
 							});
 						});
@@ -456,7 +456,7 @@ var app = {
 			deleteDB : function(num){
 				var db = window.sqlitePlugin.openDatabase({name: "DB"});
 				db.transaction(function(tx) {
-					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
+					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer,add_time integer)');
 					tx.executeSql("delete from cache_music where num ="+num, [], function(tx, res) {
 						//console.log("deleted from sqlite");
 					});
@@ -468,7 +468,7 @@ var app = {
 				params = {initial: 1, user_id: User.I.id, cache: 1};
 				db.transaction(function(tx) {
 					tx.executeSql('CREATE TABLE IF NOT EXISTS cache_music (num integer primary key, data text, play_time integer)');
-					tx.executeSql("select data from cache_music;", [], function(tx, res) {
+					tx.executeSql("select data from cache_music order by add_time desc;", [], function(tx, res) {
 						var i=0;
 						var data = {method_status: "success", auth_status: "success", musics: Array(), total_all: res.rows.length};
 						Music.url_params=params;
