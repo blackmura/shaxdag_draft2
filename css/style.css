@@ -323,6 +323,9 @@
 #left_panel .user-buttons-wrapper .ui-btn {
 	margin-left: 0.5em;
 }
+#left_panel .ui-icon-play, #left_panel .ui-icon-pause{
+	visibility: hidden;
+}
 /*список друзей*/
 
 #left_panel .friends-online{
@@ -1277,3 +1280,10 @@ div.ajax-overlay{
 	background: #000;
 	}
 	}
+/* фиксим иконки jqm */  
+.ui-icon-pause:after{
+	background-position: 4px center;
+}
+.ui-icon-play:after{
+	background-position: 6px center;
+}
