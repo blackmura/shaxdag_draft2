@@ -2,6 +2,7 @@
 MURAD: added new Music.onPlay handler to  this.events.play, stop, pause object
 deleted check for mp3 link in onclick event
 line 352 added link refresh for app_mobile
+this.init = function() - заменен //var oItems = self.getElementsByClassName('ui360','div') на jquery и не исключаются ссылки в links у которых уже есть класс 360
  *
  * SoundManager 2 Demo: 360-degree / "donut player"
  * ------------------------------------------------
@@ -1040,8 +1041,8 @@ function ThreeSixtyPlayer() {
   this.init = function() {
 
     sm._writeDebug('threeSixtyPlayer.init()');
-
-    var oItems = self.getElementsByClassName('ui360','div'),
+	var oItems = $("#"+getCurrentPage()+" .ui360"),
+    //var oItems = self.getElementsByClassName('ui360','div'),
         i, j, oLinks = [], is_vis = false, foundItems = 0, canvasElements, oCanvas, oCanvasCTX, oCover, diameter, radius, uiData, uiDataVis, oUI, oBtn, o, o2, oID;
 
     for (i=0,j=oItems.length; i<j; i++) {
@@ -1073,59 +1074,61 @@ function ThreeSixtyPlayer() {
     self.oUITemplateVis.innerHTML = self.getUIHTML(uiDataVis.circleDiameter).join('');
 
     for (i=0,j=oLinks.length; i<j; i++) {
-      if (sm.canPlayLink(oLinks[i]) && !self.hasClass(oLinks[i],self.excludeClass) && !self.hasClass(oLinks[i],self.css.sDefault)) {
-        self.addClass(oLinks[i],self.css.sDefault); // add default CSS decoration
+      if (sm.canPlayLink(oLinks[i]) && !self.hasClass(oLinks[i],self.excludeClass)) {       
         self.links[foundItems] = (oLinks[i]);
         self.indexByURL[oLinks[i].href] = foundItems; // hack for indexing
         foundItems++;
+		if(!self.hasClass(oLinks[i],self.css.sDefault)){
+			self.addClass(oLinks[i],self.css.sDefault); // add default CSS decoration
 
-        is_vis = self.hasClass(oLinks[i].parentNode, 'ui360-vis');
+			is_vis = self.hasClass(oLinks[i].parentNode, 'ui360-vis');
 
-        diameter = (is_vis ? uiDataVis : uiData).circleDiameter;
-        radius = (is_vis ? uiDataVis : uiData).circleRadius;
+			diameter = (is_vis ? uiDataVis : uiData).circleDiameter;
+			radius = (is_vis ? uiDataVis : uiData).circleRadius;
 
-        // add canvas shiz
-        oUI = oLinks[i].parentNode.insertBefore((is_vis?self.oUITemplateVis:self.oUITemplate).cloneNode(true),oLinks[i]);
+			// add canvas shiz
+			oUI = oLinks[i].parentNode.insertBefore((is_vis?self.oUITemplateVis:self.oUITemplate).cloneNode(true),oLinks[i]);
 
-        if (isIE && typeof window.G_vmlCanvasManager !== 'undefined') { // IE only
-          o = oLinks[i].parentNode;
-          o2 = document.createElement('canvas');
-          o2.className = 'sm2-canvas';
-          oID = 'sm2_canvas_'+i+(new Date().getTime());
-          o2.id = oID;
-          o2.width = diameter;
-          o2.height = diameter;
-          oUI.appendChild(o2);
-          window.G_vmlCanvasManager.initElement(o2); // Apply ExCanvas compatibility magic
-          oCanvas = document.getElementById(oID);
-          /**
-           * 05/2013: If present, Modernizr results in two canvas elements or something being made, one being <:canvas>.
-           * When this is the case, the first doesn't have getContext('2d') and such - so, use the second.
-           */
-           canvasElements = oCanvas.parentNode.getElementsByTagName('canvas');
-           if (canvasElements.length > 1) {
-             oCanvas = canvasElements[canvasElements.length-1];
-           }
-        } else { 
-          // add a handler for the button
-          oCanvas = oLinks[i].parentNode.getElementsByTagName('canvas')[0];
-        }
-        // enable hi-DPI / retina features?
-        if (hiDPIScale > 1) {
-          self.addClass(oCanvas, 'hi-dpi');
-        }
-        oCover = self.getElementsByClassName('sm2-cover','div',oLinks[i].parentNode)[0];
-        oBtn = oLinks[i].parentNode.getElementsByTagName('span')[0];
-        self.addEventHandler(oBtn,'click',self.buttonClick);
-        if (!isTouchDevice) {
-          self.addEventHandler(oCover,'mousedown',self.mouseDown);
-        } else {
-          self.addEventHandler(oCover,'touchstart',self.mouseDown);
-        }
-        oCanvasCTX = oCanvas.getContext('2d');
-        oCanvasCTX.translate(radius, radius);
-        oCanvasCTX.rotate(self.deg2rad(-90)); // compensate for arc starting at EAST // http://stackoverflow.com/questions/319267/tutorial-for-html-canvass-arc-function
-      }
+			if (isIE && typeof window.G_vmlCanvasManager !== 'undefined') { // IE only
+			  o = oLinks[i].parentNode;
+			  o2 = document.createElement('canvas');
+			  o2.className = 'sm2-canvas';
+			  oID = 'sm2_canvas_'+i+(new Date().getTime());
+			  o2.id = oID;
+			  o2.width = diameter;
+			  o2.height = diameter;
+			  oUI.appendChild(o2);
+			  window.G_vmlCanvasManager.initElement(o2); // Apply ExCanvas compatibility magic
+			  oCanvas = document.getElementById(oID);
+			  /**
+			   * 05/2013: If present, Modernizr results in two canvas elements or something being made, one being <:canvas>.
+			   * When this is the case, the first doesn't have getContext('2d') and such - so, use the second.
+			   */
+			   canvasElements = oCanvas.parentNode.getElementsByTagName('canvas');
+			   if (canvasElements.length > 1) {
+				 oCanvas = canvasElements[canvasElements.length-1];
+			   }
+			} else { 
+			  // add a handler for the button
+			  oCanvas = oLinks[i].parentNode.getElementsByTagName('canvas')[0];
+			}
+			// enable hi-DPI / retina features?
+			if (hiDPIScale > 1) {
+			  self.addClass(oCanvas, 'hi-dpi');
+			}
+			oCover = self.getElementsByClassName('sm2-cover','div',oLinks[i].parentNode)[0];
+			oBtn = oLinks[i].parentNode.getElementsByTagName('span')[0];
+			self.addEventHandler(oBtn,'click',self.buttonClick);
+			if (!isTouchDevice) {
+			  self.addEventHandler(oCover,'mousedown',self.mouseDown);
+			} else {
+			  self.addEventHandler(oCover,'touchstart',self.mouseDown);
+			}
+			oCanvasCTX = oCanvas.getContext('2d');
+			oCanvasCTX.translate(radius, radius);
+			oCanvasCTX.rotate(self.deg2rad(-90)); // compensate for arc starting at EAST // http://stackoverflow.com/questions/319267/tutorial-for-html-canvass-arc-function
+		}
+	  }
     }
     if (foundItems>0) {
       self.addEventHandler(document,'click',self.handleClick);

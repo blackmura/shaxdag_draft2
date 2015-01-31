@@ -346,12 +346,12 @@ var app = {
 						function(){ // если кеша нет
 							var  fileTransfer= new FileTransfer();
 							dom.html('<i class="fa fa-circle-o-notch fa-spin" style="color:#ccc;"></i>');
+							app.Cache.Music.insertDB(mus_obj);
 							//console.log("cache not exist. Downloading data...");
 							fileTransfer.download(c_url, cache_path, 
 								function(entry) { // если есть кеш
 									//console.log(cache_path+" Successfully cached");
-									app.Cache.Music.replace_url(dom.parents(".song-item"), cache_path);
-									app.Cache.Music.insertDB(mus_obj);
+									app.Cache.Music.replace_url(dom.parents(".song-item"), cache_path);									
 									
 								}, 
 								function(err) {

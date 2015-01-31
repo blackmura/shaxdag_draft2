@@ -281,7 +281,7 @@ Music = new Object({
 		link : {
 			refresh_nation_footer : function(){
 				
-				$("#page_music_nation_popup").html("<option value=0>Все народы</option>"+Environment.Nations.nations_selectmenu());
+				$("#page_music_nation_popup").html("<option value=0>Все народы</option>"+Environment.Nations.nations_selectmenu()+"<option value=100>Не тематическая</option>");
 				$("#page_music_nation_popup").change (Music.link.btn_nations_onClick);
 			},
 			refresh_navbar : function(){
