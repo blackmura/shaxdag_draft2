@@ -202,6 +202,10 @@ NavLefPanel = new Object({
 				else{
 					$(".nav-msg .ui-li-count").css({display: "none"});
 					$(".nav-msg .ui-li-count").html(null);
+					//если это маленкий телефон, то плюсуем сообщение к левой панели
+					if($(document).width()<360){
+						$(".topmenu-msg").css({display: "none"});
+					}
 				}
 				//друзья
 				if(NavLefPanel.Ntfy.obj.friends>0){
