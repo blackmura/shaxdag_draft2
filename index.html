@@ -228,7 +228,7 @@
 				}
 			}
 			if ($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id")=="page_music"){	
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Music.loading_data==0 && !$('#page_music .input-search').is(':focus')){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Music.loading_data==0 && !$('#page_music .input-search').is(':focus') && !getUrlVars().share){
 					Music.GoAppend();
 				}
 			}
