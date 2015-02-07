@@ -364,6 +364,9 @@ function show_smiles(){
 			},100);
 	}
 }
+function delCookie(name) {
+  document.cookie = name + "=" + "; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+}
 function setCookie (name, value, expires, path, domain, secure) {
          document.cookie = name + "=" + escape(value) +
         ((expires) ? "; expires=" + expires : "") +

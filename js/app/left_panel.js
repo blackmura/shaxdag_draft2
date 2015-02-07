@@ -142,6 +142,9 @@ NavLefPanel = new Object({
 									NavLefPanel.Users.display(Environment.OnlineUsers, "users_online");
 								}								
 							}
+							else{
+								Environment.Utils.handle_auth_error();
+							}
 							
 						},
 						"json"
@@ -188,6 +191,13 @@ NavLefPanel = new Object({
 				if(NavLefPanel.Ntfy.obj.msg>0){
 					$(".nav-msg .ui-li-count").css({display: "block"});
 					$(".nav-msg .ui-li-count").html(NavLefPanel.Ntfy.obj.msg);
+					//если это маленкий телефон, то плюсуем сообщение к левой панели
+					if($(document).width()<360){
+						btn_left_count=btn_left_count+NavLefPanel.Ntfy.obj.msg;
+						$(".topmenu-msg").css({display: "none"});
+					}
+					else
+						$(".topmenu-msg").css({display: "inline-block"});
 				}
 				else{
 					$(".nav-msg .ui-li-count").css({display: "none"});

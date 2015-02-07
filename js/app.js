@@ -19,6 +19,9 @@ var app = {
 		app.PN.onDeviceReady();
 		//включаем геолокацию
 		Geo.init();
+		var my_media = new Media(app.getPhoneGapPath()+"bin/init.mp3");
+		my_media.play();
+				
 	},
 	PN : {
 		Instance : Object(),

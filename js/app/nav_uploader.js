@@ -136,7 +136,9 @@ Uploader = new Object({
 			refresh_upload_form : function(){
 				$("#page_upload .uploader p").html(Uploader.Fotos.html.uploadForm());	
 				$("#page_upload .uploader p").trigger("create");				
-				UserList.link.refresh_nation_selectmenu_sp($("#uploader_fotos_nation"));				
+				//UserList.link.refresh_nation_selectmenu_sp($("#uploader_fotos_nation"));	
+				$("#uploader_fotos_nation").html(Environment.Nations.nations_selectmenu(User.I.nation_id));
+				$("#uploader_fotos_nation").selectmenu("refresh", true);
 				$("#page_upload .uploader .btn-save").off("vclick");
 				$("#page_upload .uploader .btn-save").on("vclick", Uploader.Upload);
 				$("#page_upload .uploader .btn-save").css({display: "block"});

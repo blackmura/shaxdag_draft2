@@ -19,7 +19,11 @@ Fotos = new Object({
 			else{
 				Fotos.init();
 				Exch.init();
-				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_fotos"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_fotos?album=1"} );
+				if(User.I.nation_id>0)
+					var Dataurl = "page_fotos?album=1&nation_id="+User.I.nation_id;
+				else
+					Dataurl = "page_fotos?album=1";
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_fotos"), { transition: "none", allowSamePageTransition: true, dataUrl: Dataurl} );
 				//показываем навбар
 				$("#page_fotos_navbar").show();
 				$("#page_fotos .navbar-public").css({display : "block"});

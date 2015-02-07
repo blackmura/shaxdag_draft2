@@ -13,7 +13,6 @@
 	<link rel="stylesheet" type="text/css" href="css/player360/360player.css" />
 	<link href="css/style.css?4" rel="stylesheet" type="text/css" />
 	<link href="css/loaders.css?4" rel="stylesheet" type="text/css" />
-
 	
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.mobile-1.4.5.min.js"></script>
@@ -48,20 +47,20 @@
 	
 	<script type="text/javascript" src="js/app/left_panel.js"></script>
 	<script type="text/javascript" src="js/app/nav_msg.js"></script>
-	<script type="text/javascript" src="js/app/nav_user.js"></script>
-	<script type="text/javascript" src="js/app/nav_audio.js"></script>
-	<script type="text/javascript" src="js/app/nav_fotos.js"></script>
+	<script type="text/javascript" src="js/app/_nav_user.js"></script>
+	<script type="text/javascript" src="js/app/_nav_audio.js"></script>
+	<script type="text/javascript" src="js/app/_nav_fotos.js"></script>
 	<script type="text/javascript" src="js/app/nav_env.js"></script>
 	<script type="text/javascript" src="js/app/nav_evants.js"></script>
 	<script type="text/javascript" src="js/app/nav_geo.js"></script>
 	<script type="text/javascript" src="js/app/nav_video.js"></script>
-	<script type="text/javascript" src="js/app/nav_uploader.js"></script>
+	<script type="text/javascript" src="js/app/_nav_uploader.js"></script>
 	
 </head>
 
 <body>
 <script language='javascript'>
-
+	console = {}; console.log = function(){};
 	<!----------------------------------------------------------------------------------- General events-->
 	var GLOBAL_APP_VERS = new Object({type: "app_mobile", version: "1.0"}); //app_mobile
 	var GLOBAL_SESSID=null;
@@ -162,7 +161,8 @@
 				if(vars.user_id)
 					Music.GoAll({user_id: vars.user_id},1, vars.share);
 				else{
-					Music.GoAll(null,1, vars.share);
+					Music.GoAll({nation_id:vars.nation_id},1, vars.share);
+
 				}
 				
 			}
@@ -173,10 +173,8 @@
 				if(vars.user_id)
 					Fotos.GoUsersFotos(vars.user_id);
 				else{
-					if(vars.album)
-						Fotos.GoGallery({album: vars.album});
-					else
-						Fotos.GoGallery();
+					Fotos.GoGallery({album: vars.album, nation_id: vars.nation_id});
+					
 				}
 			}
 		}); 
@@ -230,7 +228,7 @@
 				}
 			}
 			if ($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id")=="page_music"){	
-				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Music.loading_data==0 && !$('#page_music .input-search').is(':focus') && !Music.url_params.cache){
+				if(($(document).height() - $(window).height() <= $(window).scrollTop()+ 300) && Music.loading_data==0 && !$('#page_music .input-search').is(':focus')){
 					Music.GoAppend();
 				}
 			}
@@ -328,8 +326,8 @@
 	
 	function clear_sessid(){
 		if(GLOBAL_APP_VERS.type == "web_mobile"){
-			setCookie ("m_sessid", null);
-			setCookie("m_auth", null);
+			delCookie ("m_sessid");
+			delCookie("m_auth");
 		}
 		else
 		if(GLOBAL_APP_VERS.type == "app_mobile"){

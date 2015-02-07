@@ -6,6 +6,11 @@
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
+/*прозрачность верхнему меню*/
+.topheader {
+	filter: Alpha(Opacity=0.9);
+	opacity: 0.9;
+}
 /*Иконки без текста к топхедере*/
 .topheader .ui-btn-left a{
 	margin-right: 0.4em;

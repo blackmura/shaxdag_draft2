@@ -772,7 +772,9 @@ UserList = new Object({
 			$("#page_usersearch .btn-in-radius").css({display : "inline-block"});
 			
 			Environment.Utils.refresh_public_navbar("#page_usersearch .navbar-public", "btn-users");
-			
+			//по умолчанию открываем пользователей своей нации
+			if(User.I.nation_id>0)
+				UserList.Filter.user_nation = User.I.nation_id;
 			params=UserList.Filter;
 			params.initial=1;
 			params.el_per_page=UserList.el_per_page;

@@ -29,7 +29,11 @@ Music = new Object({
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true, dataUrl: "page_music?user_id="+user_id} )
 			}
 			else{
-				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true});
+				if(User.I.nation_id>0)
+					var Dataurl = "page_music?nation_id="+User.I.nation_id;
+				else
+					Dataurl = "page_music";
+				$( ":mobile-pagecontainer" ).pagecontainer( "change", $("#page_music"), { transition: "none", allowSamePageTransition: true, dataUrl: Dataurl});
 			}
 		},
 		GoAll : function (filter, init, share){
