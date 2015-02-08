@@ -36,7 +36,7 @@ var app = {
 					app.PN.Instance.register(app.PN.successHandler, app.PN.errorHandler, {"senderID":GLOBAL_GOOGLE_PID,"ecb":"app.PN.onNotificationGCM"});		// required!
 				} else {
 					//console.log('<li>registering iOS</li>');
-					//app.PN.Instance.register(tokenHandler, app.PN.errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"app.PN.onNotificationAPN"});	// required!
+					app.PN.Instance.register(tokenHandler, app.PN.errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"app.PN.onNotificationAPN"});	// required!
 				}
 			}
 			catch(err) 
@@ -50,7 +50,6 @@ var app = {
 		// handle APNS notifications for iOS
 		onNotificationAPN: function (e) {
 			if (e.alert) {
-				 $("#app-status-ul").append('<li>push-notification: ' + e.alert + '</li>');
 				 navigator.notification.alert(e.alert);
 			}
 				
@@ -97,7 +96,7 @@ var app = {
 		},
 
 		tokenHandler: function  (result) {
-			//console.log('Token handler: token: '+ result +'</li>');
+			console.log('Token handler: token: '+ result +'</li>');
 			app.PN.saveDeviceId(result,2);
 			// Your iOS push server needs to know the token before it can push to this device
 			// here is where you might want to send it the token for later use.
