@@ -36,7 +36,7 @@ var app = {
 					app.PN.Instance.register(app.PN.successHandler, app.PN.errorHandler, {"senderID":GLOBAL_GOOGLE_PID,"ecb":"app.PN.onNotificationGCM"});		// required!
 				} else {
 					//console.log('<li>registering iOS</li>');
-					app.PN.Instance.register(tokenHandler, app.PN.errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"app.PN.onNotificationAPN"});	// required!
+					app.PN.Instance.register(app.PN.tokenHandler, app.PN.errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"app.PN.onNotificationAPN"});	// required!
 				}
 			}
 			catch(err) 
