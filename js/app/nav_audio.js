@@ -85,6 +85,7 @@ Music = new Object({
 			}
 		},
 		Load : function(params){
+			params.client = GLOBAL_APP_VERS.version;
 			Music.loading_data=1;
 			$.get( LS("server/proc_music.php"), params, 
 				function( data ) {
@@ -284,8 +285,13 @@ Music = new Object({
 		},
 		link : {
 			refresh_nation_footer : function(){
-				
-				$("#page_music_nation_popup").html("<option value=0>Все народы</option>"+Environment.Nations.nations_selectmenu()+"<option value=100>Не тематическая</option>");
+				if (Music.Filter.nation_id>0){
+					var html_options = "<option value=0>Все народы</option>"+Environment.Nations.nations_selectmenu(Music.Filter.nation_id)+"<option value=100>Не тематическая</option>";
+				}
+				else{
+					var html_options = "<option value=0 selected>Все народы</option>"+Environment.Nations.nations_selectmenu()+"<option value=100>Не тематическая</option>";
+				}
+				$("#page_music_nation_popup").html(html_options);
 				$("#page_music_nation_popup").change (Music.link.btn_nations_onClick);
 			},
 			refresh_navbar : function(){
@@ -313,6 +319,7 @@ Music = new Object({
 					if(Music.Filter.nation_id!=null){
 						dom_nation.addClass("ui-btn-active"); 
 						dom_nation_title.html(Environment.Nations.modify(Environment.Nations.nation_by_id(Music.Filter.nation_id).title, "ие"));
+						Music.link.refresh_nation_footer();
 
 					}
 					else{

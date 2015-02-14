@@ -21,6 +21,13 @@ var app = {
 		Geo.init();
 		var my_media = new Media(app.getPhoneGapPath()+"bin/init.mp3");
 		my_media.play();
+		//обновляем переменную GLOBAL_APP_VERS
+		if (device.platform == 'android' || device.platform == 'Android') {
+			GLOBAL_APP_VERS.version = "android";
+		}
+		else{
+			GLOBAL_APP_VERS.version = "ios";
+		}
 				
 	},
 	PN : {

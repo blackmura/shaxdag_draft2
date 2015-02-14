@@ -548,6 +548,7 @@ Fotos = new Object({
 				if(Fotos.Filter.nation_id>0){
 					dom_nation.addClass("ui-btn-active"); 
 					dom_nation_title.html(Environment.Nations.nation_by_id(Fotos.Filter.nation_id).nationality);
+					Fotos.link.refresh_nation_footer();
 
 				}
 				else{
@@ -558,12 +559,12 @@ Fotos = new Object({
 				
 			},
 			refresh_nation_footer : function(){
-				/*
-				$("#page_fotos_nation_popup .navbar_footer_nation_ul").append(Environment.Nations.nations_listview()); 
-				$("#page_fotos_nation_popup .navbar_footer_nation_ul").listview("refresh");
-				$("#page_fotos_nation_popup .navbar_footer_nation_ul a").on ("click", Fotos.link.btn_nations_onClick);
-				*/
-				$("#page_fotos_nation_popup").html("<option value=0>Все народы</option>"+Environment.Nations.nations_selectmenu_var(-1, "nation"));
+				if (Fotos.Filter.nation_id>0){
+					var html_options = "<option value=0>Все народы</option>"+Environment.Nations.nations_selectmenu_var(Fotos.Filter.nation_id, "nation");
+				}
+				else
+					var html_options = "<option value=0 selected>Все народы</option>"+Environment.Nations.nations_selectmenu_var(Fotos.Filter.nation_id, "nation");
+				$("#page_fotos_nation_popup").html(html_options);
 				$("#page_fotos_nation_popup").change (Fotos.link.btn_nations_onClick);
 			},
 			Delete : function(ev){
