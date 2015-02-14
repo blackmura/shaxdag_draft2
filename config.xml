@@ -96,7 +96,19 @@
 	<!--
     <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" />
     <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" gap:state="hover"/>-->
-	
+	 
+	 <!-- iOS 8.0+ -->
+	 <!-- iPhone 6 -->
+    <icon src="images/res/ios/ic_launcher_180.png"            gap:platform="ios"        width="180" height="180" />
+	 <!-- iOS 7.0+ -->
+	 <!-- iPhone -->
+    <icon src="images/res/ios/ic_launcher_60.png"            gap:platform="ios"        width="60" height="60" />
+	<icon src="images/res/ios/ic_launcher_120.png"            gap:platform="ios"        width="120" height="120" />
+	 <!-- ipad -->
+	<icon src="images/res/ios/ic_launcher_76.png"            gap:platform="ios"        width="76" height="76" />
+	<icon src="images/res/ios/ic_launcher_152.png"            gap:platform="ios"        width="152" height="152" />
+	 <!-- iOS 6.1 -->
+	 <!-- iPhone / iPod Touch -->
     <icon src="images/res/ios/ic_launcher_57.png"            gap:platform="ios"        width="57" height="57" />
     <icon src="images/res/ios/ic_launcher_72.png"            gap:platform="ios"        width="72" height="72" />
 	<icon src="images/res/ios/ic_launcher_87.png"            gap:platform="ios"        width="87" height="87" />
@@ -113,6 +125,7 @@
     <gap:splash src="res/screen/android/screen-hdpi-portrait.png"       gap:platform="android" gap:qualifier="port-hdpi" />
     <gap:splash src="res/screen/android/screen-xhdpi-portrait.png"      gap:platform="android" gap:qualifier="port-xhdpi" />
     <gap:splash src="res/screen/blackberry/screen-225.png"              gap:platform="blackberry" />
+	
     <gap:splash src="res/screen/ios/my/Default.png"         gap:platform="ios"     width="320" height="480" />
     <gap:splash src="res/screen/ios/my/Default@2x.png"      gap:platform="ios"     width="640" height="960" />
     <gap:splash src="res/screen/ios/my/Default-568h@2x.png" gap:platform="ios"     width="640" height="1136" />
