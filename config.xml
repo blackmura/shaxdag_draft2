@@ -98,7 +98,7 @@
 
 		 
 		 <!-- iOS 7.0+ -->
-		 <icon src="icon.png" gap:platform="ios">
+		 <icon src="icon.png" gap:platform="ios" />
 		 <!-- iPhone -->
 		<icon src="images/res/ios/ic_launcher_60.png" gap:platform="ios"  width="60" height="60" />
 		<icon src="images/res/ios/ic_launcher_120.png" gap:platform="ios" width="120" height="120" />
