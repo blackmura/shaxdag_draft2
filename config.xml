@@ -24,7 +24,7 @@
     <preference name="permissions"                value="none"/>
 
     <!-- Customize your app and platform with the preference element. -->
-    <preference name="phonegap-version" value="3.7.0" />          <!-- all: current version of PhoneGap -->
+    <preference name="phonegap-version" value="3.6.3" />          <!-- all: current version of PhoneGap -->
     <preference name="orientation"                value="default" />        <!-- all: default means both landscape and portrait are enabled -->
     <preference name="target-device"              value="universal" />      <!-- all: possible values handset, tablet, or universal -->
 
@@ -100,21 +100,21 @@
 		 <!-- iOS 7.0+ -->
 		 <icon src="icon.png" gap:platform="ios" />
 		 <!-- iPhone -->
-		<icon src="ic_launcher_60.png" gap:platform="ios"  width="60" height="60" />
-		<icon src="ic_launcher_120.png" gap:platform="ios" width="120" height="120" />
+		<icon src="images/res/ios/ic_launcher_60.png" gap:platform="ios"  width="60" height="60" />
+		<icon src="images/res/ios/ic_launcher_120.png" gap:platform="ios" width="120" height="120" />
 		 <!-- ipad -->
-		<icon src="ic_launcher_76.png" gap:platform="ios"  width="76" height="76" />
-		<icon src="ic_launcher_152.png" gap:platform="ios" width="152" height="152" />
+		<icon src="images/res/ios/ic_launcher_76.png" gap:platform="ios"  width="76" height="76" />
+		<icon src="images/res/ios/ic_launcher_152.png" gap:platform="ios" width="152" height="152" />
 		
-		<icon src="ic_launcher_29.png" gap:platform="ios" width="29" height="29" />
-		<icon src="ic_launcher_58.png" gap:platform="ios" width="58" height="58" />
+		<icon src="images/res/ios/ic_launcher_29.png" gap:platform="ios" width="29" height="29" />
+		<icon src="images/res/ios/ic_launcher_58.png" gap:platform="ios" width="58" height="58" />
 		
-		<icon src="ic_launcher_40.png" gap:platform="ios" width="40" height="40" />
-		<icon src="ic_launcher_80.png" gap:platform="ios" width="80" height="80" />
+		<icon src="images/res/ios/ic_launcher_40.png" gap:platform="ios" width="40" height="40" />
+		<icon src="images/res/ios/ic_launcher_80.png" gap:platform="ios" width="80" height="80" />
 		
 		<!-- iOS 8.0+ -->
 		<!-- iPhone 6 -->
-		<icon src="ic_launcher_180.png" gap:platform="ios" width="180" height="180" />
+		<icon src="images/res/ios/ic_launcher_180.png" gap:platform="ios" width="180" height="180" />
 		
 		
 		 
