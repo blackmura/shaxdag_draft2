@@ -87,14 +87,14 @@
     -->
 
     <!-- Define app icon for each platform. -->
-    <platform name="android">
-		<icon src="images/res/mipmap-mdpi/ic_launcher_new.png"   density="mdpi" />
-		<icon src="images/res/mipmap-hdpi/ic_launcher_new.png"   density="hdpi" />
-		<icon src="images/res/mipmap-xhdpi/ic_launcher_new.png"  density="xhdpi" />
-		<icon src="images/res/mipmap-xxhdpi/ic_launcher_new.png" density="xxhdpi" />
-	</platform>
+  
+		<icon src="images/res/mipmap-mdpi/ic_launcher_new.png"  gap:platform="android" density="mdpi" />
+		<icon src="images/res/mipmap-hdpi/ic_launcher_new.png"   gap:platform="android" density="hdpi" />
+		<icon src="images/res/mipmap-xhdpi/ic_launcher_new.png" gap:platform="android" density="xhdpi" />
+		<icon src="images/res/mipmap-xxhdpi/ic_launcher_new.png" gap:platform="android" density="xxhdpi" />
 
-	<platform name="ios">
+
+
 		 
 		 <!-- iOS 7.0+ -->
 		 <!-- iPhone -->
@@ -124,7 +124,7 @@
 		<icon src="images/res/ios/ic_launcher_144.png" gap:platform="ios" width="144" height="144" />
 		-->
 		 
-	</platform>
+	
     <!--<icon src="res/icon/webos/icon-64.png"          gap:platform="webos" />
     <icon src="res/icon/windows-phone/icon-48.png"  gap:platform="winphone" />
     <icon src="res/icon/windows-phone/icon-173.png" gap:platform="winphone"   gap:role="background" />
