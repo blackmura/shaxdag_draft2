@@ -53,8 +53,11 @@ UserPage = new Object({
 			//инфо-меню
 			html+="<div class='info-line'>";
 				if(resp_obj.user.nation_id>0)
-					html+="<span class='nation'><i class='fa fa-globe'></i> Народность: "+Environment.Nations.nation_by_id(resp_obj.user.nation_id).nationality+"</span>";
-				html+="<span class='rating'><i class='fa fa-heart-o'></i> Лайков: "+resp_obj.user.rating+"</span>";
+					html+="<a style='cursor: pointer;' class='nation' nation='"+resp_obj.user.nation_id+"'><i class='fa fa-globe'></i><b> "+Environment.Nations.nation_by_id(resp_obj.user.nation_id).nationality+"</b></a>";														
+				if(resp_obj.user.guests.total>0)
+					html+="<span class='guests'><i class='fa fa-star-o'></i> Гостей сегодня: "+resp_obj.user.guests.total+"</span>";
+				if(resp_obj.user.rating!=0)
+					html+="<span class='rating'><i class='fa fa-heart-o'></i>: "+resp_obj.user.rating+"</span>";
 				if(!resp_obj.user.online_status.code)
 					html+="<span class='last-visit'>"+resp_obj.user.online_status.txt+"</span>";
 			html+="</div>";
@@ -191,6 +194,7 @@ UserPage = new Object({
 			$( ".friend .user-avatar").on( "vclick", UserPage.Go);
 			$( "#page_user .btn-all-friends").on( "vclick", UserList.GoFriends);
 			$( "#page_user .user-page-info-t2 a").on( "vclick", UserList.GoLink);
+			$("#page_user_name .nation").on("vclick", UserList.GoLink);
 			
 			//подсказки
 			if(resp_obj.user.id==User.I.id){
@@ -824,6 +828,10 @@ UserList = new Object({
 			//unhide geolocation
 			$("#page_usersearch .btn-in-radius").css({display : "inline-block"});
 			UserList.GoSearch({city: city, country: country, resp: resp, raion: raion, selo: selo, user_nation: nation, online: online, in_radius: in_radius});
+			//close panel if opened
+			if( $("#left_panel").hasClass("ui-panel-open") == true )
+				$("#left_panel").panel("close");
+				
 		},
 		//функция перехода на страницу поиска людей
 		GoSearch: function(filterObj){

@@ -93,27 +93,37 @@
 		<icon src="images/res/mipmap-xhdpi/ic_launcher_new.png"  density="xhdpi" />
 		<icon src="images/res/mipmap-xxhdpi/ic_launcher_new.png" density="xxhdpi" />
 	</platform>
-	<!--
-    <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" />
-    <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" gap:state="hover"/>-->
+
 	<platform name="ios">
-		 <!-- iOS 8.0+ -->
-		 <!-- iPhone 6 -->
-		<icon src="images/res/ios/ic_launcher_180.png" width="180" height="180" />
+		 
 		 <!-- iOS 7.0+ -->
 		 <!-- iPhone -->
-		<icon src="images/res/ios/ic_launcher_60.png"  width="60" height="60" />
-		<icon src="images/res/ios/ic_launcher_120.png" width="120" height="120" />
+		<icon src="images/res/ios/ic_launcher_60.png" gap:platform="ios"  width="60" height="60" />
+		<icon src="images/res/ios/ic_launcher_120.png" gap:platform="ios" width="120" height="120" />
 		 <!-- ipad -->
-		<icon src="images/res/ios/ic_launcher_76.png"  width="76" height="76" />
-		<icon src="images/res/ios/ic_launcher_152.png" width="152" height="152" />
+		<icon src="images/res/ios/ic_launcher_76.png" gap:platform="ios"  width="76" height="76" />
+		<icon src="images/res/ios/ic_launcher_152.png" gap:platform="ios" width="152" height="152" />
+		
+		<icon src="images/res/ios/ic_launcher_29.png" gap:platform="ios" width="29" height="29" />
+		<icon src="images/res/ios/ic_launcher_58.png" gap:platform="ios" width="58" height="58" />
+		
+		<icon src="images/res/ios/ic_launcher_40.png" gap:platform="ios" width="40" height="40" />
+		<icon src="images/res/ios/ic_launcher_80.png" gap:platform="ios" width="80" height="80" />
+		
+		<!-- iOS 8.0+ -->
+		<!-- iPhone 6 -->
+		<icon src="images/res/ios/ic_launcher_180.png" gap:platform="ios" width="180" height="180" />
+		
 		 <!-- iOS 6.1 -->
 		 <!-- iPhone / iPod Touch -->
-		<icon src="images/res/ios/ic_launcher_57.png"   width="57" height="57" />
-		<icon src="images/res/ios/ic_launcher_72.png"   width="72" height="72" />
-		<icon src="images/res/ios/ic_launcher_87.png"   width="87" height="87" />
-		<icon src="images/res/ios/ic_launcher_114.png"  width="114" height="114" />
-		<icon src="images/res/ios/ic_launcher_144.png"  width="144" height="144" />
+		 <!--
+		<icon src="images/res/ios/ic_launcher_57.png"  gap:platform="ios"  width="57" height="57" />
+		<icon src="images/res/ios/ic_launcher_72.png" gap:platform="ios"  width="72" height="72" />
+		<icon src="images/res/ios/ic_launcher_87.png" gap:platform="ios"  width="87" height="87" />
+		<icon src="images/res/ios/ic_launcher_114.png" gap:platform="ios" width="114" height="114" />
+		<icon src="images/res/ios/ic_launcher_144.png" gap:platform="ios" width="144" height="144" />
+		-->
+		 
 	</platform>
     <!--<icon src="res/icon/webos/icon-64.png"          gap:platform="webos" />
     <icon src="res/icon/windows-phone/icon-48.png"  gap:platform="winphone" />

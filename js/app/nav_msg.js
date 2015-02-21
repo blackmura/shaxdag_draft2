@@ -14,6 +14,9 @@ NavMsg = new Object({
 			NavMsg.ActiveUser = new Object();
 			//очищаем стек выделенных сообщений и добавляем событие на клик
 			NavMsg.Utils.stack = new Array();
+			$("#page_msg2-trashbutton").css({display : "none"});
+			$("#page_msg2-trashbutton i").html("");
+			
 			NavMsg.D_params = new Object();
 			
 		},
