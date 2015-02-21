@@ -31,7 +31,6 @@
 	<preference name="fullscreen"                 value="false" />          <!-- all: hides the status bar at the top of the screen --> 
 
     <preference name="webviewbounce"              value="true" />           <!-- ios: control whether the screen 'bounces' when scrolled beyond the top -->
-    <preference name="prerendered-icon"           value="true" />           <!-- ios: if icon is prerendered, iOS will not apply it's gloss to the app's icon on the user's home screen -->
     <preference name="stay-in-webview"            value="false" />          <!-- ios: external links should open in the default browser, 'true' would use the webview the app lives in -->
     <preference name="ios-statusbarstyle"         value="black-opaque" />   <!-- ios: black-translucent will appear black because the PhoneGap webview doesn't go beneath the status bar -->
     <preference name="detect-data-types"          value="true" />           <!-- ios: controls whether data types (such as phone no. and dates) are automatically turned into links by the system -->
@@ -99,6 +98,7 @@
 
 		 
 		 <!-- iOS 7.0+ -->
+		 <icon src="icon.png" gap:platform="ios">
 		 <!-- iPhone -->
 		<icon src="images/res/ios/ic_launcher_60.png" gap:platform="ios"  width="60" height="60" />
 		<icon src="images/res/ios/ic_launcher_120.png" gap:platform="ios" width="120" height="120" />
@@ -116,21 +116,10 @@
 		<!-- iPhone 6 -->
 		<icon src="images/res/ios/ic_launcher_180.png" gap:platform="ios" width="180" height="180" />
 		
-		 <!-- iOS 6.1 -->
-		 <!-- iPhone / iPod Touch -->
-		 <!--
-		<icon src="images/res/ios/ic_launcher_57.png"  gap:platform="ios"  width="57" height="57" />
-		<icon src="images/res/ios/ic_launcher_72.png" gap:platform="ios"  width="72" height="72" />
-		<icon src="images/res/ios/ic_launcher_87.png" gap:platform="ios"  width="87" height="87" />
-		<icon src="images/res/ios/ic_launcher_114.png" gap:platform="ios" width="114" height="114" />
-		<icon src="images/res/ios/ic_launcher_144.png" gap:platform="ios" width="144" height="144" />
-		-->
+		
 		 
 	
-    <!--<icon src="res/icon/webos/icon-64.png"          gap:platform="webos" />
-    <icon src="res/icon/windows-phone/icon-48.png"  gap:platform="winphone" />
-    <icon src="res/icon/windows-phone/icon-173.png" gap:platform="winphone"   gap:role="background" />
-	-->
+    
 
     <!-- Define app splash screen for each platform. -->
     <gap:splash src="res/screen/android/screen-ldpi-portrait.png"       gap:platform="android" gap:qualifier="port-ldpi" />
