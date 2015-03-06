@@ -1265,7 +1265,7 @@ Comments = new Object({
 				}
 				else{
 					var html='' +
-						'<li><a href="#"  class="go-confirm" base="'+Comments.source.base+'" t_key="'+Comments.source.num+'" confirm_type="send_claim"><i class="fa fa-gavel fa-lg"></i>  Пожаловаться</a></li>'
+						'<li><a href="#"  class="go-confirm" base="'+Comments.source.base+'" t_key="'+Comments.source.num+'" confirm_type="send_complaint"><i class="fa fa-gavel fa-lg"></i>  Пожаловаться</a></li>'
 					;
 				}
 				$("#page_comment_menu ul").html(html);
@@ -1273,6 +1273,25 @@ Comments = new Object({
 				$("#page_comment_menu ul").listview("refresh");
 				//обработчики 
 				$("#page_comment_menu .go-confirm").on("vclick", Environment.Confirm.onShow);
+			},
+			send_complaint : function(t_key, base){
+				var params= {t_key: t_key, base: base, method: "send_complaint"};
+				$.get( LS("server/proc_source.php"), params, 
+					function( data ) {
+						if(data.auth_status=="success" ){
+							if(data.method_status=="success"){
+								show_popup("fast_ntfy", "<b>Жалоба отправлена администраторам.</b> Она будет рассмотрена в течение 24 часов.<p>Спасибо за участие!</p>");					
+							}
+							else{
+								show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+							}	
+						}
+						else{
+							Environment.Utils.handle_auth_error();
+						}
+					},
+					"json"
+				);
 			}
 		}
 		

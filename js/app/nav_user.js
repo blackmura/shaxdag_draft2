@@ -211,30 +211,49 @@ UserPage = new Object({
 				var user = UserPage.User;
 				if(user.id ==User.I.id){
 					var html='<li><a href="#"  class="go-settings" ><i class="fa fa-cog fa-lg"></i>  Настройки</a></li>';
+					$("#page_user_topmenu ul").html(html);
+					$("#page_user_topmenu ul").listview();
+					$("#page_user_topmenu ul").listview("refresh");
+					//обработчики 
+					$("#page_user_topmenu .go-settings").on("click", User.Settings.Page.Go);
 				}
 				else
 				if(Environment.Utils.is_friend(user.id)){
-					var html='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" act="delete" confirm_type="delete_from_friend"><i class="fa fa-times fa-lg"></i>  Удалить из друзей</a></li>' +
-						'<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="add_to_ban"><i class="fa fa-ban fa-lg"></i>  Заблокировать</a></li>'
-					;
+					var html='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" act="delete" confirm_type="delete_from_friend"><i class="fa fa-times fa-lg"></i>  Удалить из друзей</a></li>';
+					if(!user.is_ban)
+						html+='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="add_to_ban"><i class="fa fa-lock fa-lg"></i>  Заблокировать</a></li>';
+					else
+						html+='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="remove_from_ban"><i class="fa fa-unlock-alt fa-lg"></i>  Разблокировать</a></li>';
+					
+					$("#page_user_topmenu ul").html(html);
+					$("#page_user_topmenu ul").listview();
+					$("#page_user_topmenu ul").listview("refresh");
+					//обработчики 
+					$("#page_user_topmenu .go-confirm").on("click", Environment.Confirm.onShow);
 				}
 				else{
-					var html='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" act="add" confirm_type="add_to_friend"><i class="fa fa-plus fa-lg"></i>  Добавить в друзья</a></li>' +
-						'<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="add_to_ban"><i class="fa fa-ban fa-lg"></i>  Заблокировать</a></li>'
-					;
+					var html='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" act="add" confirm_type="add_to_friend"><i class="fa fa-plus fa-lg"></i>  Добавить в друзья</a></li>';
+					if(!user.is_ban)
+						html+='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="add_to_ban"><i class="fa fa-lock fa-lg"></i>  Заблокировать</a></li>';
+					else
+						html+='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="remove_from_ban"><i class="fa fa-unlock-alt fa-lg"></i>  Разблокировать</a></li>';
+					
+					$("#page_user_topmenu ul").html(html);
+					$("#page_user_topmenu ul").listview();
+					$("#page_user_topmenu ul").listview("refresh");
+					//обработчики 
+					$("#page_user_topmenu .go-confirm").on("click", Environment.Confirm.onShow);
 				}
-				$("#page_user_topmenu ul").html(html);
-				$("#page_user_topmenu ul").listview();
-				$("#page_user_topmenu ul").listview("refresh");
-				//обработчики 
-				$("#page_user_topmenu .go-confirm").on("click", Environment.Confirm.onShow);
+				
+				
+				
 			}
 		}
 		
 		
 	});
 	
-	User = new Object({
+	User = new Object({ 
 		I : Object(),
 		html :{
 			gender : function(user_obj){
@@ -712,6 +731,40 @@ UserPage = new Object({
 								if(params.act=="delete"){
 									show_popup("fast_ntfy", "Пользователь удален из друзей");
 									Environment.Utils.pop_friend(data.user.id);
+								}
+								//если находимся на странице пользователя, то обновляем меню
+								if(getCurrentPage()=="page_user"){
+									UserPage.Utils.refresh_dropdown_menu();
+								}
+								console.log(data);							
+							}
+							else{
+								show_popup("message_not_sent", data.error_text, $( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr("id"));
+							}	
+						}
+						else{
+							Environment.Utils.handle_auth_error();
+						}
+					},
+					"json"
+				);
+			},
+			proc_ban : function(user_id, action){
+				var params= {user_id: user_id, method: action};
+				$.get( LS("server/proc_user.php"), params, 
+					function( data ) {
+						if(data.auth_status=="success" ){
+							if(data.method_status=="success"){
+								if(params.method=="add_to_ban"){
+									show_popup("fast_ntfy", "Пользователь заблокирован");
+									if(getCurrentPage()=="page_user")
+										UserPage.User.is_ban = 1;
+								}
+								else
+								if(params.method=="remove_from_ban"){
+									show_popup("fast_ntfy", "Пользователь разблокирован");
+									if(getCurrentPage()=="page_user")
+										UserPage.User.is_ban = 0;
 								}
 								//если находимся на странице пользователя, то обновляем меню
 								if(getCurrentPage()=="page_user"){

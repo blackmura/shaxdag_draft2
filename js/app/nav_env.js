@@ -405,6 +405,24 @@ Rpl =new Object({
 					attrs = "f_id='"+$(this).attr("f_id")+"' act='delete' type='"+type+"'";
 				}
 				else
+				if(type=="add_to_ban"){
+					h="Заблокировать пользователя?";
+					title = "Вы уверены что хотите добавить пользователя в черный список?";
+					attrs = "f_id='"+$(this).attr("f_id")+"' act='"+type+"' type='"+type+"'";
+				}
+				else
+				if(type=="remove_from_ban"){
+					h="Разблокировать пользователя?";
+					title = "Вы уверены что хотите удалить пользователя из черного списка?";
+					attrs = "f_id='"+$(this).attr("f_id")+"' act='"+type+"' type='"+type+"'";
+				}
+				else
+				if(type=="send_complaint"){
+					h="Отправить жалобу?";
+					title = "Вы уверены что хотите пожаловаться на этот ресурс?";
+					attrs = "t_key='"+$(this).attr("t_key")+"' base='"+$(this).attr("base")+"' act='send' type='"+type+"'";
+				}
+				else
 				if(type=="logout"){
 					h="Выйти?";
 					title = "Вы уверены что хотите выйти из аккаунта?";
@@ -461,6 +479,19 @@ Rpl =new Object({
 						var f_id = $(this).attr("f_id");
 						var act = $(this).attr("act");
 						User.link.proc_friend(f_id, act);
+					}
+					else
+					//если ban
+					if(type=="add_to_ban" || type=="remove_from_ban"){
+						var user_id = $(this).attr("f_id");
+						var act = $(this).attr("act");
+						User.link.proc_ban(user_id, act);
+					}
+					//если ban
+					if(type=="send_complaint"){
+						var t_key = $(this).attr("t_key");
+						var base = $(this).attr("base");
+						Comments.Utils.send_complaint(t_key, base);
 					}
 					else
 					//если выход
