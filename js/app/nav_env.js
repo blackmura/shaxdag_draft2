@@ -389,6 +389,9 @@ Rpl =new Object({
 				if(page_id == "page_user"){
 					$("#page_user_topmenu").popup("close");
 				}
+				if(page_id == "page_msg2"){
+					$("#page_msg2_menu").popup("close");
+				}
 				if(page_id == "page_comment"){
 					$("#page_comment_menu").popup("close");
 				}

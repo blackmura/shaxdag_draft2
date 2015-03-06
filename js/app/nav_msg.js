@@ -165,6 +165,7 @@ NavMsg = new Object({
 							if(params.initial == 1){
 								NavMsg.AppendMsg(data);
 								NavMsg.ActiveDialogObj = data.messages;
+								NavMsg.Utils.refresh_dropdown_menu();
 							}
 							//Если запрос отправлен для догрузки сообщений
 							else{
@@ -637,7 +638,27 @@ NavMsg = new Object({
 						NavMsg.MsgListObj.splice(found_i,1);
 					}
 				}
-			}			
+			},			
+			refresh_dropdown_menu: function(){
+				var user = NavMsg.ActiveUser;
+				
+				var html='<li><a href="#page_msg2_confirm_delete" class="delete-all" option_type="delete_all" data-rel="popup" data-position-to="window"><i class="fa fa-trash-o fa-lg"></i>  Удалить все</a></li>';
+				if(!user.is_ban)
+					html+='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="add_to_ban"><i class="fa fa-lock fa-lg"></i>  Заблокировать</a></li>';
+				else
+					html+='<li><a href="#"  class="go-confirm" f_id="'+user.id+'" confirm_type="remove_from_ban"><i class="fa fa-unlock-alt fa-lg"></i>  Разблокировать</a></li>';
+				
+				$("#page_msg2_menu ul").html(html);
+				$("#page_msg2_menu ul").listview();
+				$("#page_msg2_menu ul").listview("refresh");
+				//обработчики 
+				$("#page_msg2_menu .go-confirm").on("click", Environment.Confirm.onShow);
+				$("#page_msg2_menu .delete-all").on ("click", NavMsg.Utils.confirm);
+				
+				
+				
+				
+			}
 		}
 		
 	});

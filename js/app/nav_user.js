@@ -759,16 +759,26 @@ UserPage = new Object({
 									show_popup("fast_ntfy", "Пользователь заблокирован");
 									if(getCurrentPage()=="page_user")
 										UserPage.User.is_ban = 1;
+									else
+									if(getCurrentPage()=="page_msg2")
+										NavMsg.ActiveUser.is_ban = 1;
 								}
 								else
 								if(params.method=="remove_from_ban"){
 									show_popup("fast_ntfy", "Пользователь разблокирован");
 									if(getCurrentPage()=="page_user")
 										UserPage.User.is_ban = 0;
+									else
+									if(getCurrentPage()=="page_msg2")
+										NavMsg.ActiveUser.is_ban = 0;
 								}
 								//если находимся на странице пользователя, то обновляем меню
 								if(getCurrentPage()=="page_user"){
 									UserPage.Utils.refresh_dropdown_menu();
+								}
+								else
+								if(getCurrentPage()=="page_msg2"){
+									NavMsg.Utils.refresh_dropdown_menu();
 								}
 								console.log(data);							
 							}

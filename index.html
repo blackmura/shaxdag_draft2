@@ -41,26 +41,26 @@
 	<!-- APP для переключения между версиями необходимо 1) раскоментить нижние инклуды и GLOBAL_APP_VERS-->
 	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 	<script type="text/javascript" src="js/PushNotification.js"></script>
-	<script type="text/javascript" src="js/app.js"></script>
+	<script type="text/javascript" src="js/app.js?3"></script>
 	
 	
 	
-	<script type="text/javascript" src="js/app/left_panel.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_msg.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_user.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_audio.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_fotos.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_env.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_evants.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_geo.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_video.js?1"></script>
-	<script type="text/javascript" src="js/app/nav_uploader.js?1"></script>
+	<script type="text/javascript" src="js/app/left_panel.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_msg.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_user.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_audio.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_fotos.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_env.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_evants.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_geo.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_video.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_uploader.js?3"></script>
 	
 </head>
 
 <body>
 <script language='javascript'>
-	console = {}; console.log = function(){};
+	//console = {}; console.log = function(){};
 	<!----------------------------------------------------------------------------------- General events-->
 	var GLOBAL_APP_VERS = new Object({type: "app_mobile", version: "1.0"}); //app_mobile
 	var GLOBAL_SESSID=null;
@@ -598,7 +598,6 @@
 		$("#page_msg2 .topheader h1").on( "vclick", UserPage.Go);
 		$("#page_msg2-trashbutton").on ( "vclick", NavMsg.Delete.Do);
 		$("#page_msg2_confirm_delete_yes").on ( "vclick", NavMsg.Delete.Do);
-		$("#page_msg2_menu .page_msg2_menu_li").on ("vclick", NavMsg.Utils.confirm);
 		$("#nav-msg-txtarea").on("keyup", NavMsg.Utils.keyPress.send_handler);
 		$("#page_msg2_attach .share").on("vclick", Exch.Go);
 	});
@@ -909,8 +908,6 @@
 	<!-- меню страницы переписки -->
 	<div data-role="popup" id="page_msg2_menu" data-theme="b">
         <ul data-role="listview" data-inset="true" style="min-width:210px;">
-			<li><a href="#page_msg2_confirm_delete" class="page_msg2_menu_li" option_type="delete_all" data-rel="popup" data-position-to="window"><i class="fa fa-trash-o fa-lg"></i>  Удалить все</a></li>
-            <li><a href="#"  class="page_msg2_menu_li" option_type="ban"><i class="fa fa-ban fa-lg"></i>  Заблокировать</a></li>
         </ul>
 	</div>
 	<!-- меню приаттачивания -->
