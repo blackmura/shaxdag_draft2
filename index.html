@@ -41,26 +41,26 @@
 	<!-- APP для переключения между версиями необходимо 1) раскоментить нижние инклуды и GLOBAL_APP_VERS-->
 	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 	<script type="text/javascript" src="js/PushNotification.js"></script>
-	<script type="text/javascript" src="js/app.js?3"></script>
+	<script type="text/javascript" src="js/app.js"></script>
 	
 	
 	
-	<script type="text/javascript" src="js/app/left_panel.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_msg.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_user.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_audio.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_fotos.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_env.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_evants.js?3"></script>
+	<script type="text/javascript" src="js/app/left_panel.js?2"></script>
+	<script type="text/javascript" src="js/app/nav_msg.js?2"></script>
+	<script type="text/javascript" src="js/app/nav_user.js?2"></script>
+	<script type="text/javascript" src="js/app/nav_audio.js?2"></script>
+	<script type="text/javascript" src="js/app/nav_fotos.js?2"></script>
+	<script type="text/javascript" src="js/app/nav_env.js?2"></script>
+	<script type="text/javascript" src="js/app/nav_evants.js?2"></script>
 	<script type="text/javascript" src="js/app/nav_geo.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_video.js?3"></script>
-	<script type="text/javascript" src="js/app/nav_uploader.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_video.js?4"></script>
+	<script type="text/javascript" src="js/app/nav_uploader.js?5"></script>
 	
 </head>
 
 <body>
 <script language='javascript'>
-	//console = {}; console.log = function(){};
+	console = {}; console.log = function(){};
 	<!----------------------------------------------------------------------------------- General events-->
 	var GLOBAL_APP_VERS = new Object({type: "app_mobile", version: "1.0"}); //app_mobile
 	var GLOBAL_SESSID=null;
@@ -649,7 +649,7 @@
 	});
 	//обработчик страницы личных фотографий
 	$( document ).on( "pagecreate", "#page_usersfotos", function() {
-		$( "#page_usersfotos .topheader .btn-upload").on( "vclick", Fotos.link.btn_upload_onClick);		
+		$( "#page_usersfotos_topmenu a").on( "vclick", Fotos.link.btn_upload_onClick);		
 		$( "#page_usersfotos .topheader .btn-delete").on( "vclick", function(){
 			if(Fotos.delete_mode==0)
 				Fotos.delete_mode=1;
@@ -1173,7 +1173,7 @@
 				<i class="fa fa-trash-o fa-lg fa-button-theme-a"></i> 
 			</a>	
 			
-			<a class="fa-button right btn-upload" upload_type="users_fotos" href="#">
+			<a class="fa-button right btn-upload"  data-rel="popup" href="#page_usersfotos_topmenu">
 				<i class="fa fa-plus fa-lg fa-button-theme-a"></i> 
 			</a>	
 		</div>
@@ -1184,7 +1184,13 @@
 		<div  id="page_usersfotos_list"></div>
 
 	</div><!-- /content -->
-	
+	<!-- Меню страницы пользователя -->
+	<div data-role="popup" id="page_usersfotos_topmenu" data-theme="b">
+        <ul data-role="listview" data-inset="true">
+		<li><a upload_type="fotos" href="#">В общую галерею</a></li>
+		<li><a upload_type="users_fotos" href="#">Только в мой альбом</a></li>
+        </ul>
+	</div>
 	
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
 		<div class="share-panel">

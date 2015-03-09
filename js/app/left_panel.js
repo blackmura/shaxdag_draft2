@@ -70,8 +70,13 @@ NavLefPanel = new Object({
 					html+="<div class='info_1'>";
 					if(obj.city)
 						html+="Живет в: "+obj.city+"<br>";
-					if(obj.nation_id>0)
-						html+="<i class='fa fa-globe'></i> "+Environment.Nations.nation_by_id(obj.nation_id).nationality+"<br>";	
+					if(obj.nation_id>0){
+						if(obj.nation_id == User.I.nation_id)
+							var nation_class = "my_nation";
+						else
+							var nation_class = "";
+						html+="<span class='"+nation_class+"'><i class='fa fa-globe'></i> "+Environment.Nations.nation_by_id(obj.nation_id).nationality+"</span><br>";	
+					}
 					else
 					if(obj.resp)
 						html+="Родом из: "+obj.resp+" ";	
