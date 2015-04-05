@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="windows-1251">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 	<title>Шaxдаг App</title>
 	<link rel="stylesheet"  href="css/jqm-icon-pack-fa.css" />
 	<link rel="stylesheet" href="css/default/jquery.mobile-1.4.5.min.css">
@@ -11,8 +11,11 @@
 	<link rel="stylesheet"  href="css/font-awesome/css/font-awesome.min.css" />
 	<link href="js/photoswipe/photoswipe.css" type="text/css" rel="stylesheet" />
 	<link rel="stylesheet" type="text/css" href="css/player360/360player.css" />
-	<link href="css/style.css?4" rel="stylesheet" type="text/css" />
+	<link href="css/style.css?5" rel="stylesheet" type="text/css" />
 	<link href="css/loaders.css?4" rel="stylesheet" type="text/css" />
+	<link href="css/emoji/minEmoji.css" rel="stylesheet" type="text/css" />
+	
+	
 	
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.mobile-1.4.5.min.js"></script>
@@ -26,7 +29,8 @@
 	<script type="text/javascript" src="js/badger.js"></script>
 	<link rel="stylesheet" href="css/badger.css" type="text/css" />
 
-	<script type="text/javascript" src="js/general.js"></script>
+	<script type="text/javascript" src="js/emoji.js"></script>
+	<script type="text/javascript" src="js/general.js?2"></script>
 	
 	<script type="text/javascript" src="js/audio_api_patch.js"></script> 
 
@@ -45,13 +49,13 @@
 	
 	
 	
-	<script type="text/javascript" src="js/app/left_panel.js?2"></script>
+	<script type="text/javascript" src="js/app/left_panel.js?3"></script>
 	<script type="text/javascript" src="js/app/nav_msg.js?2"></script>
 	<script type="text/javascript" src="js/app/nav_user.js?2"></script>
 	<script type="text/javascript" src="js/app/nav_audio.js?2"></script>
-	<script type="text/javascript" src="js/app/nav_fotos.js?2"></script>
-	<script type="text/javascript" src="js/app/nav_env.js?2"></script>
-	<script type="text/javascript" src="js/app/nav_evants.js?2"></script>
+	<script type="text/javascript" src="js/app/nav_fotos.js?3"></script>
+	<script type="text/javascript" src="js/app/nav_env.js?4"></script>
+	<script type="text/javascript" src="js/app/nav_evants.js?3"></script>
 	<script type="text/javascript" src="js/app/nav_geo.js?3"></script>
 	<script type="text/javascript" src="js/app/nav_video.js?4"></script>
 	<script type="text/javascript" src="js/app/nav_uploader.js?5"></script>
@@ -62,7 +66,7 @@
 <script language='javascript'>
 	console = {}; console.log = function(){};
 	<!----------------------------------------------------------------------------------- General events-->
-	var GLOBAL_APP_VERS = new Object({type: "app_mobile", version: "1.0"}); //app_mobile
+	var GLOBAL_APP_VERS = new Object({type: "app_mobile", version: "1.1"}); //app_mobile
 	var GLOBAL_SESSID=null;
 	var GLOBAL_SERVER="http://shaxdag.com/";
 	var GLOBAL_HOST="shaxdag.com";
@@ -105,6 +109,7 @@
 		}
 		//обработчики
 		Fotos.Utils.HandleAjax("send", settings);
+		Evants.Utils.HandleAjax("send", settings);
 		
 		console.log(settings.url); 
 	});
@@ -113,6 +118,7 @@
 		$(".topheader .ui-title").css({visibility: "visible"});
 		//обработчики
 		Fotos.Utils.HandleAjax("stop", settings);
+		Evants.Utils.HandleAjax("stop", settings);
 	});
 	$( document ).ajaxError(function( event, request, settings ) {
 		$(".ajax-loader-center").hide();
@@ -781,6 +787,11 @@
 		  
 
 		  
+	});
+	<!------------------------------- обработчики страницы событий-->
+	$( document ).on( "pagecreate", "#page_help", function() {
+		//панель навигации по разделам
+		$("#feedback_send").on("vclick", Help.OnSendFeedback);
 	});
 	
 
@@ -1655,11 +1666,87 @@
 	
 
 </div>
+
+<!-------------------------------------------- Помощь ---------------------------------------------------->
+<div data-role="page" id="page_help" data-theme="a" >
+
+	<div data-role="header" class='topheader' data-tap-toggle="false" data-position="fixed">
+		<div class='ui-btn-left'>
+		<a class="fa-button left" data-rel="back" id="" href="#" >
+				<i class="fa fa-chevron-left fa-lg fa-button-theme-a"></i> 
+		</a>
+		<a href="#left_panel" class='ui-btn  ui-btn-a ui-corner-all ui-icon-bars ui-btn-icon-notext topmenu-left'>Меню </a>
+		<a href="#page_msg1" class='ui-btn ui-btn-a ui-corner-all ui-icon-envelope ui-btn-icon-notext topmenu-msg'>Сообщения </a>
+		</div>
+		<h1>Помощь</h1>
+		
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content  page_limited" >
+		<div class="ui-body">
+			<div data-role="collapsible" data-inset="false">
+			    <h3>Мой профиль</h3>
+			    <div style='border-bottom: 1px #ccc solid'>
+			        <p class='help-question'><b>Как загрузить аватарку?</b><br>Левая панель меню > кликаете на свое имя или аватарку сверху > попадете на свою страницу, здесь под аватаркой есть значок +. Кликните на него, чтоб загрузить новую аватарку.</p>
+			        <p class='help-question'><b>Как заполнить инфорациб о себе?</b><br> Перейдите в раздел настройки: Левая панель > значок <i class="fa fa-cog"></i> под Вашим именем</p>      
+					<p class='help-question'><b>Как скрыть часть информации о себе?</b><br> Перейдите в подраздел Приватность: Левая панель > значок <i class="fa fa-cog"></i> под Вашим именем > Дополнительно </p>     
+			</div>
+			</div>
+			<div data-role="collapsible" data-inset="false">
+			    <h3>Сообщения</h3>
+			   <div style='border-bottom: 1px #ccc solid'>
+			        <p class='help-question'><b>Как заблокировать назойливого пользователя?</b><br> Откройте переписку с этим пользователем > в правом верхнем углу откройте меню, кликнув на <i class="fa fa-ellipsis-v"></i> и выберите Заблокировать</p>
+			        <p class='help-question'><b>Как запретить не друзьям писать мне сообщения?</b><br> Перейдите в подраздел Приватность: Левая панель > значок <i class="fa fa-cog"></i> под Вашим именем > Дополнительно </p> 
+					<p class='help-question'><b>Как удалить сообщения?</b><br> Откройте переписку с этим пользователем > начните кликать на сообщения, которые необходимо удалить. Они будут выделяться цветом, а в правом верхнем углу появится иконка к корзиной <i class="fa fa-trash-o"></i>. Кликните на нее, чтоб удалить выбранные сообщения.</p>     
+					<p class='help-question'><b>Как прикрепить к сообщению песню или фотографию?</b><br> Нажмите на плюсик <i class="fa fa-plus"></i> слева от поля для ввода сообщения. В открывшемся меню выберите соответствующий раздел. </p>     
+				</div>
+			</div>
+			<div data-role="collapsible" data-inset="false">
+			    <h3>Фотографии</h3>
+			   <div style='border-bottom: 1px #ccc solid'>
+			        <p class='help-question'><b>Как загрузить новые фотографии?</b><br> Перейдите в раздел Мои фотографии: Левая панель > Мои фотографии > <i class="fa fa-plus"></i> в верхнем правом углу</p>
+			        <p class='help-question'><b>Как удалить фотографии?</b><br> Перейдите в раздел Мои фотографии: Левая панель > Мои фотографии > нажмите на иконку <i class="fa fa-trash-o"></i> в верхнем правом углу. Над фотографиями появится кнопка Удалить > удалите не нужные фотографии.</p> 
+					<p class='help-question'><b>Как настроить видимость моих фотографий?</b><br> Перейдите в подраздел Приватность: Левая панель > значок <i class="fa fa-cog"></i> под Вашим именем > Дополнительно </p>     
+					<p class='help-question'><b>Как перейти к комментариям фотографии?</b><br> Нажмите на значок <i class="fa fa-comments"></i></p> 
+					<p class='help-question'><b>Как поставить лайк к фотографии?</b><br> Нажмите на значок <i class="fa fa-heart"></i> и <i class="fa fa-heart"></i></p>       
+				</div>
+			</div>
+			<div data-role="collapsible" data-inset="false">
+			    <h3>Пользователи и друзья</h3>
+			   <div style='border-bottom: 1px #ccc solid'>
+			        <p class='help-question'><b>Как найти нужного мне пользователя?</b><br> Перейдите в раздел Люди: Левая панель > Главная страница > <i class="fa fa-users"></i> Люди > <i class="fa fa-search"></i> Поиск</p>
+			        <p class='help-question'><b>Как найти людей по близости?</b><br> Перейдите в раздел Люди: Левая панель > Главная страница > <i class="fa fa-users"></i> Люди > Нажмите на <i class="fa fa-map-marker"></i> в верхнем правом углу.</p> 
+					<p class='help-question'><b>Как добавить пользователя в друзья?</b><br> Перейдите на страницу пользователя, затем кликните на меню в правом верхнем углу <i class="fa fa-ellipsis-v"></i> и нажмите "Добавить в друзья"</p>     
+					<p class='help-question'><b>Как удалить пользователя из друзей?</b><br> Перейдите на страницу пользователя, затем кликните на меню в правом верхнем углу <i class="fa fa-ellipsis-v"></i> и нажмите "Удалить из друзей"</p> 				      
+				</div>
+			</div>
+			<div data-role="collapsible" data-inset="false">
+		    <h3>Музыка</h3>
+		   <div style='border-bottom: 1px #ccc solid'>
+		        <p class='help-question'><b>Как найти нужную мне музыку?</b><br> Перейдите в раздел Музыка: Левая панель > Главная страница > <i class="fa fa-music"></i> Музыка > <i class="fa fa-search"></i> Поиск</p>
+		        <p class='help-question'><b>Как добавить музыку в свой альбом?</b><br> Нажмите на плюсик справа от понравившейся песни</p> 
+				<p class='help-question'><b>Как закешировать песню?</b><br> Нажмите на иконку <i class="fa fa-cloud-download"></i> рядом с песней. Все кешированные песни будут находится в разделе Моя музыка > <i class="fa fa-cloud-download"></i></p>     				      
+			</div>
+		</div>
+		
+			<div class="ui-body ui-body-a ui-corner-all">
+				<h3>Задать вопрос</h3>
+				<p>
+				 <textarea  name="feedback_msg" id="feedback_msg" placeholder="Опишите подробно свою проблему или вопрос"></textarea>				 
+				 <input type="email" data-clear-btn="true"  placeholder="Укажите email, куда мы сможем Вам ответить" name="feedback_email" id="feedback_email" value="">				
+				 <button class="ui-btn ui-btn-b" id="feedback_send">Отправить</button>
+				 </p>
+			 </div>
+		</div>
+	</div><!-- /content -->
+	
+</div>
+
 <!--Панель боковая-->
 <div data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay"  data-theme="b" id="left_panel">
 		<h2>Меню</h2>
 		<p> Вы не вошли под своим аккаунтом на Шах-Даг</p>
-		<p><a href="#page_auth"  data-transition="slide" data-icon="lock" class="ui-btn ui-shadow ui-corner-all ui-btn-b nav-login">Войти</a></p>
+		<p><a href="#page_help"  class="ui-btn ui-shadow ui-corner-all ui-btn-b">Помощь</a></p>
 	
 </div>
 <!--Панель боковая-->

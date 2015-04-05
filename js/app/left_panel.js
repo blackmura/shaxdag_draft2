@@ -27,6 +27,7 @@ NavLefPanel = new Object({
 				html_left_panel+=' <li class="nav-music" user_id="'+User.I.id+'"><a > <i class="fa fa-music"></i> Моя музыка</a> <span class="ui-li-count b" style="display: none;"></span></li>';
 				html_left_panel+=' <li class="nav-friends" user_id="'+User.I.id+'"><a > <i class="fa fa-users"></i> Мои друзья</a> <span class="ui-li-count b" style="display: none;"></span></li>';
 				
+				
 				html_left_panel+='</ul>';
 				//друзья онлайн и пользователи онлайн
 				html_left_panel+='<div class="friends-div" ><div class="friends-online"><div class="ui-bar ui-bar-b" user_id="'+User.I.id+'"><h2><i class="fa fa-circle user-online"></i> Друзья онлайн (<span>0</span>)</h2></div><ul data-role="listview">';
@@ -34,9 +35,15 @@ NavLefPanel = new Object({
 				//пользователи онлайн
 				html_left_panel+='<div class="users-div" ><div class="friends-online"><div class="ui-bar ui-bar-b" ><h2 online="1"><i class="fa fa-circle user-online"></i> Онлайн (<span>0</span>)</h2> <div class="ui-btn-right my-nation" nation="0" online="1"></div></div><ul data-role="listview">';
 				html_left_panel+='</div></ul></div>';
-
+				
+				html_left_panel+='<ul data-role="listview" id="nav-listview2" class="ui-nodisc-icon ui-alt-icon" style="margin-top: 1em;">';
+				html_left_panel+='<li><a href="#page_help"> <i class="fa fa-question"></i> Помощь</a></li>';
+				html_left_panel+='<li><a id="nav-settings2"> <i class="fa fa-gear"></i> Настрокйи</a></li>';
+				html_left_panel+='</ul>';
+				
 				$("#left_panel").html(html_left_panel);
 				$( "#nav-listview1" ).listview();
+				$( "#nav-listview2" ).listview();
 				$( ".cl_nav-logout" ).button();
 				$( ".cl_nav-hrefresh" ).button();
 				$( "#nav-settings" ).button();
@@ -46,6 +53,7 @@ NavLefPanel = new Object({
 				$( ".cl_nav-logout" ).on( "vclick", Environment.Confirm.onShow);
 				$( ".cl_nav-hrefresh" ).on( "vclick",Environment.UI.hard_refresh);
 				$( "#nav-settings" ).on( "vclick",  User.Settings.Page.Go);
+				$( "#nav-settings2" ).on( "vclick",  User.Settings.Page.Go);
 				$( "#play_btn" ).on("vclick", Music.link.onPanelPlay);
 				
 				$( "#left_panel .user-avatar-wrapper, .user-name-wrapper" ).on( "vclick",  UserPage.Go); 

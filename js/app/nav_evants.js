@@ -411,7 +411,29 @@
 					if(Evants.new_.clips<0)
 						Evants.new_.clips=0;
 				}
-			}
+			},
+			ajax_overlay : function(action){
+				if(action == "enable"){
+					//$('div.foto').fadeTo('normal',0.5); --тормозит на мобильниках
+					$("#page_evants_list .comments_fotos").append('<div class="ajax-overlay"></div>');
+				}
+				else
+				if(action == "disable"){
+					//$('div.foto').fadeTo('fast',1);
+					$("#page_evants_list .comments_fotos .ajax-overlay").remove();
+				}
+			},
+			HandleAjax : function(action,settings){
+				if (settings.url.indexOf("refresh_ui.php")>=0 && settings.url.indexOf("getEvants")>=0){
+					if(action=="send"){
+						Evants.Utils.ajax_overlay('enable');
+					}
+					else
+					if(action=="stop"){
+						Evants.Utils.ajax_overlay('disable');
+					}
+				}
+			},
 		},
 		onScroll : function(){
 			var params=Evants.url_params;

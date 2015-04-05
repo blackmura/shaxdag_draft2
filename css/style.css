@@ -301,6 +301,9 @@
 	margin-top: 0.2em;
 	color: #898989;
 }
+.help-question{
+	border-bottom: 1px #ccc solid;
+}
 /*
 ** mobile device class
 */
@@ -533,8 +536,8 @@
 }
 #page_fotos_list .foto, #page_usersfotos_list .foto, #page_upload .foto{
 	position: relative;
-    width: 30%;
-    padding-bottom: 30%;
+    width: 48%;
+    padding-bottom: 48%;
     float: left;
     height: 0;
 	margin: 1%;	
@@ -544,6 +547,61 @@
     height: 100%;
     position: absolute;
     left: 0; 
+}
+/*иконки над фотками*/
+#page_fotos_list .foto .comments, #page_usersfotos_list .foto .comments{
+	font-size: 1.1em;
+    position: absolute;
+    right: 2px; 
+	bottom: 2px;
+	cursor: pointer;
+	color: #fff;
+	text-shadow: 0px 1px 2px #000000, 0px -1px 2px #000000;
+	width:60px;
+	text-align: right;
+}
+#page_fotos_list .foto .rating, #page_usersfotos_list .foto .rating{
+	font-size: 1.0em;
+    position: absolute;
+    right: 2px; 
+	top: 2px;
+	cursor: pointer;
+	color: #fff;
+	text-shadow: 0px 1px 2px #000000, 0px -1px 2px #000000;
+	width:60px;
+	text-align: right;
+}
+@media screen and (min-width: 340px)  {
+	#page_fotos_list .foto .rating, #page_usersfotos_list .foto .rating{
+		font-size: 0.8em;
+	}
+	#page_fotos_list .foto .comments, #page_usersfotos_list .foto .comments{
+		font-size: 0.9em;
+	}
+}
+@media screen and (min-width: 400px)  {
+	#page_fotos_list .foto .rating, #page_usersfotos_list .foto .rating{
+		font-size: 1.0em;
+	}
+	#page_fotos_list .foto .comments, #page_usersfotos_list .foto .comments{
+		font-size: 1.1em;
+	}
+}
+@media screen and (min-width: 468px)  {
+	#page_fotos_list .foto .rating, #page_usersfotos_list .foto .rating{
+		font-size: 0.8em;
+	}
+	#page_fotos_list .foto .comments, #page_usersfotos_list .foto .comments{
+		font-size: 0.9em;
+	}
+}
+@media screen and (min-width: 640px)  {
+	#page_fotos_list .foto .rating, #page_usersfotos_list .foto .rating{
+		font-size: 1.0em;
+	}
+	#page_fotos_list .foto .comments, #page_usersfotos_list .foto .comments{
+		font-size: 1.1em;
+	}
 }
 
 /* CSS talk bubble 
@@ -1003,6 +1061,9 @@ div.ajax-overlay{
 #page_evants_list .comments-clips{ 
 	cursor: pointer;
 }
+#page_evants_list .comments_fotos{ /*фотки PS*/
+	position: relative;
+}
 /*--------------------- Музыка-------------------------*/ 
 #page_music .topheader .btn-cache{
 	display: none;
@@ -1144,6 +1205,18 @@ div.ajax-overlay{
 ** which won't be perfect, but will work in most cases.
 ** if our width is 1024 or less assume and orientation portrait
 */
+
+/* если больше айфона 5*/
+@media screen and (min-width: 340px)  {
+	#page_fotos_list .foto, #page_usersfotos_list .foto, #page_upload .foto{
+		position: relative;
+		width: 30%;
+		padding-bottom: 30%;
+		float: left;
+		height: 0;
+		margin: 1%;	
+	}
+}
 /* если как минимум большой телефон*/
 @media screen and (min-width: 468px)  {
 	.page_limited{

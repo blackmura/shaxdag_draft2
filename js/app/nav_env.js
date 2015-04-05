@@ -144,7 +144,12 @@ Rpl =new Object({
 			
 			if(GLOBAL_APP_VERS.type == "web_mobile" && /Android/i.test(navigator.userAgent)){
 				show_popup("important_ntfy", "Мобильное приложение Шах-Даг теперь доступно и на платформе Андроид. Поторопитесь скачать его на Google Play! <a href='https://play.google.com/store/apps/details?id=com.shaxdag.app' rel='external' class='ui-btn ui-corner-all ui-shadow ui-btn-b'><i class='fa fa-android'></i> Установить!</a>");
-				Geo.init();
+				//Geo.init();
+			}
+			else
+			if(GLOBAL_APP_VERS.type == "web_mobile" && /iPhone|iPad|iPod/i.test(navigator.userAgent)){
+				show_popup("important_ntfy", "Мобильное приложение Шах-Даг теперь доступно Apple Store! <a href='https://itunes.apple.com/us/app/shaxdag/id965608612?l=ru&ls=1&mt=8' rel='external' class='ui-btn ui-corner-all ui-shadow ui-btn-b'><i class='fa fa-apple'></i> Загрузить!</a>");
+				//Geo.init();
 			}
 			
 		},
@@ -594,6 +599,39 @@ Help = new Object({
 				},
 				"json"
 			);
+		},
+		OnSendFeedback :function(ev){
+			ev.preventDefault();
+			var feedback_msg=$("#feedback_msg").val();
+			var feedback_email=$("#feedback_email").val();
+			if(User.I.login)
+				var feedback_login = User.I.login
+			else
+				var feedback_login="";
+			if(feedback_msg && feedback_email){
+				var  params = { method: "send_feedback", 
+								feedback_msg: feedback_msg, 
+								feedback_email: feedback_email, 
+								feedback_login: feedback_login,
+								app_type: GLOBAL_APP_VERS.type,
+								app_ver: GLOBAL_APP_VERS.version
+							};
+				$.get( LS("refresh_ui.php"),params, 
+					function( data ) {
+						if(data.method_status=="success"){
+							show_popup("fast_ntfy","<b><i class='fa fa-check'></i> Сообщение отправлено!</b> Вы получите ответ на "+params.feedback_email);
+							$("#feedback_msg").val("");
+							setTimeout(Environment.UI.hard_refresh,4000);
+						}
+						else{
+							show_popup("fast_ntfy", data.error_text);
+						}
+					},
+					"json"
+				);
+			}
+			else
+				show_popup("fast_ntfy", "Не заполнены все поля");
 		}
 	});
 Exch = new Object({
@@ -871,4 +909,21 @@ Offline = new Object({
 			}
 		}
 	});
+Localization = new Object({
+	help:{
+		cat_music:{
+			ru: "Музыка",
+			en: "Music"
+		},
+		cat_profile:{
+			ru: "Профиль",
+			en: "Profile"
+		},
+		cat_fotos:{
+			ru: "Фотографии",
+			en: "Photos"
+		}
+		
+	}
+});
 		

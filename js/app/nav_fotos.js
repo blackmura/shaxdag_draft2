@@ -142,13 +142,40 @@ Fotos = new Object({
 				if(resp_obj.fotos.total>0){
 					var i=0;
 					$.each(resp_obj.fotos.fotos, function(key,obj){
-						html+= "<div  class='foto num_"+resp_obj.fotos.fotos[i].num+"'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a></div>";
+						html+= "<div  class='foto num_"+resp_obj.fotos.fotos[i].num+"'>";
+						html+="<a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>";
+						
+						if(resp_obj.fotos.fotos[i].rating>0 || resp_obj.fotos.fotos[i].rating<0)
+							var foto_rating = resp_obj.fotos.fotos[i].rating;
+						else
+							var foto_rating = "";
+							
+						if(resp_obj.fotos.fotos[i].comments>0)
+							var foto_comment = resp_obj.fotos.fotos[i].comments;
+						else
+							var foto_comment = "";
+							
+						html+="<div class='rating' base='fotos' mark='plus' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-heart'></i> <span>"+foto_rating+"</span></div>";
+						html+="<div class='comments' base='fotos' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-comments'></i> <span>"+foto_comment+"</span></div>";
+						
+						/*
+						html+="<div class='rating'>";
+						if(resp_obj.fotos.fotos[i].rating>0 || resp_obj.fotos.fotos[i].rating<0)
+							html+="<i class='fa fa-heart'></i>"+resp_obj.fotos.fotos[i].rating+"<br>";
+						if(resp_obj.fotos.fotos[i].comments>0)
+							html+="<i class='fa fa-comments'></i>"+resp_obj.fotos.fotos[i].comments+"";
+						html+="</div>";
+						*/
+						html+="</div>";
 						i++;
 					});
-					$("#page_fotos_list").html(html);
+					$("#page_fotos_list").html(html);					
+					$("#page_fotos_list .foto .rating").on("vclick", Environment.Like);
+					$("#page_fotos_list .foto .comments").on("vclick", Comments.Go);
 					
 					//применяем Swipe
 					Fotos.PS.ReCreate($("#page_fotos_list .foto a"));
+					
 				}
 				
 			}
@@ -172,6 +199,20 @@ Fotos = new Object({
 							html+= "<div class='foto num_"+resp_obj.fotos.fotos[i].num+"'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>";
 						html+="<div class='btn-delete'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' confirm_type='delete_source' class='ui-btn ui-icon-delete ui-btn-icon-left ui-mini go-confirm'>Удалить</button></div>";
 						html+="<div class='btn-choose'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"'  class='ui-btn ui-icon-check ui-btn-icon-left ui-mini'>Выбрано</button></div>";
+						
+						if(resp_obj.fotos.fotos[i].rating>0 || resp_obj.fotos.fotos[i].rating<0)
+							var foto_rating = resp_obj.fotos.fotos[i].rating;
+						else
+							var foto_rating = "";
+							
+						if(resp_obj.fotos.fotos[i].comments>0)
+							var foto_comment = resp_obj.fotos.fotos[i].comments;
+						else
+							var foto_comment = "";
+						if(Exch.to.type==null){	
+							html+="<div class='rating' base='"+base+"' mark='plus' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-heart'></i> <span>"+foto_rating+"</span></div>";
+							html+="<div class='comments' base='"+base+"' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-comments'></i> <span>"+foto_comment+"</span></div>";
+						}
 						html+="</div>";
 						i++;
 					});
@@ -183,6 +224,8 @@ Fotos = new Object({
 					else{				
 						//применяем Swipe
 						Fotos.PS.ReCreate($("#page_usersfotos_list .foto a"));
+						$("#page_usersfotos_list .foto .rating").on("vclick", Environment.Like);
+						$("#page_usersfotos_list .foto .comments").on("vclick", Comments.Go);
 					}
 					
 					//обработчик удаления
@@ -208,11 +251,28 @@ Fotos = new Object({
 				if(resp_obj.fotos.total>0){
 					var i=0;
 					$.each(resp_obj.fotos.fotos, function(key,obj){
-						html+= "<div class='foto'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a></div>";
+						html+= "<div class='foto'>"
+						html+="<a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>"
+						if(resp_obj.fotos.fotos[i].rating>0 || resp_obj.fotos.fotos[i].rating<0)
+							var foto_rating = resp_obj.fotos.fotos[i].rating;
+						else
+							var foto_rating = "";
+							
+						if(resp_obj.fotos.fotos[i].comments>0)
+							var foto_comment = resp_obj.fotos.fotos[i].comments;
+						else
+							var foto_comment = "";
+							
+						html+="<div class='rating' base='fotos' mark='plus' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-heart'></i> <span>"+foto_rating+"</span></div>";
+						html+="<div class='comments' base='fotos' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-comments'></i> <span>"+foto_comment+"</span></div>";
+						html+="</div>";
 						i++;
 					});
 					$("#page_fotos_list").append(html);
-					//$(".foto").velocity("fadeIn",500)
+					$("#page_fotos_list .foto .rating").off("vclick");
+					$("#page_fotos_list .foto .rating").on("vclick", Environment.Like);
+					$("#page_fotos_list .foto .comments").off("vclick");
+					$("#page_fotos_list .foto .comments").on("vclick", Comments.Go);
 					//если PS открыт, то закрываем, обновляем и открываем
 					if(Fotos.PS.isShown==1){
 						photoSwipeInstance.hide();
@@ -243,6 +303,20 @@ Fotos = new Object({
 							html+= "<div class='foto num_"+resp_obj.fotos.fotos[i].num+"'><a href='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "full")+"' t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' rel='external'><img src='"+User.html.fotos_url(resp_obj.fotos.fotos[i].path, resp_obj.fotos.fotos[i].private_foto, "small")+"'></a>";
 						html+="<div class='btn-delete'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"' confirm_type='delete_source' class='ui-btn ui-icon-delete ui-btn-icon-left ui-mini go-confirm'>Удалить</button></div>";
 						html+="<div class='btn-choose'><button t_key='"+resp_obj.fotos.fotos[i].num+"' base='"+base+"'  class='ui-btn ui-icon-check ui-btn-icon-left ui-mini'>Выбрано</button></div>";
+						
+						if(resp_obj.fotos.fotos[i].rating>0 || resp_obj.fotos.fotos[i].rating<0)
+							var foto_rating = resp_obj.fotos.fotos[i].rating;
+						else
+							var foto_rating = "";
+							
+						if(resp_obj.fotos.fotos[i].comments>0)
+							var foto_comment = resp_obj.fotos.fotos[i].comments;
+						else
+							var foto_comment = "";
+						if(Exch.to.type==null){	
+							html+="<div class='rating' base='"+base+"' mark='plus' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-heart'></i> <span>"+foto_rating+"</span></div>";
+							html+="<div class='comments' base='"+base+"' t_key='"+resp_obj.fotos.fotos[i].num+"'><i class='fa fa-comments'></i> <span>"+foto_comment+"</span></div>";
+						}
 						html+="</div>";
 						i++;
 					});
@@ -266,6 +340,10 @@ Fotos = new Object({
 					Fotos.link.refresh_del_mode(); 
 					$("#page_usersfotos .go-confirm").off("vclick")
 					$("#page_usersfotos .go-confirm").on("vclick", Environment.Confirm.onShow);
+					$("#page_usersfotos_list .foto .rating").off("vclick");
+					$("#page_usersfotos_list .foto .rating").on("vclick", Environment.Like);
+					$("#page_usersfotos_list .foto .comments").off("vclick");
+					$("#page_usersfotos_list .foto .comments").on("vclick", Comments.Go);
 				}
 				
 				console.log("appended new fotos"+JSON.stringify(resp_obj));

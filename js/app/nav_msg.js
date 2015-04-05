@@ -245,6 +245,8 @@ NavMsg = new Object({
 		},
 		SendMsgHandler : function (send_to){
 			var msg_text=$("#nav-msg-txtarea").val();
+			//replace emoji
+			msg_text = emoji_encode(msg_text); 
 			$("#nav-msg-txtarea").val(""); $("#nav-msg-txtarea").css({height: "auto"});
 			if(msg_text){
 				var fake_num = -1*rand(100000000);
